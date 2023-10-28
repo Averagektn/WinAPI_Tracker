@@ -4,6 +4,7 @@
 #include "Functions.h"
 #include "Cursor.h"
 #include "Target.h"
+#include "Logger.h"
 
 #define TIMER_LOG 1
 #define TIMER_LOAD 2
@@ -75,8 +76,10 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLi
 	return (int)msg.wParam;
 }
 
+
 Cursor cursor(ProjConst::WND_DEF_WIDTH / 2, ProjConst::WND_DEF_HEIGHT / 2, ProjConst::CURSOR_RADIUS);
 Target target(100, 100, 10);
+Logger coordLogger("coords.txt");
 bool isLeftPressed = false;
 bool isRightPressed = false;
 bool isUpPressed = false;
@@ -117,14 +120,15 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			{
 				xSpeed += speed;
 			}
-
+			POINT center = cursor.GetCenter();
+			coordLogger.LogLn(std::to_string(center.x) + " " + std::to_string(center.y));
 			cursor.AddCoordX(xSpeed);
 			cursor.AddCoordY(ySpeed);
 			InvalidateRect(hWnd, NULL, TRUE);
 		}
 		if (wParam == TIMER_LOAD) 
 		{
-		
+
 		}
 		break;
 

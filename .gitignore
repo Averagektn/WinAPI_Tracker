@@ -411,4 +411,7 @@ FodyWeavers.xsd
 *.jpeg
 
 disk
-/src/tracker/coords.txt
+*.txt
+*.csv
+*.bmp
+*.png

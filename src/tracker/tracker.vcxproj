@@ -133,10 +133,12 @@
   <ItemGroup>
     <ClCompile Include="Axis.cpp" />
     <ClCompile Include="Circle.cpp" />
+    <ClCompile Include="Converter.cpp" />
     <ClCompile Include="Cursor.cpp" />
     <ClCompile Include="FileReader.cpp" />
     <ClCompile Include="Graph.cpp" />
     <ClCompile Include="Logger.cpp" />
+    <ClCompile Include="Network.cpp" />
     <ClCompile Include="Source.cpp" />
     <ClCompile Include="Statistics.cpp" />
     <ClCompile Include="Target.cpp" />
@@ -145,11 +147,13 @@
     <ClInclude Include="Axis.h" />
     <ClInclude Include="Circle.h" />
     <ClInclude Include="Constants.h" />
+    <ClInclude Include="Converter.h" />
     <ClInclude Include="Cursor.h" />
     <ClInclude Include="FileReader.h" />
     <ClInclude Include="Functions.h" />
     <ClInclude Include="Graph.h" />
     <ClInclude Include="Logger.h" />
+    <ClInclude Include="Network.h" />
     <ClInclude Include="Statistics.h" />
     <ClInclude Include="Target.h" />
   </ItemGroup>
