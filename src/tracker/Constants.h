@@ -8,6 +8,7 @@ namespace ProjConst
 
 	// DRAWING
 	const int SPEED = 5;
+	const float DIAGONAL_SPEED_CORRECTION = 1.41;
 
 	// SIZES
 	const int WND_DEF_HEIGHT = 800;

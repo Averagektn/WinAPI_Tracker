@@ -1,7 +1,6 @@
 #pragma once
 
 #include <windows.h>
-#include <gdiplus.h>
 #include <d2d1.h>
 
 class Cursor

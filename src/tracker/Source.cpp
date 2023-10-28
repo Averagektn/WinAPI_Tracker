@@ -90,24 +90,30 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 	case WM_TIMER:
 		if (wParam == TIMER_LOG) 
 		{
-			int xSpeed = ProjConst::SPEED;
-			int ySpeed = ProjConst::SPEED;
+			int xSpeed = 0;
+			int ySpeed = 0;
+			int speed = ProjConst::SPEED;
+
+			if ((isUpPressed || isDownPressed) && (isLeftPressed || isRightPressed))
+			{
+				speed /= ProjConst::DIAGONAL_SPEED_CORRECTION;
+			}
 
 			if (isUpPressed)
 			{
-				
+				ySpeed -= speed;
 			}
 			if (isDownPressed)
 			{
-
+				ySpeed += speed;
 			}
 			if (isLeftPressed)
 			{
-
+				xSpeed -= speed;
 			}
 			if (isRightPressed)
 			{
-
+				xSpeed += speed;
 			}
 
 			cursor.AddCoordX(xSpeed);
