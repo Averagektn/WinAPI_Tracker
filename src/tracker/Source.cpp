@@ -1,10 +1,10 @@
 #include <windows.h>
 #include <d2d1.h>
 #include "Constants.h"
-#include "Functions.h"
 #include "Cursor.h"
 #include "Target.h"
 #include "Logger.h"
+#include "Axis.h"
 
 #define TIMER_LOG 1
 #define TIMER_LOAD 2
@@ -84,11 +84,15 @@ bool isLeftPressed = false;
 bool isRightPressed = false;
 bool isUpPressed = false;
 bool isDownPressed = false;
+bool isGame = true;
 
 LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam) 
 {
 	HDC hdc;
 	PAINTSTRUCT ps;
+
+	Axis xAxis(0, ProjConst::WND_DEF_HEIGHT / 2, ProjConst::WND_DEF_WIDTH, ProjConst::WND_DEF_HEIGHT / 2);
+	Axis yAxis(ProjConst::WND_DEF_WIDTH / 2, 0, ProjConst::WND_DEF_WIDTH / 2, ProjConst::WND_DEF_HEIGHT);
 
 	switch (message) 
 	{
@@ -120,10 +124,18 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			{
 				xSpeed += speed;
 			}
+
 			POINT center = cursor.GetCenter();
 			coordLogger.LogLn(std::to_string(center.x) + " " + std::to_string(center.y));
 			cursor.AddCoordX(xSpeed);
 			cursor.AddCoordY(ySpeed);
+
+			if (!isGame)
+			{
+				KillTimer(hWnd, TIMER_LOG);
+				KillTimer(hWnd, TIMER_LOAD);
+			}
+
 			InvalidateRect(hWnd, NULL, TRUE);
 		}
 		if (wParam == TIMER_LOAD) 
@@ -172,13 +184,15 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 
 	case WM_PAINT:
 		hdc = BeginPaint(hWnd, &ps);
-
 		renderTarget->BeginDraw();
 		renderTarget->Clear(D2D1::ColorF(D2D1::ColorF::White));
+
+		xAxis.Draw(renderTarget, ProjConst::DEF_AXIS_COLOR);
+		yAxis.Draw(renderTarget, ProjConst::DEF_AXIS_COLOR);
 		target.Draw(renderTarget, ProjConst::DEF_TARGET_COLOR);
 		cursor.Draw(renderTarget, ProjConst::DEF_CURSOR_COLOR);
-		renderTarget->EndDraw();
 
+		renderTarget->EndDraw();
 		EndPaint(hWnd, &ps);
 		break;
 

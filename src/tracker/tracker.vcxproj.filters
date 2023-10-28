@@ -48,12 +48,18 @@
     <ClCompile Include="Converter.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="PathDrawer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Classifier.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Center.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Constants.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Functions.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Cursor.h">
@@ -84,6 +90,15 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Converter.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="PathDrawer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Classifier.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Center.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
