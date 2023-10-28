@@ -10,7 +10,7 @@ public:
 	Cursor(int x, int y, int radius);
 	Cursor(POINT center, int radius);
 
-	void Draw(ID2D1HwndRenderTarget* renderTarget);
+	void Draw(ID2D1HwndRenderTarget* renderTarget, D2D1::ColorF color);
 	void SetCenterX(int x);
 	void SetCenterY(int y);
 	void AddCoordX(int dx);

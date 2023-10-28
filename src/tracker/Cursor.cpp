@@ -63,12 +63,12 @@ POINT Cursor::GetCenter()
 	return center;
 }
 
-void Cursor::Draw(ID2D1HwndRenderTarget* renderTarget)
+void Cursor::Draw(ID2D1HwndRenderTarget* renderTarget, D2D1::ColorF color)
 {
 	ID2D1SolidColorBrush* brush;
-	renderTarget->CreateSolidColorBrush(D2D1::ColorF(D2D1::ColorF::Red), &brush);
+	renderTarget->CreateSolidColorBrush(D2D1::ColorF(color), &brush);
 
-	D2D1_ELLIPSE ellipse = D2D1::Ellipse(D2D1::Point2(center.x, center.y), radius, radius);
+	D2D1_ELLIPSE ellipse = D2D1::Ellipse(D2D1::Point2<int>(center.x, center.y), radius, radius);
 	renderTarget->FillEllipse(ellipse, brush);
 
 	brush->Release();

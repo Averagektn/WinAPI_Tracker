@@ -1,5 +1,4 @@
 #include <windows.h>
-#include <gdiplus.h>
 #include <d2d1.h>
 #include "Constants.h"
 #include "Functions.h"
@@ -17,10 +16,6 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLi
 	WNDCLASSEX wcex;
 	HWND hWnd;
 	MSG msg;
-	Gdiplus::GdiplusStartupInput gdiplusStartupInput;
-	ULONG_PTR gdiplusToken;
-
-	Gdiplus::GdiplusStartup(&gdiplusToken, &gdiplusStartupInput, NULL);
 
 	wcex.cbSize = sizeof(WNDCLASSEX);
 	wcex.style = CS_DBLCLKS;
@@ -30,7 +25,7 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLi
 	wcex.hInstance = hInstance;
 	wcex.hIcon = LoadIcon(NULL, IDI_APPLICATION);
 	wcex.hCursor = LoadCursor(NULL, IDC_ARROW);
-	wcex.hbrBackground = HBRUSH(CreateSolidBrush(RGB(255, 255, 255)));
+	wcex.hbrBackground = HBRUSH(CreateSolidBrush(ProjConst::WND_DEF_COLOR));
 	wcex.lpszMenuName = NULL;
 	wcex.lpszClassName = ProjConst::PROJ_NAME;
 	wcex.hIconSm = wcex.hIcon;
@@ -61,8 +56,8 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLi
 		&renderTarget
 	);
 
-	SetTimer(hWnd, TIMER_LOG, 17, NULL);
-	SetTimer(hWnd, TIMER_LOAD, 40, NULL);
+	SetTimer(hWnd, TIMER_LOG, ProjConst::FPS_60, NULL);
+	SetTimer(hWnd, TIMER_LOAD, ProjConst::LOAD_TIMEOUT, NULL);
 
 	ShowWindow(hWnd, nCmdShow);
 	UpdateWindow(hWnd);
@@ -75,12 +70,11 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLi
 
 	KillTimer(hWnd, TIMER_LOG);
 	KillTimer(hWnd, TIMER_LOAD);
-	Gdiplus::GdiplusShutdown(gdiplusToken);
 
 	return (int)msg.wParam;
 }
 
-Cursor cursor(ProjConst::WND_DEF_WIDTH / 2, ProjConst::WND_DEF_HEIGHT / 2, 10);
+Cursor cursor(ProjConst::WND_DEF_WIDTH / 2, ProjConst::WND_DEF_HEIGHT / 2, ProjConst::CURSOR_RADIUS);
 bool isLeftPressed = false;
 bool isRightPressed = false;
 bool isUpPressed = false;
@@ -98,29 +92,34 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		{
 			int xSpeed = ProjConst::SPEED;
 			int ySpeed = ProjConst::SPEED;
+
 			if (isUpPressed)
 			{
-				cursor.AddCoordY(-ProjConst::SPEED);
+				
 			}
 			if (isDownPressed)
 			{
-				cursor.AddCoordY(ProjConst::SPEED);
+
 			}
 			if (isLeftPressed)
 			{
-				cursor.AddCoordX(-ProjConst::SPEED);
+
 			}
 			if (isRightPressed)
 			{
-				cursor.AddCoordX(ProjConst::SPEED);
+
 			}
+
+			cursor.AddCoordX(xSpeed);
+			cursor.AddCoordY(ySpeed);
 			InvalidateRect(hWnd, NULL, TRUE);
 		}
-		//if (wParam == TIMER_LOAD) 
-		//{
+		if (wParam == TIMER_LOAD) 
+		{
 		
-		//}
+		}
 		break;
+
 	case WM_KEYDOWN:
 		if (wParam == VK_LEFT) 
 		{
@@ -139,6 +138,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			isDownPressed = true;
 		}
 		break;
+
 	case WM_KEYUP:
 		if (wParam == VK_LEFT) 
 		{
@@ -157,22 +157,22 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			isDownPressed = false;
 		}
 		break;
+
 	case WM_PAINT:
 		hdc = BeginPaint(hWnd, &ps);
 
-		//cursor.Draw(hdc);
-		//cursor.DrawDoubleBuffer(hdc);
-		// Нарисовать на рендер-таргете с помощью Direct2D
 		renderTarget->BeginDraw();
 		renderTarget->Clear(D2D1::ColorF(D2D1::ColorF::White));
-		cursor.Draw(renderTarget);
+		cursor.Draw(renderTarget, ProjConst::DEF_CURSOR_COLOR);
 		renderTarget->EndDraw();
 
 		EndPaint(hWnd, &ps);
 		break;
+
 	case WM_DESTROY:
 		PostQuitMessage(0);
 		break;
+
 	default:
 		return DefWindowProc(hWnd, message, wParam, lParam);
 	}
