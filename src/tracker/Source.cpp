@@ -3,6 +3,7 @@
 #include "Constants.h"
 #include "Functions.h"
 #include "Cursor.h"
+#include "Target.h"
 
 #define TIMER_LOG 1
 #define TIMER_LOAD 2
@@ -75,6 +76,7 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLi
 }
 
 Cursor cursor(ProjConst::WND_DEF_WIDTH / 2, ProjConst::WND_DEF_HEIGHT / 2, ProjConst::CURSOR_RADIUS);
+Target target(100, 100, 10);
 bool isLeftPressed = false;
 bool isRightPressed = false;
 bool isUpPressed = false;
@@ -169,6 +171,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 
 		renderTarget->BeginDraw();
 		renderTarget->Clear(D2D1::ColorF(D2D1::ColorF::White));
+		target.Draw(renderTarget, ProjConst::DEF_TARGET_COLOR);
 		cursor.Draw(renderTarget, ProjConst::DEF_CURSOR_COLOR);
 		renderTarget->EndDraw();
 

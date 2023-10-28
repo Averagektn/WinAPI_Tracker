@@ -134,6 +134,7 @@
     <ClCompile Include="Axis.cpp" />
     <ClCompile Include="Circle.cpp" />
     <ClCompile Include="Cursor.cpp" />
+    <ClCompile Include="FileReader.cpp" />
     <ClCompile Include="Graph.cpp" />
     <ClCompile Include="Logger.cpp" />
     <ClCompile Include="Source.cpp" />
@@ -145,6 +146,7 @@
     <ClInclude Include="Circle.h" />
     <ClInclude Include="Constants.h" />
     <ClInclude Include="Cursor.h" />
+    <ClInclude Include="FileReader.h" />
     <ClInclude Include="Functions.h" />
     <ClInclude Include="Graph.h" />
     <ClInclude Include="Logger.h" />
