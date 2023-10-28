@@ -1,38 +1,36 @@
 #include "Cursor.h"
 
-Cursor::Cursor(Gdiplus::Color color, int left, int top, int diameter)
+Cursor::Cursor(int x, int y, int radius)
 {
-	this->color = color;
-	center.x = left - diameter / 2;
-	center.y = top - diameter / 2;
-	this->diameter = diameter;
+	center.x = x;
+	center.y = y;
+	this->radius = radius;
 }
 
-Cursor::Cursor(Gdiplus::Color color, POINT leftTop, int diameter)
+Cursor::Cursor(POINT center, int radius)
 {
-	this->color = color;
-	this->center = { leftTop.x - diameter / 2, leftTop.y - diameter / 2};
-	this->diameter = diameter;
+	this->center = center;
+	this->radius = radius;
 }
 
-void Cursor::Draw(HDC hdc)
-{
-	Gdiplus::Graphics graphics(hdc);
-	Gdiplus::Pen pen(color);
-	Gdiplus::SolidBrush brush(color);
-
-	graphics.DrawEllipse(&pen, GetDrawingRect());
-	graphics.FillEllipse(&brush, GetDrawingRect());
-}
-
-void Cursor::SetX(int x)
+void Cursor::SetCenterX(int x)
 {
 	center.x = x;
 }
 
-void Cursor::SetY(int y)
+void Cursor::SetCenterY(int y)
 {
 	center.y = y;
+}
+
+void Cursor::AddCoordX(int dx)
+{
+	center.x += dx;
+}
+
+void Cursor::AddCoordY(int dy)
+{
+	center.y += dy;
 }
 
 void Cursor::SetCenter(POINT center)
@@ -42,30 +40,36 @@ void Cursor::SetCenter(POINT center)
 
 int Cursor::GetLeft()
 {
-	return center.x - diameter / 2;
+	return center.x - radius;
 }
 
 int Cursor::GetTop()
 {
-	return center.y - diameter / 2;
+	return center.y - radius;
 }
 
 int Cursor::GetBottom()
 {
-	return center.y + diameter / 2;
+	return center.y + radius;
 }
 
 int Cursor::GetRight()
 {
-	return center.x + diameter / 2;
+	return center.x + radius;
 }
 
 POINT Cursor::GetCenter()
 {
-	return { center.x + diameter / 2, center.y + diameter / 2 };
+	return center;
 }
 
-Gdiplus::Rect Cursor::GetDrawingRect()
+void Cursor::Draw(ID2D1HwndRenderTarget* renderTarget)
 {
-	return Gdiplus::Rect(center.x, center.y, diameter, diameter);
+	ID2D1SolidColorBrush* brush;
+	renderTarget->CreateSolidColorBrush(D2D1::ColorF(D2D1::ColorF::Red), &brush);
+
+	D2D1_ELLIPSE ellipse = D2D1::Ellipse(D2D1::Point2(center.x, center.y), radius, radius);
+	renderTarget->FillEllipse(ellipse, brush);
+
+	brush->Release();
 }
