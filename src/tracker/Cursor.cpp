@@ -6,5 +6,5 @@ Cursor::Cursor(POINT center, int radius) : Circle(center, radius) {  }
 
 POINT Cursor::Shot()
 {
-	return center;
+	return GetCenter();
 }

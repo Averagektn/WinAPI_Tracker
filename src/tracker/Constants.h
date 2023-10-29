@@ -25,6 +25,6 @@ namespace ProjConst
 	const int BORDER_RIGHT = WND_DEF_WIDTH + 20;
 	const int BORDER_LEFT = -35;
 
-	const int FPS_60 = 17;
+	const int LOG_TIMEOUT = 20;
 	const int CURSOR_RADIUS = 5;
 }

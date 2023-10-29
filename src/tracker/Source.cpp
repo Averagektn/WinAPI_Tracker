@@ -40,25 +40,19 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLi
 	ID2D1Factory* d2dFactory;
 	D2D1CreateFactory(D2D1_FACTORY_TYPE_SINGLE_THREADED, &d2dFactory);
 
-	D2D1_RENDER_TARGET_PROPERTIES renderProps = D2D1::RenderTargetProperties(
+	D2D1_RENDER_TARGET_PROPERTIES renderProps = D2D1::RenderTargetProperties
+	(
 		D2D1_RENDER_TARGET_TYPE_HARDWARE,
 		D2D1::PixelFormat(DXGI_FORMAT_UNKNOWN, D2D1_ALPHA_MODE_PREMULTIPLIED)
 	);
 
 	RECT clientRect;
 	GetClientRect(hWnd, &clientRect);
-	D2D1_SIZE_U size = D2D1::SizeU(
-		clientRect.right - clientRect.left,
-		clientRect.bottom - clientRect.top
-	);
+	D2D1_SIZE_U size = D2D1::SizeU(clientRect.right - clientRect.left, clientRect.bottom - clientRect.top);
 
-	d2dFactory->CreateHwndRenderTarget(
-		renderProps,
-		D2D1::HwndRenderTargetProperties(hWnd, size),
-		&renderTarget
-	);
+	d2dFactory->CreateHwndRenderTarget(renderProps, D2D1::HwndRenderTargetProperties(hWnd, size), &renderTarget);
 
-	SetTimer(hWnd, TIMER_LOG, ProjConst::FPS_60, NULL);
+	SetTimer(hWnd, TIMER_LOG, ProjConst::LOG_TIMEOUT, NULL);
 	SetTimer(hWnd, TIMER_LOAD, ProjConst::LOAD_TIMEOUT, NULL);
 
 	ShowWindow(hWnd, nCmdShow);
@@ -70,14 +64,11 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLi
 		DispatchMessage(&msg);
 	}
 
-	KillTimer(hWnd, TIMER_LOG);
-	KillTimer(hWnd, TIMER_LOAD);
-
 	return (int)msg.wParam;
 }
 
-
-Cursor cursor(ProjConst::WND_DEF_WIDTH / 2, ProjConst::WND_DEF_HEIGHT / 2, ProjConst::CURSOR_RADIUS);
+// def rb = 704, 681
+Cursor cursor(352, 340, ProjConst::CURSOR_RADIUS);
 Target target(100, 100, 10);
 Logger coordLogger("coords.txt");
 bool isLeftPressed = false;
@@ -90,9 +81,10 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
 	HDC hdc;
 	PAINTSTRUCT ps;
-
-	Axis xAxis(0, ProjConst::WND_DEF_HEIGHT / 2, ProjConst::WND_DEF_WIDTH, ProjConst::WND_DEF_HEIGHT / 2);
-	Axis yAxis(ProjConst::WND_DEF_WIDTH / 2, 0, ProjConst::WND_DEF_WIDTH / 2, ProjConst::WND_DEF_HEIGHT);
+	RECT clientRect;
+	GetClientRect(hWnd, &clientRect);
+	Axis xAxis(clientRect.left, clientRect.bottom / 2, clientRect.right, clientRect.bottom / 2);
+	Axis yAxis(clientRect.right / 2, clientRect.top, clientRect.right / 2, clientRect.bottom);
 
 	switch (message) 
 	{
@@ -125,8 +117,28 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 				xSpeed += speed;
 			}
 
+			if (cursor.GetLeft() <= clientRect.left && xSpeed < 0)
+			{
+				xSpeed = 0;
+			}
+			if (cursor.GetRight() >= clientRect.right && xSpeed > 0)
+			{
+				int r = cursor.GetRight();
+				int l = cursor.GetLeft();
+				xSpeed = 0;
+			}
+			if (cursor.GetTop() <= clientRect.top && ySpeed < 0)
+			{
+				ySpeed = 0;
+			}
+			if (cursor.GetBottom() >= clientRect.bottom && ySpeed > 0)
+			{
+				ySpeed = 0;
+			}
+
 			POINT center = cursor.GetCenter();
 			coordLogger.LogLn(std::to_string(center.x) + " " + std::to_string(center.y));
+
 			cursor.AddCoordX(xSpeed);
 			cursor.AddCoordY(ySpeed);
 
