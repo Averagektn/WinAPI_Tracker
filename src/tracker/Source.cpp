@@ -5,6 +5,7 @@
 #include "Target.h"
 #include "Logger.h"
 #include "Axis.h"
+#include "FileReader.h"
 
 #define TIMER_LOG 1
 #define TIMER_LOAD 2
@@ -14,6 +15,7 @@ ID2D1HwndRenderTarget* renderTarget;
 Cursor cursor(352, 340, ProjConst::CURSOR_RADIUS);
 Target target(100, 100, 10);
 Logger coordLogger("coords.txt");
+FileReader reader("centers.txt");
 
 bool isLeftPressed = false;
 bool isRightPressed = false;
@@ -79,10 +81,12 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLi
 
 LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam) 
 {
-	HDC hdc;
-	PAINTSTRUCT ps;
+	//HDC hdc;
+	//PAINTSTRUCT ps;
+
 	RECT clientRect;
 	GetClientRect(hWnd, &clientRect);
+
 	Axis xAxis(clientRect.left, clientRect.bottom / 2, clientRect.right, clientRect.bottom / 2);
 	Axis yAxis(clientRect.right / 2, clientRect.top, clientRect.right / 2, clientRect.bottom);
 
@@ -152,7 +156,22 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		}
 		if (wParam == TIMER_LOAD) 
 		{
+			std::string nextLine = reader.ReadLn();
 
+			if (nextLine.empty())
+			{
+				isGame = false;
+				// path drawing
+				// graph drawing
+				// statistics output
+				// statistics log
+			}
+			else
+			{
+				// convert to float point
+				// convert to coordinates from angles
+				// log angles
+			}
 		}
 		break;
 
@@ -195,7 +214,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		break;
 
 	case WM_PAINT:
-		hdc = BeginPaint(hWnd, &ps);
+		//hdc = BeginPaint(hWnd, &ps);
 		renderTarget->BeginDraw();
 		renderTarget->Clear(D2D1::ColorF(D2D1::ColorF::White));
 
@@ -205,7 +224,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		cursor.Draw(renderTarget, ProjConst::DEF_CURSOR_COLOR);
 
 		renderTarget->EndDraw();
-		EndPaint(hWnd, &ps);
+		//EndPaint(hWnd, &ps);
 		break;
 
 	case WM_DESTROY:
