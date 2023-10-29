@@ -9,12 +9,7 @@ public:
 	Circle(int x, int y, int radius);
 	Circle(POINT center, int radius);
 
-	void Draw(ID2D1HwndRenderTarget* renderTarget, D2D1::ColorF color);
-	void SetCenterX(int x);
-	void SetCenterY(int y);
-	void AddCoordX(int dx);
-	void AddCoordY(int dy);
-	void SetCenter(POINT center);
+	POINT GetCenter();
 
 	bool Contains(POINT point);
 
@@ -23,7 +18,12 @@ public:
 	int GetBottom();
 	int GetRight();
 
-	POINT GetCenter();
+	void Draw(ID2D1HwndRenderTarget* renderTarget, D2D1::ColorF color);
+	void SetCenterX(int x);
+	void SetCenterY(int y);
+	void AddCoordX(int dx);
+	void AddCoordY(int dy);
+	void SetCenter(POINT center);
 
 protected:
 	POINT center;

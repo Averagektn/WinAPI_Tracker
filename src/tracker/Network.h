@@ -6,6 +6,7 @@ class Network
 {
 public:
 	Network();
+
 	float ReceiveAngle();
 
 protected:

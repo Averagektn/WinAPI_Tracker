@@ -2,19 +2,15 @@
 
 Converter::Converter(int width, int height, float maxAngleX, float maxAngleY)
 {
-    // 720
     maxCoordX = width;
     maxCoordY = height;
     
-    // 180
     this->maxAngleX = maxAngleX;
     this->maxAngleY = maxAngleY;
     
-    // 360
     angleWidth = maxAngleX * 2;
     angleHeight = maxAngleY * 2;
 
-    // 360
     maxLogCoordX = width / 2;
     maxLogCoordY = height / 2;
 }

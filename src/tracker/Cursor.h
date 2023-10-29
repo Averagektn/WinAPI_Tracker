@@ -9,6 +9,7 @@ class Cursor : public Circle
 public:
 	Cursor(int x, int y, int radius);
 	Cursor(POINT center, int radius);
+
 	POINT Shot();
 
 protected:

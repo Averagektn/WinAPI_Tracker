@@ -17,6 +17,7 @@ class Converter
 public:
 	Converter(int width, int height, float maxAngleX, float maxAngleY);
 
+	// Window coordinates
 	int ToCoordX(float angle);
 	int ToCoordY(float angle);
 	int ToCoordX_Log(int logCoord);
@@ -25,6 +26,7 @@ public:
 	POINT ToCoord(POINTFLOAT point);
 	POINT ToCoord(POINT logPoint);
 
+	// Angle coordinates
 	float ToAngleX(int coord);
 	float ToAngleY(int coord);
 	float ToAngleX_Log(int logCoord);
@@ -33,6 +35,7 @@ public:
 	POINTFLOAT ToAngle(POINT point);
 	POINTFLOAT ToAngle_Log(POINT logPoint);
 
+	// Logical coordinates
 	int ToLogCoordX(int coord);
 	int ToLogCoordY(int coord);
 	int ToLogCoordX_Angle(float angle);

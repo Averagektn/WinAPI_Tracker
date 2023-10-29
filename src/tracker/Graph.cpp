@@ -32,27 +32,7 @@ void Graph::DrawWindRose(ID2D1HwndRenderTarget* renderTarget, D2D1::ColorF color
     int segmentsNum, int radius)
 {
     std::vector<std::vector<double>> angles = GetClasses(segmentsNum);
-    std::vector<POINT> nodes;
-    int coeff = GetMaxLength(angles);
-    double ang = 360.0f / segmentsNum / 2;
-    double angleStep = 360.0f / segmentsNum;
-
-    for (int i = 0; i < segmentsNum; i++)
-    {
-        double cosinus = cos(ToRadians(ang));
-        double x = radius * cosinus;
-        x = x * (float)angles[i].size() / coeff;
-
-        double sinus = sin(ToRadians(ang));
-        double y = radius * sinus;
-        y = y * (float)angles[i].size() / coeff;
-        
-        x = converter.ToCoordX_Log((int)x);
-        y = converter.ToCoordY_Log((int)y);
-
-        nodes.push_back({ (int)x, (int)y });
-        ang += angleStep;
-    }
+    std::vector<POINT> nodes = GetGeometryPoints(angles, converter, segmentsNum, radius);
 
     ID2D1Factory* d2dFactory = nullptr;
     renderTarget->GetFactory(&d2dFactory);
@@ -104,6 +84,34 @@ std::vector<std::vector<double>> Graph::GetClasses(int segmentsNum)
 	}
 
     return segments;
+}
+
+std::vector<POINT> Graph::GetGeometryPoints(std::vector<std::vector<double>> angles, Converter converter,
+    int segmentsNum, int radius)
+{
+    std::vector<POINT> res;
+
+    int coeff = GetMaxLength(angles);
+
+    double ang = 360.0f / segmentsNum / 2;
+    double angleStep = 360.0f / segmentsNum;
+
+    for (int i = 0; i < segmentsNum; i++)
+    {
+        double x = radius * cos(ToRadians(ang));
+        x = x * (float)angles[i].size() / coeff;
+
+        double y = radius * sin(ToRadians(ang));
+        y = y * (float)angles[i].size() / coeff;
+
+        x = converter.ToCoordX_Log((int)x);
+        y = converter.ToCoordY_Log((int)y);
+
+        res.push_back({ (int)x, (int)y });
+        ang += angleStep;
+    }
+
+    return res;
 }
 
 double Graph::GetAngle(POINT point)

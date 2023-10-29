@@ -43,7 +43,6 @@ bool Circle::Contains(POINT point)
 {
 	double centerX = center.x;
 	double centerY = center.x;
-
 	double distance = sqrt(pow((point.x - centerX) / radius, 2) + pow((point.y - centerY) / radius, 2));
 
 	return distance <= 1;

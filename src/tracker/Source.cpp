@@ -12,9 +12,6 @@
 #include "PathDrawer.h"
 #include "Graph.h"
 
-#include <wincodec.h>
-#pragma comment(lib, "windowscodecs.lib")
-
 #define TIMER_LOG 1
 #define TIMER_LOAD 2
 
@@ -170,9 +167,6 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 				isGame = false;
 				KillTimer(hWnd, TIMER_LOG);
 				KillTimer(hWnd, TIMER_LOAD);
-				//MessageBox(hWnd, L"No more targets", L"No more targets", MB_OK);
-				// path drawing
-				// graph drawing
 				// statistics output
 				// statistics log
 
@@ -238,7 +232,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		if (!isGame)
 		{
 			Graph graph("coords.txt", converter);
-			graph.DrawWindRose(renderTarget, D2D1::ColorF::DarkViolet, converter, 8, 360);
+			graph.DrawWindRose(renderTarget, ProjConst::DEF_WINDROSE_COLOR, converter, 4, 360);
+
 			PathDrawer drawer("coords.txt", converter);
 			drawer.Draw(renderTarget, ProjConst::DEF_PATH_COLOR);
 		}
