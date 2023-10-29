@@ -10,6 +10,7 @@
 #include "FileReader.h"
 #include "Converter.h"
 #include "PathDrawer.h"
+#include "Graph.h"
 
 #include <wincodec.h>
 #pragma comment(lib, "windowscodecs.lib")
@@ -236,6 +237,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		cursor.Draw(renderTarget, ProjConst::DEF_CURSOR_COLOR);
 		if (!isGame)
 		{
+			Graph graph("coords.txt", converter);
+			graph.DrawWindRose(renderTarget, D2D1::ColorF::DarkViolet, converter, 8, 360);
 			PathDrawer drawer("coords.txt", converter);
 			drawer.Draw(renderTarget, ProjConst::DEF_PATH_COLOR);
 		}
