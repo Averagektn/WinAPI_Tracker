@@ -16,6 +16,7 @@ namespace ProjConst
 	const D2D1::ColorF DEF_CURSOR_COLOR = D2D1::ColorF::Red;
 	const D2D1::ColorF DEF_TARGET_COLOR = D2D1::ColorF::Blue;
 	const D2D1::ColorF DEF_AXIS_COLOR = D2D1::ColorF::Black;
+	const D2D1::ColorF DEF_PATH_COLOR = D2D1::ColorF::Green;
 
 	const COLORREF WND_DEF_COLOR = RGB(255, 255, 255);
 	const int LOAD_TIMEOUT = 4000;

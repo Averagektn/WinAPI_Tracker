@@ -41,6 +41,15 @@ public:
 	POINT ToLogCoord(POINT point);
 	POINT ToLogCoord(std::string str);
 
+	POINT ToLogCoord_FromCoordString(std::string str);
+	POINT ToLogCoord_FromAngleString(std::string str);
+
+	POINT ToCoord_FromLogCoordString(std::string str);
+	POINT ToCoord_FromAngleString(std::string str);
+
+	POINTFLOAT ToAngle_FromLogCoordString(std::string str);
+	POINTFLOAT ToAngle_FromCoordString(std::string str);
+
 protected:
 	int maxCoordX;
 	int maxCoordY;

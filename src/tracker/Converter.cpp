@@ -141,3 +141,33 @@ POINT Converter::ToLogCoord(std::string str)
 {
     return ToCoord(str);
 }
+
+POINT Converter::ToLogCoord_FromCoordString(std::string str)
+{
+    return ToLogCoord(ToCoord(str));
+}
+
+POINT Converter::ToLogCoord_FromAngleString(std::string str)
+{
+    return ToLogCoord(ToAngle(str));
+}
+
+POINT Converter::ToCoord_FromLogCoordString(std::string str)
+{
+    return ToCoord(ToLogCoord(str));
+}
+
+POINT Converter::ToCoord_FromAngleString(std::string str)
+{
+    return ToCoord(ToAngle(str));
+}
+
+POINTFLOAT Converter::ToAngle_FromLogCoordString(std::string str)
+{
+    return ToAngle(ToLogCoord(str));
+}
+
+POINTFLOAT Converter::ToAngle_FromCoordString(std::string str)
+{
+    return ToAngle(ToCoord(str));
+}
