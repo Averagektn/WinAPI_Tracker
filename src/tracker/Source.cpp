@@ -1,11 +1,13 @@
 #include <windows.h>
 #include <d2d1.h>
 #include "Constants.h"
+
 #include "Cursor.h"
 #include "Target.h"
 #include "Logger.h"
 #include "Axis.h"
 #include "FileReader.h"
+#include "Converter.h"
 
 #define TIMER_LOG 1
 #define TIMER_LOAD 2
@@ -14,7 +16,8 @@ ID2D1HwndRenderTarget* renderTarget;
 // def rb = 704, 681
 Cursor cursor(352, 340, ProjConst::CURSOR_RADIUS);
 Target target(100, 100, 10);
-Logger coordLogger("coords.txt");
+Logger coordLogger("coords.txt", ' ');
+Logger angleLogger("angles.txt", ' ');
 FileReader reader("centers.txt");
 
 bool isLeftPressed = false;
@@ -81,11 +84,12 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLi
 
 LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam) 
 {
-	//HDC hdc;
-	//PAINTSTRUCT ps;
+	HDC hdc;
+	PAINTSTRUCT ps;
 
 	RECT clientRect;
 	GetClientRect(hWnd, &clientRect);
+	Converter converter(clientRect.right, clientRect.bottom, 180.0f, 180.0f);
 
 	Axis xAxis(clientRect.left, clientRect.bottom / 2, clientRect.right, clientRect.bottom / 2);
 	Axis yAxis(clientRect.right / 2, clientRect.top, clientRect.right / 2, clientRect.bottom);
@@ -127,8 +131,6 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			}
 			if (cursor.GetRight() >= clientRect.right && xSpeed > 0)
 			{
-				int r = cursor.GetRight();
-				int l = cursor.GetLeft();
 				xSpeed = 0;
 			}
 			if (cursor.GetTop() <= clientRect.top && ySpeed < 0)
@@ -140,8 +142,9 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 				ySpeed = 0;
 			}
 
-			POINT center = cursor.GetCenter();
-			coordLogger.LogLn(std::to_string(center.x) + " " + std::to_string(center.y));
+			POINT center = cursor.Shot();
+			coordLogger.LogLn(converter.ToLogCoord(center));
+			angleLogger.LogLn(converter.ToAngle(center));
 
 			cursor.AddCoordX(xSpeed);
 			cursor.AddCoordY(ySpeed);
@@ -156,22 +159,22 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		}
 		if (wParam == TIMER_LOAD) 
 		{
-			std::string nextLine = reader.ReadLn();
+			//std::string nextLine = reader.ReadLn();
 
-			if (nextLine.empty())
-			{
-				isGame = false;
-				// path drawing
-				// graph drawing
-				// statistics output
-				// statistics log
-			}
-			else
-			{
-				// convert to float point
-				// convert to coordinates from angles
-				// log angles
-			}
+			//if (nextLine.empty())
+			//{
+			//	//isGame = false;
+			//	// path drawing
+			//	// graph drawing
+			//	// statistics output
+			//	// statistics log
+			//}
+			//else
+			//{
+			//	// convert to float point
+			//	// convert to coordinates from angles
+			//	// log angles
+			//}
 		}
 		break;
 
@@ -214,7 +217,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		break;
 
 	case WM_PAINT:
-		//hdc = BeginPaint(hWnd, &ps);
+		hdc = BeginPaint(hWnd, &ps);
 		renderTarget->BeginDraw();
 		renderTarget->Clear(D2D1::ColorF(D2D1::ColorF::White));
 
@@ -224,7 +227,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		cursor.Draw(renderTarget, ProjConst::DEF_CURSOR_COLOR);
 
 		renderTarget->EndDraw();
-		//EndPaint(hWnd, &ps);
+		EndPaint(hWnd, &ps);
 		break;
 
 	case WM_DESTROY:

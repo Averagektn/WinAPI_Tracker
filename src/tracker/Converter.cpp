@@ -1,40 +1,143 @@
 #include "Converter.h"
 
-int Converter::FromAngleToCoord(float angle, int maxCoord, float maxAngle)
+Converter::Converter(int width, int height, float maxAngleX, float maxAngleY)
 {
-	return (int)round(angle * maxCoord / maxAngle);
+    // 720
+    maxCoordX = width;
+    maxCoordY = height;
+    
+    // 180
+    this->maxAngleX = maxAngleX;
+    this->maxAngleY = maxAngleY;
+    
+    // 360
+    angleWidth = maxAngleX * 2;
+    angleHeight = maxAngleY * 2;
+
+    // 360
+    maxLogCoordX = width / 2;
+    maxLogCoordY = height / 2;
 }
 
-float Converter::FromCoordToAngle(int coord, int maxCoord, float maxAngle)
+int Converter::ToCoordX(float angle)
 {
-	float res = coord * maxAngle / maxCoord;
-	return res;
+    angle += maxAngleX;
+
+    return (int)round(angle * maxCoordX / angleWidth);
 }
 
-std::vector<float> Converter::FromStringToAngles(std::string str)
+int Converter::ToCoordY(float angle)
 {
-    std::vector<float> angles;
+    angle += maxAngleY;
+
+    return (int)round(angle * maxCoordY / angleHeight);
+}
+
+int Converter::ToCoordX_Log(int logCoord)
+{
+    return logCoord + maxLogCoordX;
+}
+
+int Converter::ToCoordY_Log(int logCoord)
+{
+    return logCoord + maxLogCoordY;
+}
+
+POINT Converter::ToCoord(std::string str)
+{
+    POINT result = { 0, 0 }; 
     std::istringstream iss(str);
-    float angle;
 
-    while (iss >> angle) 
+    if (iss >> result.x >> result.y) 
     {
-        angles.push_back(angle);
+        return result;
     }
-
-    return angles;
+    return result;
 }
 
-std::vector<int> Converter::FromStringToInt(std::string str)
+POINT Converter::ToCoord(POINTFLOAT point)
 {
-    std::vector<int> integers;
+    return { ToCoordX(point.x), ToCoordY(point.y) };
+}
+
+POINT Converter::ToCoord(POINT logPoint)
+{
+    return { ToCoordX_Log(logPoint.x), ToCoordY_Log(logPoint.y) };
+}
+
+float Converter::ToAngleX(int coord)
+{
+    return ToLogCoordX(coord) * angleWidth / maxCoordX;
+}
+
+float Converter::ToAngleY(int coord)
+{
+    return ToLogCoordY(coord) * angleHeight / maxCoordY;
+}
+
+float Converter::ToAngleX_Log(int logCoord)
+{
+    return ToAngleX(logCoord + maxLogCoordX);
+}
+
+float Converter::ToAngleY_Log(int logCoord)
+{
+    return ToAngleX(logCoord + maxLogCoordY);
+}
+
+POINTFLOAT Converter::ToAngle(std::string str)
+{
+    POINTFLOAT result = { 0, 0 };
     std::istringstream iss(str);
-    int number;
 
-    while (iss >> number) 
+    if (iss >> result.x >> result.y)
     {
-        integers.push_back(number);
+        return result;
     }
+    return result;
+}
 
-    return integers;
+POINTFLOAT Converter::ToAngle(POINT point)
+{
+    return { ToAngleX(point.x), ToAngleY(point.y) };
+}
+
+POINTFLOAT Converter::ToAngle_Log(POINT logPoint)
+{
+    return { ToAngleX_Log(logPoint.x), ToAngleY_Log(logPoint.y) };
+}
+
+int Converter::ToLogCoordX(int coord)
+{
+    return coord - maxLogCoordX;
+}
+
+int Converter::ToLogCoordY(int coord)
+{
+    return maxLogCoordY - coord;
+}
+
+int Converter::ToLogCoordX_Angle(float angle)
+{
+    return ToLogCoordX(ToCoordX(angle));
+}
+
+int Converter::ToLogCoordY_Angle(float angle)
+{
+    return ToLogCoordY(ToCoordY(angle));
+}
+
+POINT Converter::ToLogCoord(POINTFLOAT point)
+{
+    return { ToLogCoordX_Angle(point.x), ToLogCoordY_Angle(point.y) };
+}
+
+POINT Converter::ToLogCoord(POINT point)
+{
+    return { ToLogCoordX(point.x), ToLogCoordY(point.y) };
+}
+
+POINT Converter::ToLogCoord(std::string str)
+{
+    return ToCoord(str);
 }
