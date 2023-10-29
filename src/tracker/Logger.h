@@ -12,6 +12,8 @@ public:
 	void LogLn(std::string info);
 	void Log(std::string info);
 
+	~Logger();
+
 protected:
 	std::ofstream outputFile;
 	std::string filePath;
