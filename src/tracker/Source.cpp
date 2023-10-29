@@ -9,9 +9,19 @@
 #define TIMER_LOG 1
 #define TIMER_LOAD 2
 
-LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
-
 ID2D1HwndRenderTarget* renderTarget;
+// def rb = 704, 681
+Cursor cursor(352, 340, ProjConst::CURSOR_RADIUS);
+Target target(100, 100, 10);
+Logger coordLogger("coords.txt");
+
+bool isLeftPressed = false;
+bool isRightPressed = false;
+bool isUpPressed = false;
+bool isDownPressed = false;
+bool isGame = true;
+
+LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
 
 int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow) 
 {
@@ -66,16 +76,6 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLi
 
 	return (int)msg.wParam;
 }
-
-// def rb = 704, 681
-Cursor cursor(352, 340, ProjConst::CURSOR_RADIUS);
-Target target(100, 100, 10);
-Logger coordLogger("coords.txt");
-bool isLeftPressed = false;
-bool isRightPressed = false;
-bool isUpPressed = false;
-bool isDownPressed = false;
-bool isGame = true;
 
 LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam) 
 {
