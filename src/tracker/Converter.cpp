@@ -40,7 +40,7 @@ int Converter::ToCoordX_Log(int logCoord)
 
 int Converter::ToCoordY_Log(int logCoord)
 {
-    return logCoord + maxLogCoordY;
+    return maxLogCoordY - logCoord;
 }
 
 POINT Converter::ToCoord(std::string str)

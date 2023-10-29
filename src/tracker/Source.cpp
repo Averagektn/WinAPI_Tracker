@@ -103,6 +103,10 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			int ySpeed = 0;
 			int speed = ProjConst::SPEED;
 
+			POINT center = cursor.Shot();
+			coordLogger.LogLn(converter.ToLogCoord(center));
+			angleLogger.LogLn(converter.ToAngle(center));
+
 			if ((isUpPressed || isDownPressed) && (isLeftPressed || isRightPressed))
 			{
 				speed /= ProjConst::DIAGONAL_SPEED_CORRECTION;
@@ -142,10 +146,6 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 				ySpeed = 0;
 			}
 
-			POINT center = cursor.Shot();
-			coordLogger.LogLn(converter.ToLogCoord(center));
-			angleLogger.LogLn(converter.ToAngle(center));
-
 			cursor.AddCoordX(xSpeed);
 			cursor.AddCoordY(ySpeed);
 
@@ -159,22 +159,24 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		}
 		if (wParam == TIMER_LOAD) 
 		{
-			//std::string nextLine = reader.ReadLn();
+			std::string nextLine = reader.ReadLn();
 
-			//if (nextLine.empty())
-			//{
-			//	//isGame = false;
-			//	// path drawing
-			//	// graph drawing
-			//	// statistics output
-			//	// statistics log
-			//}
-			//else
-			//{
-			//	// convert to float point
-			//	// convert to coordinates from angles
-			//	// log angles
-			//}
+			if (nextLine.empty())
+			{
+				isGame = false;
+				MessageBox(hWnd, L"B", L"A", MB_OK);
+				// path drawing
+				// graph drawing
+				// statistics output
+				// statistics log
+			}
+			else
+			{
+				target.SetCenter(converter.ToCoord(converter.ToLogCoord(nextLine)));
+				// convert to float point
+				// convert to coordinates from angles
+				// log angles
+			}
 		}
 		break;
 
