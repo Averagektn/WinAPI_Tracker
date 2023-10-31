@@ -20,7 +20,7 @@ namespace ProjConst
 	const D2D1::ColorF DEF_WINDROSE_COLOR = D2D1::ColorF::LightGray;
 
 	const COLORREF WND_DEF_COLOR = RGB(255, 255, 255);
-	const int LOAD_TIMEOUT = 4000;
+	const int LOAD_TIMEOUT = 10;
 
 	const int BORDER_BOTTOM = WND_DEF_HEIGHT - 40;
 	const int BORDER_TOP = 0;
@@ -28,5 +28,6 @@ namespace ProjConst
 	const int BORDER_LEFT = -35;
 
 	const int LOG_TIMEOUT = 20;
+
 	const int CURSOR_RADIUS = 5;
 }

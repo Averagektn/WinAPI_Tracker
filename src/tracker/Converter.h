@@ -53,6 +53,9 @@ public:
 	POINTFLOAT ToAngle_FromLogCoordString(std::string str);
 	POINTFLOAT ToAngle_FromCoordString(std::string str);
 
+	static float ToAngle_FromRadian(float radian);
+	static float ToRadian_FromAngle(float angle);
+
 protected:
 	int maxCoordX;
 	int maxCoordY;

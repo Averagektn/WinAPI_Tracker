@@ -1,5 +1,6 @@
 #include <windows.h>
 #include <wingdi.h>
+#include <iostream>
 #include <d2d1.h>
 #include "Constants.h"
 
@@ -15,13 +16,14 @@
 #define TIMER_LOG 1
 #define TIMER_LOAD 2
 
+// частота 100 герц
 ID2D1HwndRenderTarget* renderTarget;
 // def rb = 704, 681
 Cursor cursor(352, 340, ProjConst::CURSOR_RADIUS);
 Target target(1000, 1000, 10);
 Logger coordLogger("coords.txt", ' ');
 Logger angleLogger("angles.txt", ' ');
-FileReader reader("centers.txt");
+FileReader reader("data2.txt");
 
 bool isLeftPressed = false;
 bool isRightPressed = false;
@@ -85,8 +87,6 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLi
 	return (int)msg.wParam;
 }
 
-bool SaveBitmapToFile(HBITMAP hBitmap, const wchar_t* filename);
-
 LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam) 
 {
 	HDC hdc;
@@ -94,7 +94,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 
 	RECT clientRect;
 	GetClientRect(hWnd, &clientRect);
-	Converter converter(clientRect.right, clientRect.bottom, 180.0f, 180.0f);
+	Converter converter(clientRect.right, clientRect.bottom, 18.0f, 14.0f);
 
 	Axis xAxis(clientRect.left, clientRect.bottom / 2, clientRect.right, clientRect.bottom / 2);
 	Axis yAxis(clientRect.right / 2, clientRect.top, clientRect.right / 2, clientRect.bottom);
@@ -134,6 +134,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 				xSpeed += speed;
 			}
 
+			// add - radius
 			if (cursor.GetLeft() <= clientRect.left && xSpeed < 0)
 			{
 				xSpeed = 0;
@@ -174,7 +175,12 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			}
 			else
 			{
-				target.SetCenter(converter.ToCoord_FromLogCoordString(nextLine));
+				//target.SetCenter(converter.ToCoord_FromLogCoordString(nextLine));
+
+				nextLine += " " + reader.ReadLn();
+				reader.ReadLn();
+				target.SetCenter(converter.ToCoord_FromAngleString(nextLine));
+				
 				// convert to float point
 				// convert to coordinates from angles
 				// log angles
@@ -229,6 +235,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		yAxis.Draw(renderTarget, ProjConst::DEF_AXIS_COLOR);
 		target.Draw(renderTarget, ProjConst::DEF_TARGET_COLOR);
 		cursor.Draw(renderTarget, ProjConst::DEF_CURSOR_COLOR);
+
 		if (!isGame)
 		{
 			Graph graph("coords.txt", converter);

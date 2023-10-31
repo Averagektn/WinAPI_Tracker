@@ -167,3 +167,13 @@ POINTFLOAT Converter::ToAngle_FromCoordString(std::string str)
 {
     return ToAngle(ToCoord(str));
 }
+
+float Converter::ToAngle_FromRadian(float radian)
+{
+    return radian * 180 / 3.14;
+}
+
+float Converter::ToRadian_FromAngle(float angle)
+{
+    return angle * 3.14 / 180;
+}
