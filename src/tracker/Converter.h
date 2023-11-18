@@ -69,6 +69,7 @@ protected:
 	int maxLogCoordY;
 
 private:
+	std::string ReplaceCommas(std::string str);
 
 };
 

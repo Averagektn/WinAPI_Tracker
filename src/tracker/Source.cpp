@@ -109,8 +109,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			int speed = ProjConst::SPEED;
 
 			POINT center = cursor.Shot();
-			coordLogger.LogLn(converter.ToLogCoord(center));
-			angleLogger.LogLn(converter.ToAngle(center));
+			//coordLogger.LogLn(converter.ToLogCoord(center));
+			//angleLogger.LogLn(converter.ToAngle(center));
 
 			if ((isUpPressed || isDownPressed) && (isLeftPressed || isRightPressed))
 			{
@@ -180,7 +180,9 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 				nextLine += " " + reader.ReadLn();
 				reader.ReadLn();
 				target.SetCenter(converter.ToCoord_FromAngleString(nextLine));
-				
+				coordLogger.LogLn(converter.ToLogCoord(target.GetCenter()));
+				angleLogger.LogLn(nextLine);
+
 				// convert to float point
 				// convert to coordinates from angles
 				// log angles
@@ -246,6 +248,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		}
 
 		renderTarget->EndDraw();
+
 		EndPaint(hWnd, &ps);
 		break;
 

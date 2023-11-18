@@ -84,6 +84,8 @@ float Converter::ToAngleY_Log(int logCoord)
 POINTFLOAT Converter::ToAngle(std::string str)
 {
     POINTFLOAT result = { 0, 0 };
+
+    str = ReplaceCommas(str);
     std::istringstream iss(str);
 
     if (iss >> result.x >> result.y)
@@ -176,4 +178,17 @@ float Converter::ToAngle_FromRadian(float radian)
 float Converter::ToRadian_FromAngle(float angle)
 {
     return angle * 3.14 / 180;
+}
+
+std::string Converter::ReplaceCommas(std::string str)
+{
+    size_t pos = str.find(",");
+
+    while (pos != std::string::npos)
+    {
+        str.replace(pos, 1, ".");
+        pos = str.find(",", pos + 1);
+    }
+
+    return str;
 }
