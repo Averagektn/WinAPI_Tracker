@@ -56,6 +56,9 @@ public:
 	static float ToAngle_FromRadian(float radian);
 	static float ToRadian_FromAngle(float angle);
 
+	static POINTFLOAT ToAngle_FromRadian(POINTFLOAT radian);
+	static POINTFLOAT ToRadian_FromAngle(POINTFLOAT angle);
+
 protected:
 	int maxCoordX;
 	int maxCoordY;

@@ -180,6 +180,16 @@ float Converter::ToRadian_FromAngle(float angle)
     return angle * 3.14 / 180;
 }
 
+POINTFLOAT Converter::ToAngle_FromRadian(POINTFLOAT radian)
+{
+    return POINTFLOAT{ToAngle_FromRadian(radian.x), ToAngle_FromRadian(radian.y)};
+}
+
+POINTFLOAT Converter::ToRadian_FromAngle(POINTFLOAT angle)
+{
+    return POINTFLOAT{ToRadian_FromAngle(angle.x), ToRadian_FromAngle(angle.y)};
+}
+
 std::string Converter::ReplaceCommas(std::string str)
 {
     size_t pos = str.find(",");

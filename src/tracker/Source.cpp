@@ -1,3 +1,5 @@
+#include "Network.h"
+
 #include <windows.h>
 #include <wingdi.h>
 #include <iostream>
@@ -13,6 +15,7 @@
 #include "PathDrawer.h"
 #include "Graph.h"
 
+
 #define TIMER_LOG 1
 #define TIMER_LOAD 2
 
@@ -24,6 +27,7 @@ Target target(1000, 1000, 10);
 Logger coordLogger("coords.txt", ' ');
 Logger angleLogger("angles.txt", ' ');
 FileReader reader("data2.txt");
+Network network("127.0.0.1", 9998);
 
 bool isLeftPressed = false;
 bool isRightPressed = false;
@@ -71,6 +75,8 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLi
 	D2D1_SIZE_U size = D2D1::SizeU(clientRect.right - clientRect.left, clientRect.bottom - clientRect.top);
 
 	d2dFactory->CreateHwndRenderTarget(renderProps, D2D1::HwndRenderTargetProperties(hWnd, size), &renderTarget);
+
+	network.Connect();
 
 	SetTimer(hWnd, TIMER_LOG, ProjConst::LOG_TIMEOUT, NULL);
 	SetTimer(hWnd, TIMER_LOAD, ProjConst::LOAD_TIMEOUT, NULL);
@@ -159,9 +165,10 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		}
 		if (wParam == TIMER_LOAD) 
 		{
-			std::string nextLine = reader.ReadLn();
+			/*std::string nextLine = reader.ReadLn();*/
+			POINTFLOAT nextPoint;
 
-			if (nextLine.empty())
+			if (!network.NextXY(nextPoint))
 			{
 				target.SetCenter({ 1000, 1000 });
 				cursor.SetCenter({ 1000, 1000 });
@@ -177,11 +184,19 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			{
 				//target.SetCenter(converter.ToCoord_FromLogCoordString(nextLine));
 
-				nextLine += " " + reader.ReadLn();
-				reader.ReadLn();
-				target.SetCenter(converter.ToCoord_FromAngleString(nextLine));
+				//nextLine += " " + reader.ReadLn();
+				//reader.ReadLn();
+
+				nextPoint = converter.ToAngle_FromRadian(nextPoint);
+				POINT newCenter = converter.ToCoord(nextPoint);
+				target.SetCenter(newCenter);
 				coordLogger.LogLn(converter.ToLogCoord(target.GetCenter()));
-				angleLogger.LogLn(nextLine);
+				angleLogger.LogLn(nextPoint);
+
+
+				wchar_t buffer[50];
+				_snwprintf_s(buffer, 50, L"%.2f %.2f", nextPoint.x, nextPoint.y);
+				SetWindowTextW(hWnd, buffer);
 
 				// convert to float point
 				// convert to coordinates from angles
