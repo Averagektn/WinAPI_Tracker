@@ -1,4 +1,4 @@
-#include "Target.h"
+#include "../header/Target.h"
 
 Target::Target(int x, int y, int radius) : Circle(x, y, radius) {  }
 

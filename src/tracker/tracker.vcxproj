@@ -131,36 +131,34 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="Axis.cpp" />
-    <ClCompile Include="Center.cpp" />
-    <ClCompile Include="Circle.cpp" />
-    <ClCompile Include="Classifier.cpp" />
-    <ClCompile Include="Converter.cpp" />
-    <ClCompile Include="Cursor.cpp" />
-    <ClCompile Include="FileReader.cpp" />
-    <ClCompile Include="Graph.cpp" />
-    <ClCompile Include="Logger.cpp" />
-    <ClCompile Include="Network.cpp" />
-    <ClCompile Include="PathDrawer.cpp" />
+    <ClCompile Include="view\impl\Axis.cpp" />
+    <ClCompile Include="view\impl\Circle.cpp" />
+    <ClCompile Include="calculations\impl\Classifier.cpp" />
+    <ClCompile Include="calculations\impl\Converter.cpp" />
+    <ClCompile Include="view\impl\Cursor.cpp" />
+    <ClCompile Include="data\impl\FileReader.cpp" />
+    <ClCompile Include="view\impl\Graph.cpp" />
+    <ClCompile Include="data\impl\Logger.cpp" />
+    <ClCompile Include="data\impl\Network.cpp" />
+    <ClCompile Include="view\impl\PathDrawer.cpp" />
     <ClCompile Include="Source.cpp" />
-    <ClCompile Include="Statistics.cpp" />
-    <ClCompile Include="Target.cpp" />
+    <ClCompile Include="calculations\impl\Statistics.cpp" />
+    <ClCompile Include="view\impl\Target.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Axis.h" />
-    <ClInclude Include="Center.h" />
-    <ClInclude Include="Circle.h" />
-    <ClInclude Include="Classifier.h" />
-    <ClInclude Include="Constants.h" />
-    <ClInclude Include="Converter.h" />
-    <ClInclude Include="Cursor.h" />
-    <ClInclude Include="FileReader.h" />
-    <ClInclude Include="Graph.h" />
-    <ClInclude Include="Logger.h" />
-    <ClInclude Include="Network.h" />
-    <ClInclude Include="PathDrawer.h" />
-    <ClInclude Include="Statistics.h" />
-    <ClInclude Include="Target.h" />
+    <ClInclude Include="view\header\Axis.h" />
+    <ClInclude Include="view\header\Circle.h" />
+    <ClInclude Include="calculations\header\Classifier.h" />
+    <ClInclude Include="config\Constants.h" />
+    <ClInclude Include="calculations\header\Converter.h" />
+    <ClInclude Include="view\header\Cursor.h" />
+    <ClInclude Include="data\header\FileReader.h" />
+    <ClInclude Include="view\header\Graph.h" />
+    <ClInclude Include="data\header\Logger.h" />
+    <ClInclude Include="data\header\Network.h" />
+    <ClInclude Include="view\header\PathDrawer.h" />
+    <ClInclude Include="calculations\header\Statistics.h" />
+    <ClInclude Include="view\header\Target.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

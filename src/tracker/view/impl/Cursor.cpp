@@ -1,4 +1,4 @@
-#include "Cursor.h"
+#include "../header/Cursor.h"
 
 Cursor::Cursor(int x, int y, int radius) : Circle(x, y, radius) {  }
 

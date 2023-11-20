@@ -1,4 +1,4 @@
-#include "Converter.h"
+#include "../header/Converter.h"
 
 Converter::Converter(int width, int height, float maxAngleX, float maxAngleY)
 {

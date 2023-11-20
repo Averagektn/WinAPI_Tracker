@@ -5,8 +5,8 @@
 #include <d2d1.h>
 #include <windows.h>
 
-#include "FileReader.h"
-#include "Converter.h"
+#include "../../data/header/FileReader.h"
+#include "../../calculations/header/Converter.h"
 
 class Graph
 {

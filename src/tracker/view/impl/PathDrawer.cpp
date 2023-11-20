@@ -1,4 +1,4 @@
-#include "PathDrawer.h"
+#include "../header/PathDrawer.h"
 
 PathDrawer::PathDrawer(std::string filePath, Converter converter)
 {

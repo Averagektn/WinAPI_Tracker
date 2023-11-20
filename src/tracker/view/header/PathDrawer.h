@@ -4,8 +4,8 @@
 #include <string>
 #include <d2d1.h>
 
-#include "FileReader.h"
-#include "Converter.h"
+#include "../../data/header/FileReader.h"
+#include "../../calculations/header/Converter.h"
 
 class PathDrawer
 {

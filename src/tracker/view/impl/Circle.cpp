@@ -1,5 +1,4 @@
-#include "Circle.h"
-#include <math.h>
+#include "../header/Circle.h"
 
 Circle::Circle(int x, int y, int radius)
 {

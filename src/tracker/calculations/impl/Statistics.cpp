@@ -1,4 +1,4 @@
-#include "Statistics.h"
+#include "../header/Statistics.h"
 
 float Statistics::MathExpectation(std::vector<POINT> points)
 {

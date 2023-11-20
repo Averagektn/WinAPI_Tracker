@@ -1,19 +1,19 @@
-#include "Network.h"
+#include "data/header/Network.h"
 
 #include <windows.h>
 #include <wingdi.h>
 #include <iostream>
 #include <d2d1.h>
-#include "Constants.h"
+#include "config/Constants.h"
 
-#include "Cursor.h"
-#include "Target.h"
-#include "Logger.h"
-#include "Axis.h"
-#include "FileReader.h"
-#include "Converter.h"
-#include "PathDrawer.h"
-#include "Graph.h"
+#include "view/header/Cursor.h"
+#include "view/header/Target.h"
+#include "data/header/Logger.h"
+#include "view/header/Axis.h"
+#include "data/header/FileReader.h"
+#include "calculations/header/Converter.h"
+#include "view/header/PathDrawer.h"
+#include "view/header/Graph.h"
 
 
 #define TIMER_LOG 1

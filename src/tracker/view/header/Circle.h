@@ -2,6 +2,7 @@
 
 #include <windows.h>
 #include <d2d1.h>
+#include <math.h>
 
 class Circle
 {

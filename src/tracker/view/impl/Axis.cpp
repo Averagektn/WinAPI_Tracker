@@ -1,4 +1,4 @@
-#include "Axis.h"
+#include "../header/Axis.h"
 
 Axis::Axis(int xLeft, int yLeft, int xRight, int yRight)
 {

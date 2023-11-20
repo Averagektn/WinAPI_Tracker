@@ -1,4 +1,4 @@
-#include "Graph.h"
+#include "../header/Graph.h"
 
 Graph::Graph(std::string filePath, Converter converter)
 {

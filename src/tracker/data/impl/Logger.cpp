@@ -1,4 +1,4 @@
-#include "Logger.h"
+#include "../header/Logger.h"
 
 Logger::Logger(std::string filePath, char separator)
 {
