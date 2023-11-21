@@ -15,7 +15,6 @@
 #include "view/header/PathDrawer.h"
 #include "view/header/Graph.h"
 
-
 #define TIMER_LOG 1
 #define TIMER_LOAD 2
 
@@ -27,7 +26,7 @@ Target target(1000, 1000, 10);
 Logger coordLogger("coords.txt", ' ');
 Logger angleLogger("angles.txt", ' ');
 FileReader reader("data2.txt");
-Network network("127.0.0.1", 9998);
+Network network("192.0.0.1", 9998);
 
 bool isLeftPressed = false;
 bool isRightPressed = false;
@@ -76,10 +75,10 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLi
 
 	d2dFactory->CreateHwndRenderTarget(renderProps, D2D1::HwndRenderTargetProperties(hWnd, size), &renderTarget);
 
-	network.Connect();
+	//network.Connect();
 
-	SetTimer(hWnd, TIMER_LOG, ProjConst::LOG_TIMEOUT, NULL);
-	SetTimer(hWnd, TIMER_LOAD, ProjConst::LOAD_TIMEOUT, NULL);
+	//SetTimer(hWnd, TIMER_LOG, ProjConst::LOG_TIMEOUT, NULL);
+	//SetTimer(hWnd, TIMER_LOAD, ProjConst::LOAD_TIMEOUT, NULL);
 
 	ShowWindow(hWnd, nCmdShow);
 	UpdateWindow(hWnd);
@@ -107,6 +106,23 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 
 	switch (message) 
 	{
+	case WM_RBUTTONDOWN:
+		network.Connect();
+
+		SetTimer(hWnd, TIMER_LOG, ProjConst::LOG_TIMEOUT, NULL);
+		SetTimer(hWnd, TIMER_LOAD, ProjConst::LOAD_TIMEOUT, NULL);
+		break;
+	case WM_LBUTTONDOWN:
+		target.SetCenter({ 1000, 1000 });
+		cursor.SetCenter({ 1000, 1000 });
+		isGame = false;
+		KillTimer(hWnd, TIMER_LOG);
+		KillTimer(hWnd, TIMER_LOAD);
+		// statistics output
+		// statistics log
+
+		InvalidateRect(hWnd, NULL, TRUE);
+		break;
 	case WM_TIMER:
 		if (wParam == TIMER_LOG) 
 		{
@@ -168,6 +184,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			/*std::string nextLine = reader.ReadLn();*/
 			POINTFLOAT nextPoint;
 
+			//if (!network.NextYZ(nextPoint))
+			//if (!network.NextXZ(nextPoint))
 			if (!network.NextXY(nextPoint))
 			{
 				target.SetCenter({ 1000, 1000 });
@@ -190,9 +208,9 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 				nextPoint = converter.ToAngle_FromRadian(nextPoint);
 				POINT newCenter = converter.ToCoord(nextPoint);
 				target.SetCenter(newCenter);
+
 				coordLogger.LogLn(converter.ToLogCoord(target.GetCenter()));
 				angleLogger.LogLn(nextPoint);
-
 
 				wchar_t buffer[50];
 				_snwprintf_s(buffer, 50, L"%.2f %.2f", nextPoint.x, nextPoint.y);

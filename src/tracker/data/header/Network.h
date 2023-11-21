@@ -14,7 +14,7 @@ class Network
 {
 public:
     Network(const char* serverAddress, int serverPort) : 
-        logger("network.txt", ' '), serverAddress_(serverAddress), serverPort_(serverPort), clientSocket_(INVALID_SOCKET), 
+        logger("dataset_1.txt", ' '), serverAddress_(serverAddress), serverPort_(serverPort), clientSocket_(INVALID_SOCKET), 
         serverAddressInfo_()
     {
         if (WSAStartup(MAKEWORD(2, 2), &wsaData_) != 0) 
@@ -107,28 +107,31 @@ public:
         return false;
     }
 
-    POINTFLOAT NextYZ() 
+    bool NextYZ(POINTFLOAT& point)
     {
         float x, y, z;
 
         if (ReadData(x, y, z)) 
         {
-            return POINTFLOAT{ y, z };
+            point = { y, z };
+            return true;
         }
 
-        return POINTFLOAT{ 0, 0 };
+        return false;
     }
 
-    POINTFLOAT NextXZ()
+    bool NextXZ(POINTFLOAT& point)
     {
         float x, y, z;
 
         if (ReadData(x, y, z))
         {
-            return POINTFLOAT{ x, z };
+            point = { x, z };
+
+            return true;
         }
 
-        return POINTFLOAT{ 0, 0 };
+        return false;
     }
 
 private:
