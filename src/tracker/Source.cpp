@@ -20,13 +20,18 @@
 
 // частота 100 герц
 ID2D1HwndRenderTarget* renderTarget;
+
 // def rb = 704, 681
 Cursor cursor(352, 340, ProjConst::CURSOR_RADIUS);
 Target target(1000, 1000, 10);
+Logger realLogger("realCoords.txt", ' ');
 Logger coordLogger("coords.txt", ' ');
 Logger angleLogger("angles.txt", ' ');
 FileReader reader("data2.txt");
-Network network("192.0.0.1", 9998);
+
+// Network multithreading
+POINTFLOAT currentAngles;
+HANDLE hThread;
 
 bool isLeftPressed = false;
 bool isRightPressed = false;
@@ -35,6 +40,31 @@ bool isDownPressed = false;
 bool isGame = true;
 
 LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
+
+CRITICAL_SECTION gCriticalSection;
+BOOL isReceiving = true;
+DWORD WINAPI NetworkThread(LPVOID lpParam)
+{
+	POINTFLOAT radianPoint;
+
+	Network network("127.0.0.1", 9998);
+	network.Connect();
+
+	while (isReceiving)
+	{
+		EnterCriticalSection(&gCriticalSection);
+
+		if (network.NextXY(radianPoint)) 
+		{
+			currentAngles = Converter::ToAngle_FromRadian(radianPoint);
+		}
+
+		LeaveCriticalSection(&gCriticalSection);
+		Sleep(20);
+	}
+
+	return 0;
+}
 
 int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow) 
 {
@@ -75,10 +105,8 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLi
 
 	d2dFactory->CreateHwndRenderTarget(renderProps, D2D1::HwndRenderTargetProperties(hWnd, size), &renderTarget);
 
-	//network.Connect();
-
-	//SetTimer(hWnd, TIMER_LOG, ProjConst::LOG_TIMEOUT, NULL);
-	//SetTimer(hWnd, TIMER_LOAD, ProjConst::LOAD_TIMEOUT, NULL);
+	SetTimer(hWnd, TIMER_LOG, ProjConst::LOG_TIMEOUT, NULL);
+	SetTimer(hWnd, TIMER_LOAD, 20, NULL);
 
 	ShowWindow(hWnd, nCmdShow);
 	UpdateWindow(hWnd);
@@ -99,127 +127,117 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 
 	RECT clientRect;
 	GetClientRect(hWnd, &clientRect);
-	Converter converter(clientRect.right, clientRect.bottom, 18.0f, 14.0f);
+	Converter converter(clientRect.right, clientRect.bottom, 20.0f, 20.0f);
 
 	Axis xAxis(clientRect.left, clientRect.bottom / 2, clientRect.right, clientRect.bottom / 2);
 	Axis yAxis(clientRect.right / 2, clientRect.top, clientRect.right / 2, clientRect.bottom);
 
 	switch (message) 
 	{
-	case WM_RBUTTONDOWN:
-		network.Connect();
+	case WM_CREATE:
+		InitializeCriticalSection(&gCriticalSection);
 
-		SetTimer(hWnd, TIMER_LOG, ProjConst::LOG_TIMEOUT, NULL);
-		SetTimer(hWnd, TIMER_LOAD, ProjConst::LOAD_TIMEOUT, NULL);
+		hThread = CreateThread(NULL, 0, NetworkThread, NULL, 0, NULL);
+
+		if (hThread == NULL)
+		{
+			return 1;
+		}
 		break;
 	case WM_LBUTTONDOWN:
 		target.SetCenter({ 1000, 1000 });
 		cursor.SetCenter({ 1000, 1000 });
+		
 		isGame = false;
+		isReceiving = false;
+		
 		KillTimer(hWnd, TIMER_LOG);
 		KillTimer(hWnd, TIMER_LOAD);
-		// statistics output
-		// statistics log
+
+		WaitForSingleObject(hThread, INFINITE);
+		CloseHandle(hThread);
+		DeleteCriticalSection(&gCriticalSection);
 
 		InvalidateRect(hWnd, NULL, TRUE);
 		break;
 	case WM_TIMER:
-		if (wParam == TIMER_LOG) 
+		//if (wParam == TIMER_LOG) 
+		//{
+		//	int xSpeed = 0;
+		//	int ySpeed = 0;
+		//	int speed = ProjConst::SPEED;
+
+		//	POINT center = cursor.Shot();
+		//	//coordLogger.LogLn(converter.ToLogCoord(center));
+		//	//angleLogger.LogLn(converter.ToAngle(center));
+
+		//	if ((isUpPressed || isDownPressed) && (isLeftPressed || isRightPressed))
+		//	{
+		//		speed /= ProjConst::DIAGONAL_SPEED_CORRECTION;
+		//	}
+
+		//	if (isUpPressed)
+		//	{
+		//		ySpeed -= speed;
+		//	}
+		//	if (isDownPressed)
+		//	{
+		//		ySpeed += speed;
+		//	}
+		//	if (isLeftPressed)
+		//	{
+		//		xSpeed -= speed;
+		//	}
+		//	if (isRightPressed)
+		//	{
+		//		xSpeed += speed;
+		//	}
+
+		//	// add - radius
+		//	if (cursor.GetLeft() <= clientRect.left && xSpeed < 0)
+		//	{
+		//		xSpeed = 0;
+		//	}
+		//	if (cursor.GetRight() >= clientRect.right && xSpeed > 0)
+		//	{
+		//		xSpeed = 0;
+		//	}
+		//	if (cursor.GetTop() <= clientRect.top && ySpeed < 0)
+		//	{
+		//		ySpeed = 0;
+		//	}
+		//	if (cursor.GetBottom() >= clientRect.bottom && ySpeed > 0)
+		//	{
+		//		ySpeed = 0;
+		//	}
+
+		//	cursor.AddCoordX(xSpeed);
+		//	cursor.AddCoordY(ySpeed);
+
+		//	InvalidateRect(hWnd, NULL, TRUE);
+		//}
+		if (wParam == TIMER_LOAD)
 		{
-			int xSpeed = 0;
-			int ySpeed = 0;
-			int speed = ProjConst::SPEED;
+			POINTFLOAT nextPoint;
+			POINT newCenter;
 
-			POINT center = cursor.Shot();
-			//coordLogger.LogLn(converter.ToLogCoord(center));
-			//angleLogger.LogLn(converter.ToAngle(center));
+			EnterCriticalSection(&gCriticalSection);
+			newCenter = converter.ToCoord(currentAngles);
+			nextPoint = currentAngles;
+			LeaveCriticalSection(&gCriticalSection);
 
-			if ((isUpPressed || isDownPressed) && (isLeftPressed || isRightPressed))
-			{
-				speed /= ProjConst::DIAGONAL_SPEED_CORRECTION;
-			}
+			target.SetCenter(newCenter);
 
-			if (isUpPressed)
-			{
-				ySpeed -= speed;
-			}
-			if (isDownPressed)
-			{
-				ySpeed += speed;
-			}
-			if (isLeftPressed)
-			{
-				xSpeed -= speed;
-			}
-			if (isRightPressed)
-			{
-				xSpeed += speed;
-			}
+			coordLogger.LogLn(converter.ToLogCoord(newCenter));
+			angleLogger.LogLn(nextPoint);
+			realLogger.LogLn(newCenter);
 
-			// add - radius
-			if (cursor.GetLeft() <= clientRect.left && xSpeed < 0)
-			{
-				xSpeed = 0;
-			}
-			if (cursor.GetRight() >= clientRect.right && xSpeed > 0)
-			{
-				xSpeed = 0;
-			}
-			if (cursor.GetTop() <= clientRect.top && ySpeed < 0)
-			{
-				ySpeed = 0;
-			}
-			if (cursor.GetBottom() >= clientRect.bottom && ySpeed > 0)
-			{
-				ySpeed = 0;
-			}
+			wchar_t buffer[50];
+			_snwprintf_s(buffer, 50, L"%.2f %.2f", nextPoint.x, nextPoint.y);
+			SetWindowTextW(hWnd, buffer);
 
-			cursor.AddCoordX(xSpeed);
-			cursor.AddCoordY(ySpeed);
 
 			InvalidateRect(hWnd, NULL, TRUE);
-		}
-		if (wParam == TIMER_LOAD) 
-		{
-			/*std::string nextLine = reader.ReadLn();*/
-			POINTFLOAT nextPoint;
-
-			//if (!network.NextYZ(nextPoint))
-			//if (!network.NextXZ(nextPoint))
-			if (!network.NextXY(nextPoint))
-			{
-				target.SetCenter({ 1000, 1000 });
-				cursor.SetCenter({ 1000, 1000 });
-				isGame = false;
-				KillTimer(hWnd, TIMER_LOG);
-				KillTimer(hWnd, TIMER_LOAD);
-				// statistics output
-				// statistics log
-
-				InvalidateRect(hWnd, NULL, TRUE);
-			}
-			else
-			{
-				//target.SetCenter(converter.ToCoord_FromLogCoordString(nextLine));
-
-				//nextLine += " " + reader.ReadLn();
-				//reader.ReadLn();
-
-				nextPoint = converter.ToAngle_FromRadian(nextPoint);
-				POINT newCenter = converter.ToCoord(nextPoint);
-				target.SetCenter(newCenter);
-
-				coordLogger.LogLn(converter.ToLogCoord(target.GetCenter()));
-				angleLogger.LogLn(nextPoint);
-
-				wchar_t buffer[50];
-				_snwprintf_s(buffer, 50, L"%.2f %.2f", nextPoint.x, nextPoint.y);
-				SetWindowTextW(hWnd, buffer);
-
-				// convert to float point
-				// convert to coordinates from angles
-				// log angles
-			}
 		}
 		break;
 
@@ -263,6 +281,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 
 	case WM_PAINT:
 		hdc = BeginPaint(hWnd, &ps);
+
 		renderTarget->BeginDraw();
 		renderTarget->Clear(D2D1::ColorF(D2D1::ColorF::White));
 

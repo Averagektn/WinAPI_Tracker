@@ -14,7 +14,7 @@ class Network
 {
 public:
     Network(const char* serverAddress, int serverPort) : 
-        logger("dataset_1.txt", ' '), serverAddress_(serverAddress), serverPort_(serverPort), clientSocket_(INVALID_SOCKET), 
+        logger("dataset_2.txt", ' '), serverAddress_(serverAddress), serverPort_(serverPort), clientSocket_(INVALID_SOCKET), 
         serverAddressInfo_()
     {
         if (WSAStartup(MAKEWORD(2, 2), &wsaData_) != 0) 
@@ -88,7 +88,7 @@ public:
         float2 = floatArray[1];
         float3 = floatArray[2];
 
-        logger.Log(std::to_string(float1) + " " + std::to_string(float2) + " " + std::to_string(float3));
+        logger.LogLn(std::to_string(float1) + " " + std::to_string(float2) + " " + std::to_string(float3));
 
         return true;
     }
@@ -133,6 +133,50 @@ public:
 
         return false;
     }
+
+    bool NextZX(POINTFLOAT& point)
+    {
+        float x, y, z;
+
+        if (ReadData(x, y, z))
+        {
+            point = { z, x };
+
+            return true;
+        }
+
+        return false;
+    }
+
+    bool NextZY(POINTFLOAT& point)
+    {
+        float x, y, z;
+
+        if (ReadData(x, y, z))
+        {
+            point = { z, y };
+
+            return true;
+        }
+
+        return false;
+    }
+
+    bool NextYX(POINTFLOAT& point)
+    {
+        float x, y, z;
+
+        if (ReadData(x, y, z))
+        {
+            point = { y, x };
+
+            return true;
+        }
+
+        return false;
+    }
+
+
 
 private:
     const char* serverAddress_;
