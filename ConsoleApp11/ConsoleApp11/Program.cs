@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Net;
 using System.Net.Sockets;
 
@@ -18,26 +19,49 @@ namespace ConsoleApp11
                 server = new TcpListener(localAddr, port);
                 server.Start();
 
-                while (true)
+                TcpClient client = server.AcceptTcpClient();
+                NetworkStream stream = client.GetStream();
+
+                byte[] data = { 23 };
+                stream.Write(data, 0, data.Length);
+                Console.WriteLine($"Sent: {data[0]}");
+
+                byte[] receivedData = new byte[1];
+                stream.Read(receivedData, 0, receivedData.Length);
+                Console.WriteLine($"Received: {receivedData[0]}");
+
+                using var reader = new StreamReader("dataset_8_long.txt");
+                string line;
+                
+                while ((line = reader.ReadLine()) != null)
                 {
-                    TcpClient client = server.AcceptTcpClient();
-                    NetworkStream stream = client.GetStream();
+                    Console.WriteLine(line);
+                    //line = line.Replace(',', '.');
+                    string[] numbers = line.Split(' ');
 
-                    byte[] data = { 23 };
-                    stream.Write(data, 0, data.Length);
-                    Console.WriteLine($"Sent: {data[0]}");
+                    if (numbers.Length < 3)
+                    {
+                        Console.WriteLine("Строка содержит недопустимое количество чисел.");
+                        continue;
+                    }
 
-                    byte[] receivedData = new byte[1];
-                    stream.Read(receivedData, 0, receivedData.Length);
-                    Console.WriteLine($"Received: {receivedData[0]}");
+                    byte[] floatBytes = new byte[3 * sizeof(float)];
 
-                    float[] floatData = { 1.1f, 2.2f, 3.3f };
-                    byte[] floatBytes = new byte[floatData.Length * sizeof(float)];
-                    Buffer.BlockCopy(floatData, 0, floatBytes, 0, floatBytes.Length);
+                    for (int i = 0; i < 3; i++)
+                    {
+                        if (!float.TryParse(numbers[i], out float value))
+                        {
+                            Console.WriteLine("Неверный формат числа.");
+                            continue;
+                        }
+
+                        byte[] bytes = BitConverter.GetBytes(value);
+                        Array.Copy(bytes, 0, floatBytes, i * sizeof(float), sizeof(float));
+                    }
+
                     stream.Write(floatBytes, 0, floatBytes.Length);
-
-                    client.Close();
                 }
+                while (true) { }
             }
             catch (Exception e)
             {
