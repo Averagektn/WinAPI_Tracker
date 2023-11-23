@@ -7,7 +7,7 @@ namespace ProjConst
 	const wchar_t* WND_CAPTION = L"Tracker";
 
 	// DRAWING
-	const int SPEED = 5;
+	const int SPEED = 6;
 	const float DIAGONAL_SPEED_CORRECTION = 1.41;
 
 	// SIZES
