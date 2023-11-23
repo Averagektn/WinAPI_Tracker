@@ -14,7 +14,7 @@ class Network
 {
 public:
     Network(const char* serverAddress, int serverPort) : 
-        logger("dataset_2.txt", ' '), serverAddress_(serverAddress), serverPort_(serverPort), clientSocket_(INVALID_SOCKET), 
+        logger("dataset_working.txt", ' '), serverAddress_(serverAddress), serverPort_(serverPort), clientSocket_(INVALID_SOCKET), 
         serverAddressInfo_()
     {
         if (WSAStartup(MAKEWORD(2, 2), &wsaData_) != 0) 
@@ -69,8 +69,8 @@ public:
         return true;
     }
 
-    bool ReadData(float& float1, float& float2, float& float3) {
-        char buffer[12];
+    bool GetCoord(float& coord) {
+        char buffer[4];
         int bytesRead = recv(clientSocket_, buffer, sizeof(buffer), 0);
 
         if (bytesRead == SOCKET_ERROR) {
@@ -84,11 +84,7 @@ public:
         }
 
         float* floatArray = reinterpret_cast<float*>(buffer);
-        float1 = floatArray[0];
-        float2 = floatArray[1];
-        float3 = floatArray[2];
-
-        logger.LogLn(std::to_string(float1) + " " + std::to_string(float2) + " " + std::to_string(float3));
+        coord = floatArray[0];
 
         return true;
     }
@@ -96,8 +92,8 @@ public:
     bool NextXY(POINTFLOAT& point)
     {
         float x, y, z;
-
-        if (ReadData(x, y, z))
+        
+        if (GetCoord(x) && GetCoord(y) && GetCoord(z))
         {
             point = {x, y};
 
@@ -111,7 +107,7 @@ public:
     {
         float x, y, z;
 
-        if (ReadData(x, y, z)) 
+        if (GetCoord(x) && GetCoord(y) && GetCoord(z))
         {
             point = { y, z };
             return true;
@@ -124,7 +120,7 @@ public:
     {
         float x, y, z;
 
-        if (ReadData(x, y, z))
+        if (GetCoord(x) && GetCoord(y) && GetCoord(z))
         {
             point = { x, z };
 
@@ -138,7 +134,7 @@ public:
     {
         float x, y, z;
 
-        if (ReadData(x, y, z))
+        if (GetCoord(x) && GetCoord(y) && GetCoord(z))
         {
             point = { z, x };
 
@@ -152,7 +148,7 @@ public:
     {
         float x, y, z;
 
-        if (ReadData(x, y, z))
+        if (GetCoord(x) && GetCoord(y) && GetCoord(z))
         {
             point = { z, y };
 
@@ -166,7 +162,7 @@ public:
     {
         float x, y, z;
 
-        if (ReadData(x, y, z))
+        if (GetCoord(x) && GetCoord(y) && GetCoord(z))
         {
             point = { y, x };
 
@@ -175,8 +171,6 @@ public:
 
         return false;
     }
-
-
 
 private:
     const char* serverAddress_;

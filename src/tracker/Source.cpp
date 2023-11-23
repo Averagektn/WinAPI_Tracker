@@ -27,11 +27,7 @@ Target target(1000, 1000, 10);
 Logger realLogger("realCoords.txt", ' ');
 Logger coordLogger("coords.txt", ' ');
 Logger angleLogger("angles.txt", ' ');
-FileReader reader("data2.txt");
-
-// Network multithreading
-POINTFLOAT currentAngles;
-HANDLE hThread;
+//FileReader reader("data2.txt");
 
 bool isLeftPressed = false;
 bool isRightPressed = false;
@@ -41,6 +37,9 @@ bool isGame = true;
 
 LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
 
+// Network multithreading
+POINTFLOAT currentAngles;
+HANDLE hThread;
 CRITICAL_SECTION gCriticalSection;
 BOOL isReceiving = true;
 DWORD WINAPI NetworkThread(LPVOID lpParam)
@@ -52,15 +51,15 @@ DWORD WINAPI NetworkThread(LPVOID lpParam)
 
 	while (isReceiving)
 	{
-		EnterCriticalSection(&gCriticalSection);
+		//EnterCriticalSection(&gCriticalSection);
 
 		if (network.NextXY(radianPoint)) 
 		{
 			currentAngles = Converter::ToAngle_FromRadian(radianPoint);
 		}
 
-		LeaveCriticalSection(&gCriticalSection);
-		Sleep(20);
+		//LeaveCriticalSection(&gCriticalSection);
+		//Sleep(9);
 	}
 
 	return 0;
@@ -105,7 +104,7 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLi
 
 	d2dFactory->CreateHwndRenderTarget(renderProps, D2D1::HwndRenderTargetProperties(hWnd, size), &renderTarget);
 
-	SetTimer(hWnd, TIMER_LOG, 20, NULL);
+	//SetTimer(hWnd, TIMER_LOG, 15, NULL);
 	SetTimer(hWnd, TIMER_LOAD, 20, NULL);
 
 	ShowWindow(hWnd, nCmdShow);
@@ -129,8 +128,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 	GetClientRect(hWnd, &clientRect);
 	Converter converter(clientRect.right, clientRect.bottom, 20.0f, 20.0f);
 
-	Axis xAxis(clientRect.left, clientRect.bottom / 2, clientRect.right, clientRect.bottom / 2);
-	Axis yAxis(clientRect.right / 2, clientRect.top, clientRect.right / 2, clientRect.bottom);
+	//Axis xAxis(clientRect.left, clientRect.bottom / 2, clientRect.right, clientRect.bottom / 2);
+	//Axis yAxis(clientRect.right / 2, clientRect.top, clientRect.right / 2, clientRect.bottom);
 
 	switch (message) 
 	{
@@ -151,7 +150,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		isGame = false;
 		isReceiving = false;
 		
-		KillTimer(hWnd, TIMER_LOG);
+		//KillTimer(hWnd, TIMER_LOG);
 		KillTimer(hWnd, TIMER_LOAD);
 
 		WaitForSingleObject(hThread, INFINITE);
@@ -161,70 +160,70 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		InvalidateRect(hWnd, NULL, TRUE);
 		break;
 	case WM_TIMER:
-		if (wParam == TIMER_LOG) 
-		{
-			int xSpeed = 0;
-			int ySpeed = 0;
-			int speed = ProjConst::SPEED;
+		//if (wParam == TIMER_LOG) 
+		//{
+			//int xSpeed = 0;
+			//int ySpeed = 0;
+			//int speed = ProjConst::SPEED;
 
-			POINT center = cursor.Shot();
+			//POINT center = cursor.Shot();
 			//coordLogger.LogLn(converter.ToLogCoord(center));
 			//angleLogger.LogLn(converter.ToAngle(center));
 
-			if ((isUpPressed || isDownPressed) && (isLeftPressed || isRightPressed))
-			{
-				speed /= ProjConst::DIAGONAL_SPEED_CORRECTION;
-			}
+			//if ((isUpPressed || isDownPressed) && (isLeftPressed || isRightPressed))
+			//{
+			//	speed /= ProjConst::DIAGONAL_SPEED_CORRECTION;
+			//}
 
-			if (isUpPressed)
-			{
-				ySpeed -= speed;
-			}
-			if (isDownPressed)
-			{
-				ySpeed += speed;
-			}
-			if (isLeftPressed)
-			{
-				xSpeed -= speed;
-			}
-			if (isRightPressed)
-			{
-				xSpeed += speed;
-			}
+			//if (isUpPressed)
+			//{
+			//	ySpeed -= speed;
+			//}
+			//if (isDownPressed)
+			//{
+			//	ySpeed += speed;
+			//}
+			//if (isLeftPressed)
+			//{
+			//	xSpeed -= speed;
+			//}
+			//if (isRightPressed)
+			//{
+			//	xSpeed += speed;
+			//}
 
-			// add - radius
-			if (cursor.GetLeft() <= clientRect.left && xSpeed < 0)
-			{
-				xSpeed = 0;
-			}
-			if (cursor.GetRight() >= clientRect.right && xSpeed > 0)
-			{
-				xSpeed = 0;
-			}
-			if (cursor.GetTop() <= clientRect.top && ySpeed < 0)
-			{
-				ySpeed = 0;
-			}
-			if (cursor.GetBottom() >= clientRect.bottom && ySpeed > 0)
-			{
-				ySpeed = 0;
-			}
+			//// add - radius
+			//if (cursor.GetLeft() <= clientRect.left && xSpeed < 0)
+			//{
+			//	xSpeed = 0;
+			//}
+			//if (cursor.GetRight() >= clientRect.right && xSpeed > 0)
+			//{
+			//	xSpeed = 0;
+			//}
+			//if (cursor.GetTop() <= clientRect.top && ySpeed < 0)
+			//{
+			//	ySpeed = 0;
+			//}
+			//if (cursor.GetBottom() >= clientRect.bottom && ySpeed > 0)
+			//{
+			//	ySpeed = 0;
+			//}
 
-			cursor.AddCoordX(xSpeed);
-			cursor.AddCoordY(ySpeed);
+			//cursor.AddCoordX(xSpeed);
+			//cursor.AddCoordY(ySpeed);
 
 			//InvalidateRect(hWnd, NULL, TRUE);
-		}
+		//}
 		if (wParam == TIMER_LOAD)
 		{
 			POINTFLOAT nextPoint;
 			POINT newCenter;
 
-			EnterCriticalSection(&gCriticalSection);
+			//EnterCriticalSection(&gCriticalSection);
 			newCenter = converter.ToCoord(currentAngles);
 			nextPoint = currentAngles;
-			LeaveCriticalSection(&gCriticalSection);
+			//LeaveCriticalSection(&gCriticalSection);
 
 			target.SetCenter(newCenter);
 
@@ -235,7 +234,6 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			wchar_t buffer[50];
 			_snwprintf_s(buffer, 50, L"%.2f %.2f", nextPoint.x, nextPoint.y);
 			SetWindowTextW(hWnd, buffer);
-
 
 			InvalidateRect(hWnd, NULL, TRUE);
 		}
@@ -285,10 +283,10 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		renderTarget->BeginDraw();
 		renderTarget->Clear(D2D1::ColorF(D2D1::ColorF::White));
 
-		xAxis.Draw(renderTarget, ProjConst::DEF_AXIS_COLOR);
-		yAxis.Draw(renderTarget, ProjConst::DEF_AXIS_COLOR);
+		//xAxis.Draw(renderTarget, ProjConst::DEF_AXIS_COLOR);
+		//yAxis.Draw(renderTarget, ProjConst::DEF_AXIS_COLOR);
 		target.Draw(renderTarget, ProjConst::DEF_TARGET_COLOR);
-		cursor.Draw(renderTarget, ProjConst::DEF_CURSOR_COLOR);
+		//cursor.Draw(renderTarget, ProjConst::DEF_CURSOR_COLOR);
 
 		if (!isGame)
 		{

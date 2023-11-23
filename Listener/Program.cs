@@ -2,8 +2,8 @@
 using System.Net.Sockets;
 
 IPAddress ipAddress = IPAddress.Any;
-string filename = "dataset_11_all_coords.txt";
-string ip = "127.0.0.1";
+string filename = "dataset_12_working.txt";
+string ip = "192.168.150.2";
 int port = 9998;
 int bytesRead;
 int c = 0;

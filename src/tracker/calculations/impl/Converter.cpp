@@ -17,7 +17,7 @@ Converter::Converter(int width, int height, float maxAngleX, float maxAngleY)
 
 int Converter::ToCoordX(float angle)
 {
-    angle += maxAngleX;
+    angle = -angle + maxAngleX;
 
     return (int)round(angle * maxCoordX / angleWidth);
 }
