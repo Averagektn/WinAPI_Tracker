@@ -14,7 +14,7 @@ class Network
 {
 public:
     Network(const char* serverAddress, int serverPort) : 
-        logger("dataset_working.txt", ' '), serverAddress_(serverAddress), serverPort_(serverPort), clientSocket_(INVALID_SOCKET), 
+        logger("data\\received\\network.txt", ' '), serverAddress_(serverAddress), serverPort_(serverPort), clientSocket_(INVALID_SOCKET), 
         serverAddressInfo_()
     {
         if (WSAStartup(MAKEWORD(2, 2), &wsaData_) != 0) 

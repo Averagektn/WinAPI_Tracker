@@ -13,6 +13,7 @@ namespace ProjConst
 	// SIZES
 	const int WND_DEF_HEIGHT = 720;
 	const int WND_DEF_WIDTH = 720;
+	const D2D1::ColorF DEF_ENEMY_COLOR = D2D1::ColorF::Green;
 	const D2D1::ColorF DEF_CURSOR_COLOR = D2D1::ColorF::Red;
 	const D2D1::ColorF DEF_TARGET_COLOR = D2D1::ColorF::Blue;
 	const D2D1::ColorF DEF_AXIS_COLOR = D2D1::ColorF::Black;

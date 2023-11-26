@@ -23,6 +23,18 @@ void Logger::LogLn(POINTFLOAT point)
     LogLn(str);
 }
 
+void Logger::Log(POINT point)
+{
+    std::string str = std::to_string(point.x) + separator + std::to_string(point.y);
+    LogLn(str);
+}
+
+void Logger::Log(POINTFLOAT point)
+{
+    std::string str = std::to_string(point.x) + separator + std::to_string(point.y);
+    Log(str);
+}
+
 void Logger::LogLn(std::string info)
 {
     if (outputFile.is_open()) {

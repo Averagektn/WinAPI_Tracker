@@ -12,6 +12,8 @@ public:
 
 	void LogLn(POINT point);
 	void LogLn(POINTFLOAT point);
+	void Log(POINT point);
+	void Log(POINTFLOAT point);
 	void LogLn(std::string info);
 	void Log(std::string info);
 

@@ -2,7 +2,7 @@
 using System.Net.Sockets;
 
 TcpListener? server = null;
-string fileName = "dataset_12_working.txt";
+string fileName = "radians.txt";
 string ip = "127.0.0.1";
 int port = 9998;
 byte handshake = 23;
@@ -32,6 +32,8 @@ try
 
     while ((line = reader.ReadLine()) != null)
     {
+        line = line.Replace('.', ',');
+
         Console.WriteLine(line);
         string[] numbers = line.Split(' ');
 

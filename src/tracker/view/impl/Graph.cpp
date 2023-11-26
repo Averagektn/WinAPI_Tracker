@@ -57,8 +57,11 @@ void Graph::DrawWindRose(ID2D1HwndRenderTarget* renderTarget, D2D1::ColorF color
     ID2D1SolidColorBrush* brush = nullptr;
     renderTarget->CreateSolidColorBrush(color, &brush);
 
-    renderTarget->FillGeometry(polygonGeometry, brush);
-
+    if (polygonGeometry != 0 && brush != 0)
+    {
+        renderTarget->FillGeometry(polygonGeometry, brush);
+    }
+ 
     brush->Release();
     polygonGeometry->Release();
 }
