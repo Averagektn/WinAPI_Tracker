@@ -4,6 +4,8 @@
 #include <wingdi.h>
 #include <iostream>
 #include <d2d1.h>
+#include <cmath>
+
 #include "config/Constants.h"
 
 #include "view/header/Cursor.h"
@@ -19,6 +21,7 @@ constexpr auto TIMER_LOG = 1;
 constexpr auto TIMER_LOAD = 2;
 constexpr auto TIMER_TARGET = 3;
 constexpr auto TIMER_PAINT = 4;
+constexpr auto TIMER_CALIBRATION = 5;
 
 constexpr auto BTN_START = 1;
 constexpr auto TXT_IP = 2;
@@ -51,28 +54,8 @@ bool isUpPressed = false;
 bool isDownPressed = false;
 bool isGame = true;
 
-// Network multithreading
-POINTFLOAT currentAngles;
-HANDLE hThread;
-CRITICAL_SECTION gCriticalSection;
-BOOL isReceiving = true;
-static DWORD WINAPI NetworkThread(LPVOID lpParam)
-{
-	POINTFLOAT radianPoint;
-
-	Network network("127.0.0.1", 9998);
-	network.Connect();
-
-	while (isReceiving)
-	{
-		if (network.NextXY(radianPoint)) 
-		{
-			currentAngles = Converter::ToAngle_FromRadian(radianPoint);
-		}
-	}
-
-	return 0;
-}
+float maxXAngle = 20.0f;
+float maxYAngle = 20.0f;
 
 ID2D1HwndRenderTarget* renderTarget;
 ID2D1Factory* d2dFactory;
@@ -87,6 +70,29 @@ HWND hWndMain, hWndPaint;
 
 LRESULT CALLBACK WndProcPaint(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
 LRESULT CALLBACK WndProcMain(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
+
+// Network multithreading
+POINTFLOAT currentAngles;
+HANDLE hThread;
+BOOL isReceiving = false;
+static DWORD WINAPI NetworkThread(LPVOID lpParam)
+{
+	POINTFLOAT radianPoint;
+
+	Network network(Network::GetIp(hTxtIP), 9998);
+	network.Connect();
+
+	while (isReceiving)
+	{
+		if (network.NextXY(radianPoint))
+		{
+			currentAngles = Converter::ToAngle_FromRadian(radianPoint);
+		}
+		Sleep(20);
+	}
+
+	return 0;
+}
 
 int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow)
 {
@@ -103,7 +109,7 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLi
 	wcexMain.hCursor = LoadCursor(NULL, IDC_ARROW);
 	wcexMain.hbrBackground = HBRUSH(CreateSolidBrush(ProjConst::WND_DEF_COLOR));
 	wcexMain.lpszMenuName = NULL;
-	wcexMain.lpszClassName = ProjConst::PROJ_NAME;
+	wcexMain.lpszClassName = L"MAIN";
 	wcexMain.hIconSm = wcexMain.hIcon;
 	RegisterClassEx(&wcexMain);
 
@@ -141,7 +147,7 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLi
 	wcexPaint.hCursor = LoadCursor(NULL, IDC_ARROW);
 	wcexPaint.hbrBackground = HBRUSH(CreateSolidBrush(ProjConst::WND_DEF_COLOR));
 	wcexPaint.lpszMenuName = NULL;
-	wcexPaint.lpszClassName = L"Start";
+	wcexPaint.lpszClassName = ProjConst::PROJ_NAME;
 	wcexPaint.hIconSm = wcexPaint.hIcon;
 	RegisterClassEx(&wcexPaint);
 
@@ -168,38 +174,48 @@ LRESULT CALLBACK WndProcMain(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPar
 	case WM_COMMAND:
 		if (LOWORD(wParam) == BTN_START)
 		{
-			int textLength = GetWindowTextLength(hTxtIP);
-			wchar_t* buffer = new wchar_t[textLength + 1];
+			maxXAngle = std::abs(Converter::GetFloat_FromWindowText(hTxtAngleX));
+			maxYAngle = std::abs(Converter::GetFloat_FromWindowText(hTxtAngleY));
 
-			GetWindowText(hTxtIP, buffer, textLength + 1);
+			KillTimer(hWnd, TIMER_CALIBRATION);
 
-			int bufferSize = WideCharToMultiByte(CP_UTF8, 0, buffer, -1, nullptr, 0, nullptr, nullptr);
-			char* charBuffer = new char[bufferSize];
-			WideCharToMultiByte(CP_UTF8, 0, buffer, -1, charBuffer, bufferSize, nullptr, nullptr);
+			isReceiving = true;
+			if (hThread == NULL)
+			{
+				hThread = CreateThread(NULL, 0, NetworkThread, NULL, 0, NULL);
+			}
+			if (hThread == NULL)
+			{
+				return 1;
+			}
 
-			std::string ip(charBuffer);
+			SetTimer(hWndPaint, TIMER_LOG, 20, NULL);
+			SetTimer(hWndPaint, TIMER_LOAD, 20, NULL);
+			SetTimer(hWndPaint, TIMER_PAINT, 20, NULL);
+			SetTimer(hWndPaint, TIMER_TARGET, target.GetDelay(), NULL);
 
-			delete[] buffer;
-			delete[] charBuffer;
-
-			ShowWindow(hWndMain, SW_HIDE); 
-			ShowWindow(hWndPaint, SW_SHOW); 
-		} 
+			ShowWindow(hWndMain, SW_HIDE);
+			ShowWindow(hWndPaint, SW_SHOW);
+		}
 		else if (LOWORD(wParam) == BTN_CALIBRATION)
 		{
-			int textLength = GetWindowTextLength(hTxtIP);
-			wchar_t* buffer = new wchar_t[textLength + 1];
-
-			GetWindowText(hTxtIP, buffer, textLength + 1);
-
-			int bufferSize = WideCharToMultiByte(CP_UTF8, 0, buffer, -1, nullptr, 0, nullptr, nullptr);
-			char* charBuffer = new char[bufferSize];
-			WideCharToMultiByte(CP_UTF8, 0, buffer, -1, charBuffer, bufferSize, nullptr, nullptr);
-
-			std::string ip(charBuffer);
-
-			delete[] buffer;
-			delete[] charBuffer;
+			SetTimer(hWnd, TIMER_CALIBRATION, 20, NULL);
+			isReceiving = true;
+			hThread = CreateThread(NULL, 0, NetworkThread, NULL, 0, NULL);
+			if (hThread == NULL)
+			{
+				return 1;
+			}
+		}
+		break;
+	case WM_TIMER:
+		if (wParam == TIMER_CALIBRATION)
+		{
+			wchar_t buffer[50];
+			_snwprintf_s(buffer, 50, L"%.2f", currentAngles.x);
+			SetWindowTextW(hTxtAngleX, buffer);
+			_snwprintf_s(buffer, 50, L"%.2f", currentAngles.y);
+			SetWindowTextW(hTxtAngleY, buffer);
 		}
 		break;
 	case WM_DESTROY:
@@ -218,7 +234,7 @@ LRESULT CALLBACK WndProcPaint(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPa
 	RECT clientRect;
 	GetClientRect(hWnd, &clientRect);
 
-	Converter converter(clientRect.right, clientRect.bottom, 20.0f, 20.0f);
+	Converter converter(clientRect.right, clientRect.bottom, maxXAngle/*20.0f*/, maxYAngle/*20.0f*/);
 
 	Axis xAxis(clientRect.left, clientRect.bottom / 2, clientRect.right, clientRect.bottom / 2);
 	Axis yAxis(clientRect.right / 2, clientRect.top, clientRect.right / 2, clientRect.bottom);
@@ -227,18 +243,6 @@ LRESULT CALLBACK WndProcPaint(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPa
 	{
 	case WM_CREATE:
 		D2D1CreateFactory(D2D1_FACTORY_TYPE_SINGLE_THREADED, &d2dFactory);
-		InitializeCriticalSection(&gCriticalSection);
-		
-		hThread = CreateThread(NULL, 0, NetworkThread, NULL, 0, NULL);
-		if (hThread == NULL)
-		{
-			return 1;
-		}
-
-		SetTimer(hWnd, TIMER_LOG, 20, NULL);
-		SetTimer(hWnd, TIMER_LOAD, 20, NULL);
-		SetTimer(hWnd, TIMER_PAINT, 20, NULL);
-		SetTimer(hWnd, TIMER_TARGET, target.GetDelay(), NULL);
 
 		cursor.SetCenter({ clientRect.right / 2, clientRect.bottom / 2 });
 		cursor.SetOldRect(clientRect);
@@ -267,7 +271,6 @@ LRESULT CALLBACK WndProcPaint(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPa
 
 		WaitForSingleObject(hThread, INFINITE);
 		CloseHandle(hThread);
-		DeleteCriticalSection(&gCriticalSection);
 
 		InvalidateRect(hWnd, NULL, TRUE);
 		break;
@@ -333,9 +336,9 @@ LRESULT CALLBACK WndProcPaint(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPa
 			POINTFLOAT nextPoint;
 			POINT newCenter;
 
-			newCenter = converter.ToCoord(currentAngles);
 			nextPoint = currentAngles;
-
+			newCenter = converter.ToCoord(nextPoint);
+			
 			enemy.SetCenter(newCenter);
 
 			enemy_CoordLogger.LogLn(converter.ToLogCoord(newCenter));
@@ -344,7 +347,7 @@ LRESULT CALLBACK WndProcPaint(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPa
 			enemy_RadianLogger.LogLn(converter.ToRadian_FromAngle(nextPoint));
 
 			wchar_t buffer[50];
-			_snwprintf_s(buffer, 50, L"%.2f %.2f", nextPoint.x, nextPoint.y);
+			_snwprintf_s(buffer, 50, L"%.2f %.2f", currentAngles.x, currentAngles.y);
 			SetWindowTextW(hWnd, buffer);
 		}
 		if (wParam == TIMER_PAINT)

@@ -59,6 +59,7 @@ public:
 	static POINTFLOAT ToAngle_FromRadian(POINTFLOAT radian);
 	static POINTFLOAT ToRadian_FromAngle(POINTFLOAT angle);
 
+	static float GetFloat_FromWindowText(HWND hWnd);
 protected:
 	int maxCoordX;
 	int maxCoordY;

@@ -138,6 +138,25 @@ bool Network::NextYX(POINTFLOAT& point)
     return false;
 }
 
+const char* Network::GetIp(HWND hText)
+{
+    int textLength = GetWindowTextLength(hText);
+    wchar_t* buffer = new wchar_t[textLength + 1];
+    GetWindowText(hText, buffer, textLength + 1);
+
+    int bufferSize = WideCharToMultiByte(CP_UTF8, 0, buffer, -1, nullptr, 0, nullptr, nullptr);
+    char* charBuffer = new char[bufferSize];
+    WideCharToMultiByte(CP_UTF8, 0, buffer, -1, charBuffer, bufferSize, nullptr, nullptr);
+
+    const char* ip = new char[bufferSize];
+    strcpy_s(const_cast<char*>(ip), bufferSize, charBuffer);
+
+    delete[] buffer;
+    delete[] charBuffer;
+
+    return ip;
+}
+
 bool Network::GetCoord(float& coord)
 {
     char buffer[4];

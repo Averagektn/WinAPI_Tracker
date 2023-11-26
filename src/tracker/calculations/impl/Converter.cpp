@@ -190,6 +190,17 @@ POINTFLOAT Converter::ToRadian_FromAngle(POINTFLOAT angle)
     return POINTFLOAT{ToRadian_FromAngle(angle.x), ToRadian_FromAngle(angle.y)};
 }
 
+float Converter::GetFloat_FromWindowText(HWND hWnd)
+{
+    wchar_t buffer[256];
+    GetWindowText(hWnd, buffer, 256);
+
+    std::wstring wstrX(buffer);
+    std::string strX(wstrX.begin(), wstrX.end());
+
+    return std::stof(strX);
+}
+
 std::string Converter::ReplaceCommas(std::string str)
 {
     size_t pos = str.find(",");

@@ -24,6 +24,8 @@ public:
     bool NextZX(POINTFLOAT& point);
     bool NextZY(POINTFLOAT& point);
     bool NextYX(POINTFLOAT& point);
+
+    static const char* GetIp(HWND hText);
 protected:
     bool GetCoord(float& coord);
 private:
