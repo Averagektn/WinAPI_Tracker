@@ -105,23 +105,9 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLi
 	wcex.hIconSm = wcex.hIcon;
 	RegisterClassEx(&wcex);
 
-	D2D1CreateFactory(D2D1_FACTORY_TYPE_SINGLE_THREADED, &d2dFactory);
-
-	hWnd = CreateWindow(ProjConst::PROJ_NAME, ProjConst::WND_CAPTION, WS_OVERLAPPEDWINDOW,
+	hWnd = CreateWindow(ProjConst::PROJ_NAME, ProjConst::WND_CAPTION, WS_SYSMENU | WS_MAXIMIZEBOX,
 		CW_USEDEFAULT, CW_USEDEFAULT, ProjConst::WND_DEF_WIDTH, ProjConst::WND_DEF_HEIGHT,
 		NULL, NULL, hInstance, NULL);
-
-	SetTimer(hWnd, TIMER_LOG, 20, NULL);
-	SetTimer(hWnd, TIMER_LOAD, 20, NULL);
-	SetTimer(hWnd, TIMER_PAINT, 20, NULL);
-	SetTimer(hWnd, TIMER_TARGET, target.GetDelay(), NULL);
-
-	RECT clientRect;
-	GetClientRect(hWnd, &clientRect);
-	cursor.SetCenter({ clientRect.right / 2, clientRect.bottom / 2 });
-	cursor.SetOldRect(clientRect);
-	target.SetOldRect(clientRect);
-	enemy.SetOldRect(clientRect);
 
 	ShowWindow(hWnd, nCmdShow);
 	UpdateWindow(hWnd);
@@ -151,15 +137,24 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 	switch (message) 
 	{
 	case WM_CREATE:
+		D2D1CreateFactory(D2D1_FACTORY_TYPE_SINGLE_THREADED, &d2dFactory);
 		InitializeCriticalSection(&gCriticalSection);
 		
 		hThread = CreateThread(NULL, 0, NetworkThread, NULL, 0, NULL);
-
 		if (hThread == NULL)
 		{
 			return 1;
 		}
 
+		SetTimer(hWnd, TIMER_LOG, 20, NULL);
+		SetTimer(hWnd, TIMER_LOAD, 20, NULL);
+		SetTimer(hWnd, TIMER_PAINT, 20, NULL);
+		SetTimer(hWnd, TIMER_TARGET, target.GetDelay(), NULL);
+
+		cursor.SetCenter({ clientRect.right / 2, clientRect.bottom / 2 });
+		cursor.SetOldRect(clientRect);
+		target.SetOldRect(clientRect);
+		enemy.SetOldRect(clientRect);
 		break;
 	case WM_SIZE:
 		D2D1_SIZE_U size = D2D1::SizeU(clientRect.right - clientRect.left, clientRect.bottom - clientRect.top);
