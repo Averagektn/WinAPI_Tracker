@@ -22,6 +22,9 @@ constexpr auto TIMER_PAINT = 4;
 
 ID2D1HwndRenderTarget* renderTarget;
 
+float defaultXAngle = 20.0f;
+float defaultYAngle = 20.0f;
+
 // def rb = 704, 681
 Cursor cursor(0, 0, ProjConst::CURSOR_RADIUS, { 0,0,0,0 });
 Cursor enemy(0, 0, 10, { 0,0,0,0 });
@@ -115,6 +118,7 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLi
 
 	RECT clientRect;
 	GetClientRect(hWnd, &clientRect);
+	cursor.SetCenter({ clientRect.right / 2, clientRect.bottom / 2 });
 	cursor.SetOldRect(clientRect);
 	target.SetOldRect(clientRect);
 	enemy.SetOldRect(clientRect);
@@ -139,7 +143,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 	RECT clientRect;
 	GetClientRect(hWnd, &clientRect);
 
-	Converter converter(clientRect.right, clientRect.bottom, 20.0f, 20.0f);
+	Converter converter(clientRect.right, clientRect.bottom, defaultXAngle, defaultYAngle);
 
 	Axis xAxis(clientRect.left, clientRect.bottom / 2, clientRect.right, clientRect.bottom / 2);
 	Axis yAxis(clientRect.right / 2, clientRect.top, clientRect.right / 2, clientRect.bottom);

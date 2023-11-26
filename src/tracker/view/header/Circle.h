@@ -35,5 +35,6 @@ public:
 protected:
 	RECT oldRect;
 	POINT center;
-	int radius;
+	int radiusX;
+	int radiusY;
 };
