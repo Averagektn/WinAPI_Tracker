@@ -20,10 +20,11 @@ constexpr auto TIMER_LOAD = 2;
 constexpr auto TIMER_TARGET = 3;
 constexpr auto TIMER_PAINT = 4;
 
-ID2D1HwndRenderTarget* renderTarget;
-
-float defaultXAngle = 20.0f;
-float defaultYAngle = 20.0f;
+constexpr auto BTN_START = 1;
+constexpr auto TXT_IP = 2;
+constexpr auto BTN_CALIBRATION = 3;
+constexpr auto TXT_ANGLE_X = 4;
+constexpr auto TXT_ANGLE_Y = 5;
 
 // def rb = 704, 681
 Cursor cursor(0, 0, ProjConst::CURSOR_RADIUS, { 0,0,0,0 });
@@ -42,15 +43,13 @@ Logger enemy_CoordLogger("data\\enemy\\coords.txt", ' ');
 Logger enemy_AngleLogger("data\\enemy\\angles.txt", ' ');
 Logger enemy_RadianLogger("data\\enemy\\radians.txt", ' ');
 
-//FileReader reader("target.txt");
+FileReader reader("data\\target\\target.txt");
 
 bool isLeftPressed = false;
 bool isRightPressed = false;
 bool isUpPressed = false;
 bool isDownPressed = false;
 bool isGame = true;
-
-LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
 
 // Network multithreading
 POINTFLOAT currentAngles;
@@ -70,14 +69,12 @@ static DWORD WINAPI NetworkThread(LPVOID lpParam)
 		{
 			currentAngles = Converter::ToAngle_FromRadian(radianPoint);
 		}
-
-		// REMOVE AFTER TESTS
-		Sleep(20);
 	}
 
 	return 0;
 }
 
+ID2D1HwndRenderTarget* renderTarget;
 ID2D1Factory* d2dFactory;
 D2D1_RENDER_TARGET_PROPERTIES renderProps = D2D1::RenderTargetProperties
 (
@@ -85,32 +82,75 @@ D2D1_RENDER_TARGET_PROPERTIES renderProps = D2D1::RenderTargetProperties
 	D2D1::PixelFormat(DXGI_FORMAT_UNKNOWN, D2D1_ALPHA_MODE_PREMULTIPLIED)
 );
 
+HWND hTxtIP, hTxtAngleX, hTxtAngleY;
+HWND hWndMain, hWndPaint;
+
+LRESULT CALLBACK WndProcPaint(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
+LRESULT CALLBACK WndProcMain(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
+
 int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow)
 {
-	WNDCLASSEX wcex{};
-	HWND hWnd;
+	WNDCLASSEX wcexMain{}, wcexPaint{};
 	MSG msg;
 
-	wcex.cbSize = sizeof(WNDCLASSEX);
-	wcex.style = CS_DBLCLKS;
-	wcex.lpfnWndProc = WndProc;
-	wcex.cbClsExtra = 0;
-	wcex.cbWndExtra = 0;
-	wcex.hInstance = hInstance;
-	wcex.hIcon = LoadIcon(NULL, IDI_APPLICATION);
-	wcex.hCursor = LoadCursor(NULL, IDC_ARROW);
-	wcex.hbrBackground = HBRUSH(CreateSolidBrush(ProjConst::WND_DEF_COLOR));
-	wcex.lpszMenuName = NULL;
-	wcex.lpszClassName = ProjConst::PROJ_NAME;
-	wcex.hIconSm = wcex.hIcon;
-	RegisterClassEx(&wcex);
+	wcexMain.cbSize = sizeof(WNDCLASSEX);
+	wcexMain.style = CS_DBLCLKS;
+	wcexMain.lpfnWndProc = WndProcMain;
+	wcexMain.cbClsExtra = 0;
+	wcexMain.cbWndExtra = 0;
+	wcexMain.hInstance = hInstance;
+	wcexMain.hIcon = LoadIcon(NULL, IDI_APPLICATION);
+	wcexMain.hCursor = LoadCursor(NULL, IDC_ARROW);
+	wcexMain.hbrBackground = HBRUSH(CreateSolidBrush(ProjConst::WND_DEF_COLOR));
+	wcexMain.lpszMenuName = NULL;
+	wcexMain.lpszClassName = ProjConst::PROJ_NAME;
+	wcexMain.hIconSm = wcexMain.hIcon;
+	RegisterClassEx(&wcexMain);
 
-	hWnd = CreateWindow(ProjConst::PROJ_NAME, ProjConst::WND_CAPTION, WS_SYSMENU | WS_MAXIMIZEBOX,
+	// Initial window
+	hWndMain = CreateWindow(wcexMain.lpszClassName, ProjConst::WND_CAPTION, WS_SYSMENU | WS_MAXIMIZEBOX,
 		CW_USEDEFAULT, CW_USEDEFAULT, ProjConst::WND_DEF_WIDTH, ProjConst::WND_DEF_HEIGHT,
 		NULL, NULL, hInstance, NULL);
 
-	ShowWindow(hWnd, nCmdShow);
-	UpdateWindow(hWnd);
+	// Text box
+	hTxtIP = CreateWindowEx(0, L"EDIT", L"192.168.150.3", WS_VISIBLE | WS_CHILD | WS_BORDER | ES_AUTOHSCROLL, 400, 70, 190, 50,
+		hWndMain, (HMENU)TXT_IP, hInstance, NULL);
+	hTxtAngleX = CreateWindowEx(0, L"EDIT", L"20.0", WS_VISIBLE | WS_CHILD | WS_BORDER | ES_AUTOHSCROLL, 400, 170, 190, 50,
+		hWndMain, (HMENU)TXT_ANGLE_X, hInstance, NULL);
+	hTxtAngleY = CreateWindowEx(0, L"EDIT", L"20.0", WS_VISIBLE | WS_CHILD | WS_BORDER | ES_AUTOHSCROLL, 400, 270, 190, 50,
+		hWndMain,(HMENU)TXT_ANGLE_Y, hInstance, NULL);
+
+	// Button
+	CreateWindowEx(0, L"BUTTON", L"Калибровка", WS_VISIBLE | WS_CHILD, 400, 350, 190, 50, hWndMain, (HMENU)BTN_CALIBRATION, 
+		hInstance, NULL);
+	CreateWindowEx(0, L"BUTTON", L"Начать", WS_VISIBLE | WS_CHILD, 400, 420, 190, 50, hWndMain, (HMENU)BTN_START, hInstance, 
+		NULL);
+
+	// Label
+	CreateWindowEx(0, L"STATIC", L"IP", WS_CHILD | WS_VISIBLE, 400, 30, 190, 20, hWndMain, NULL, hInstance,	NULL);
+	CreateWindowEx(0, L"STATIC", L"Max X angle", WS_CHILD | WS_VISIBLE, 400, 130, 190, 20, hWndMain, NULL, hInstance, NULL);
+	CreateWindowEx(0, L"STATIC", L"Max Y angle", WS_CHILD | WS_VISIBLE, 400, 230, 190, 20, hWndMain, NULL, hInstance, NULL);
+
+	wcexPaint.cbSize = sizeof(WNDCLASSEX);
+	wcexPaint.style = CS_DBLCLKS;
+	wcexPaint.lpfnWndProc = WndProcPaint;
+	wcexPaint.cbClsExtra = 0;
+	wcexPaint.cbWndExtra = 0;
+	wcexPaint.hInstance = hInstance;
+	wcexPaint.hIcon = LoadIcon(NULL, IDI_APPLICATION);
+	wcexPaint.hCursor = LoadCursor(NULL, IDC_ARROW);
+	wcexPaint.hbrBackground = HBRUSH(CreateSolidBrush(ProjConst::WND_DEF_COLOR));
+	wcexPaint.lpszMenuName = NULL;
+	wcexPaint.lpszClassName = L"Start";
+	wcexPaint.hIconSm = wcexPaint.hIcon;
+	RegisterClassEx(&wcexPaint);
+
+	hWndPaint = CreateWindow(wcexPaint.lpszClassName, ProjConst::WND_CAPTION, WS_SYSMENU | WS_MAXIMIZEBOX,
+		CW_USEDEFAULT, CW_USEDEFAULT, ProjConst::WND_DEF_WIDTH, ProjConst::WND_DEF_HEIGHT,
+		NULL, NULL, hInstance, NULL);
+
+	ShowWindow(hWndMain, nCmdShow);
+	UpdateWindow(hWndMain);
 
 	while (GetMessage(&msg, NULL, 0, 0))
 	{
@@ -121,7 +161,56 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLi
 	return (int)msg.wParam;
 }
 
-LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam) 
+LRESULT CALLBACK WndProcMain(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
+{
+	switch (message)
+	{
+	case WM_COMMAND:
+		if (LOWORD(wParam) == BTN_START)
+		{
+			int textLength = GetWindowTextLength(hTxtIP);
+			wchar_t* buffer = new wchar_t[textLength + 1];
+
+			GetWindowText(hTxtIP, buffer, textLength + 1);
+
+			int bufferSize = WideCharToMultiByte(CP_UTF8, 0, buffer, -1, nullptr, 0, nullptr, nullptr);
+			char* charBuffer = new char[bufferSize];
+			WideCharToMultiByte(CP_UTF8, 0, buffer, -1, charBuffer, bufferSize, nullptr, nullptr);
+
+			std::string ip(charBuffer);
+
+			delete[] buffer;
+			delete[] charBuffer;
+
+			ShowWindow(hWndMain, SW_HIDE); 
+			ShowWindow(hWndPaint, SW_SHOW); 
+		} 
+		else if (LOWORD(wParam) == BTN_CALIBRATION)
+		{
+			int textLength = GetWindowTextLength(hTxtIP);
+			wchar_t* buffer = new wchar_t[textLength + 1];
+
+			GetWindowText(hTxtIP, buffer, textLength + 1);
+
+			int bufferSize = WideCharToMultiByte(CP_UTF8, 0, buffer, -1, nullptr, 0, nullptr, nullptr);
+			char* charBuffer = new char[bufferSize];
+			WideCharToMultiByte(CP_UTF8, 0, buffer, -1, charBuffer, bufferSize, nullptr, nullptr);
+
+			std::string ip(charBuffer);
+
+			delete[] buffer;
+			delete[] charBuffer;
+		}
+		break;
+	case WM_DESTROY:
+		PostQuitMessage(0);
+		break;
+	default:
+		return DefWindowProc(hWnd, message, wParam, lParam);
+	}
+}
+
+LRESULT CALLBACK WndProcPaint(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam) 
 {
 	HDC hdc;
 	PAINTSTRUCT ps;
@@ -129,7 +218,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 	RECT clientRect;
 	GetClientRect(hWnd, &clientRect);
 
-	Converter converter(clientRect.right, clientRect.bottom, defaultXAngle, defaultYAngle);
+	Converter converter(clientRect.right, clientRect.bottom, 20.0f, 20.0f);
 
 	Axis xAxis(clientRect.left, clientRect.bottom / 2, clientRect.right, clientRect.bottom / 2);
 	Axis yAxis(clientRect.right / 2, clientRect.top, clientRect.right / 2, clientRect.bottom);
@@ -334,9 +423,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		break;
 
 	case WM_DESTROY:
-		PostQuitMessage(0);
+		ShowWindow(hWndMain, SW_SHOW);
 		break;
-
 	default:
 		return DefWindowProc(hWnd, message, wParam, lParam);
 	}

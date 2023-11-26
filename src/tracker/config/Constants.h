@@ -6,13 +6,15 @@ namespace ProjConst
 	const wchar_t* PROJ_NAME = L"Tracker";
 	const wchar_t* WND_CAPTION = L"Tracker";
 
+	const int DEF_PANEL_WIDTH = 300;
+
 	// DRAWING
 	const int SPEED = 6;
 	const float DIAGONAL_SPEED_CORRECTION = 1.41;
 
 	// SIZES
 	const int WND_DEF_HEIGHT = 540;
-	const int WND_DEF_WIDTH = 920;
+	const int WND_DEF_WIDTH = 990;
 	const D2D1::ColorF DEF_ENEMY_COLOR = D2D1::ColorF::Green;
 	const D2D1::ColorF DEF_CURSOR_COLOR = D2D1::ColorF::Red;
 	const D2D1::ColorF DEF_TARGET_COLOR = D2D1::ColorF::Blue;
