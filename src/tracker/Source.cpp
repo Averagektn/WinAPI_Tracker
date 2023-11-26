@@ -23,9 +23,9 @@ constexpr auto TIMER_PAINT = 4;
 ID2D1HwndRenderTarget* renderTarget;
 
 // def rb = 704, 681
-Cursor cursor(352, 340, ProjConst::CURSOR_RADIUS);
-Cursor enemy(1000, 1000, 10);
-Target target(1000, 1000, 20);
+Cursor cursor(0, 0, ProjConst::CURSOR_RADIUS, { 0,0,0,0 });
+Cursor enemy(0, 0, 10, { 0,0,0,0 });
+Target target(0, 0, 20, { 0,0,0,0 });
 
 // User data
 Logger user_RealLogger("data\\user\\realCoords.txt", ' ');
@@ -75,6 +75,13 @@ static DWORD WINAPI NetworkThread(LPVOID lpParam)
 	return 0;
 }
 
+ID2D1Factory* d2dFactory;
+D2D1_RENDER_TARGET_PROPERTIES renderProps = D2D1::RenderTargetProperties
+(
+	D2D1_RENDER_TARGET_TYPE_HARDWARE,
+	D2D1::PixelFormat(DXGI_FORMAT_UNKNOWN, D2D1_ALPHA_MODE_PREMULTIPLIED)
+);
+
 int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow)
 {
 	WNDCLASSEX wcex{};
@@ -95,29 +102,22 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLi
 	wcex.hIconSm = wcex.hIcon;
 	RegisterClassEx(&wcex);
 
+	D2D1CreateFactory(D2D1_FACTORY_TYPE_SINGLE_THREADED, &d2dFactory);
+
 	hWnd = CreateWindow(ProjConst::PROJ_NAME, ProjConst::WND_CAPTION, WS_OVERLAPPEDWINDOW,
 		CW_USEDEFAULT, CW_USEDEFAULT, ProjConst::WND_DEF_WIDTH, ProjConst::WND_DEF_HEIGHT,
 		NULL, NULL, hInstance, NULL);
-
-	ID2D1Factory* d2dFactory;
-	D2D1CreateFactory(D2D1_FACTORY_TYPE_SINGLE_THREADED, &d2dFactory);
-
-	D2D1_RENDER_TARGET_PROPERTIES renderProps = D2D1::RenderTargetProperties
-	(
-		D2D1_RENDER_TARGET_TYPE_HARDWARE,
-		D2D1::PixelFormat(DXGI_FORMAT_UNKNOWN, D2D1_ALPHA_MODE_PREMULTIPLIED)
-	);
-
-	RECT clientRect;
-	GetClientRect(hWnd, &clientRect);
-	D2D1_SIZE_U size = D2D1::SizeU(clientRect.right - clientRect.left, clientRect.bottom - clientRect.top);
-
-	d2dFactory->CreateHwndRenderTarget(renderProps, D2D1::HwndRenderTargetProperties(hWnd, size), &renderTarget);
 
 	SetTimer(hWnd, TIMER_LOG, 20, NULL);
 	SetTimer(hWnd, TIMER_LOAD, 20, NULL);
 	SetTimer(hWnd, TIMER_PAINT, 20, NULL);
 	SetTimer(hWnd, TIMER_TARGET, target.GetDelay(), NULL);
+
+	RECT clientRect;
+	GetClientRect(hWnd, &clientRect);
+	cursor.SetOldRect(clientRect);
+	target.SetOldRect(clientRect);
+	enemy.SetOldRect(clientRect);
 
 	ShowWindow(hWnd, nCmdShow);
 	UpdateWindow(hWnd);
@@ -138,6 +138,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 
 	RECT clientRect;
 	GetClientRect(hWnd, &clientRect);
+
 	Converter converter(clientRect.right, clientRect.bottom, 20.0f, 20.0f);
 
 	Axis xAxis(clientRect.left, clientRect.bottom / 2, clientRect.right, clientRect.bottom / 2);
@@ -147,7 +148,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 	{
 	case WM_CREATE:
 		InitializeCriticalSection(&gCriticalSection);
-
+		
 		hThread = CreateThread(NULL, 0, NetworkThread, NULL, 0, NULL);
 
 		if (hThread == NULL)
@@ -155,6 +156,14 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			return 1;
 		}
 
+		break;
+	case WM_SIZE:
+		D2D1_SIZE_U size = D2D1::SizeU(clientRect.right - clientRect.left, clientRect.bottom - clientRect.top);
+		d2dFactory->CreateHwndRenderTarget(renderProps, D2D1::HwndRenderTargetProperties(hWnd, size), &renderTarget);
+
+		cursor.Scale(clientRect);
+		enemy.Scale(clientRect);
+		target.Scale(clientRect);
 		break;
 	case WM_LBUTTONDOWN:
 		enemy.SetCenter(POINT{ 1000, 1000 });

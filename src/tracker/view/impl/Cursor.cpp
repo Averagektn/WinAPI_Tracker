@@ -1,10 +1,10 @@
 #include "../header/Cursor.h"
 
-Cursor::Cursor(int x, int y, int radius) : Circle(x, y, radius) {  }
+Cursor::Cursor(int x, int y, int radius, RECT oldRect) : Circle(x, y, radius, oldRect) {  }
 
-Cursor::Cursor(POINT center, int radius) : Circle(center, radius) {  }
+Cursor::Cursor(POINT center, int radius, RECT oldRect) : Circle(center, radius, oldRect) {  }
 
-POINT Cursor::Shot()
+POINT Cursor::Shot() const
 {
 	return GetCenter();
 }

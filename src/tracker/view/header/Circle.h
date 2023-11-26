@@ -7,6 +7,8 @@
 class Circle
 {
 public:
+	Circle(int x, int y, int radius, RECT rect);
+	Circle(POINT center, int radius, RECT rect);
 	Circle(int x, int y, int radius);
 	Circle(POINT center, int radius);
 
@@ -25,11 +27,13 @@ public:
 	void AddCoordX(int dx);
 	void AddCoordY(int dy);
 	void SetCenter(POINT center);
+	void SetOldRect(RECT oldRect);
+	RECT GetOldRect() const;
+
+	void Scale(RECT newRect);
 
 protected:
+	RECT oldRect;
 	POINT center;
 	int radius;
-
-private:
-
 };

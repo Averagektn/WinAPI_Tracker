@@ -1,5 +1,15 @@
 #include "../header/Circle.h"
 
+Circle::Circle(int x, int y, int radius, RECT rect) : Circle::Circle(x, y, radius)
+{
+	oldRect = rect;
+}
+
+Circle::Circle(POINT center, int radius, RECT rect) : Circle::Circle(center, radius)
+{
+	oldRect = rect;
+}
+
 Circle::Circle(int x, int y, int radius)
 {
 	center.x = x;
@@ -36,6 +46,24 @@ void Circle::AddCoordY(int dy)
 void Circle::SetCenter(POINT center)
 {
 	this->center = center;
+}
+
+void Circle::SetOldRect(RECT oldRect)
+{
+	this->oldRect = oldRect;
+}
+
+RECT Circle::GetOldRect() const
+{
+	return oldRect;
+}
+
+void Circle::Scale(RECT newRect)
+{
+	this->SetCenter({ (int)(center.x * ((float)newRect.right / oldRect.right)),
+		(int)(center.y * ((float)newRect.bottom / oldRect.bottom)) });
+
+	oldRect = newRect;
 }
 
 bool Circle::Contains(POINT point)
