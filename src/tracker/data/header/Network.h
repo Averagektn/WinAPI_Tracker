@@ -13,27 +13,27 @@
 class Network
 {
 public:
-    Network(const char* serverAddress, int serverPort);
-    ~Network();
+	Network(const char* serverAddress, int serverPort);
+	~Network();
 
-    bool Connect();
+	bool Connect();
 
-    bool NextXY(POINTFLOAT& point);
-    bool NextYZ(POINTFLOAT& point);
-    bool NextXZ(POINTFLOAT& point);
-    bool NextZX(POINTFLOAT& point);
-    bool NextZY(POINTFLOAT& point);
-    bool NextYX(POINTFLOAT& point);
+	bool NextXY(POINTFLOAT& point);
+	bool NextYZ(POINTFLOAT& point);
+	bool NextXZ(POINTFLOAT& point);
+	bool NextZX(POINTFLOAT& point);
+	bool NextZY(POINTFLOAT& point);
+	bool NextYX(POINTFLOAT& point);
 
-    static const char* GetIp(HWND hText);
+	static const char* GetIp(HWND hText);
 protected:
-    bool GetCoord(float& coord);
+	bool GetCoord(float& coord);
 private:
-    const char* serverAddress_;
-    int serverPort_;
-    WSADATA wsaData_;
-    SOCKET clientSocket_;
-    sockaddr_in serverAddressInfo_;
-    Logger logger;
+	const char* serverAddress_;
+	int serverPort_;
+	WSADATA wsaData_;
+	SOCKET clientSocket_;
+	sockaddr_in serverAddressInfo_;
+	Logger logger;
 };
 

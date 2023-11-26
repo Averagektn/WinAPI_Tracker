@@ -1,6 +1,6 @@
 #pragma once
 
-namespace ProjConst 
+namespace ProjConst
 {
 	// NAMES
 	const wchar_t* PROJ_NAME = L"Tracker";

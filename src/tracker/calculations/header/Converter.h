@@ -22,7 +22,7 @@ public:
 	int ToCoordY(float angle);
 	int ToCoordX_Log(int logCoord) const;
 	int ToCoordY_Log(int logCoord) const;
-	POINT ToCoord(std::string str);
+	static POINT ToCoord(std::string str);
 	POINT ToCoord(POINTFLOAT point);
 	POINT ToCoord(POINT logPoint);
 
@@ -60,6 +60,7 @@ public:
 	static POINTFLOAT ToRadian_FromAngle(POINTFLOAT angle);
 
 	static float GetFloat_FromWindowText(HWND hWnd);
+	static int GetValue(std::string str);
 protected:
 	int maxCoordX;
 	int maxCoordY;

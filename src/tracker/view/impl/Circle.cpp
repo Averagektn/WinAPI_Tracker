@@ -66,7 +66,7 @@ void Circle::Scale(RECT newRect)
 {
 	float xScale = (float)newRect.right / oldRect.right;
 	float yScale = (float)newRect.bottom / oldRect.bottom;
-	
+
 	this->SetCenter({ (int)(center.x * xScale), (int)(center.y * yScale) });
 
 	radiusX *= xScale;
@@ -77,11 +77,10 @@ void Circle::Scale(RECT newRect)
 
 bool Circle::Contains(POINT point)
 {
-	double centerX = center.x;
-	double centerY = center.x;
-	double distance = sqrt(pow((point.x - centerX) / radiusX, 2) + pow((point.y - centerY) / radiusY, 2));
+	float result = std::pow((static_cast<float>(point.x) - center.x) / radiusX, 2) +
+		std::pow((static_cast<float>(point.y) - center.y) / radiusY, 2);
 
-	return distance <= 1;
+	return result <= 1.0f;
 }
 
 int Circle::GetLeft() const

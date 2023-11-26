@@ -54,6 +54,9 @@ bool isUpPressed = false;
 bool isDownPressed = false;
 bool isGame = true;
 
+long userPoints = 0;
+long enemyPoints = 0;
+
 float maxXAngle = 20.0f;
 float maxYAngle = 20.0f;
 
@@ -114,7 +117,7 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLi
 	RegisterClassEx(&wcexMain);
 
 	// Initial window
-	hWndMain = CreateWindow(wcexMain.lpszClassName, ProjConst::WND_CAPTION, WS_SYSMENU | WS_MAXIMIZEBOX,
+	hWndMain = CreateWindow(wcexMain.lpszClassName, ProjConst::WND_CAPTION, WS_SYSMENU,
 		CW_USEDEFAULT, CW_USEDEFAULT, ProjConst::WND_DEF_WIDTH, ProjConst::WND_DEF_HEIGHT,
 		NULL, NULL, hInstance, NULL);
 
@@ -124,16 +127,16 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLi
 	hTxtAngleX = CreateWindowEx(0, L"EDIT", L"20.0", WS_VISIBLE | WS_CHILD | WS_BORDER | ES_AUTOHSCROLL, 400, 170, 190, 50,
 		hWndMain, (HMENU)TXT_ANGLE_X, hInstance, NULL);
 	hTxtAngleY = CreateWindowEx(0, L"EDIT", L"20.0", WS_VISIBLE | WS_CHILD | WS_BORDER | ES_AUTOHSCROLL, 400, 270, 190, 50,
-		hWndMain,(HMENU)TXT_ANGLE_Y, hInstance, NULL);
+		hWndMain, (HMENU)TXT_ANGLE_Y, hInstance, NULL);
 
 	// Button
-	CreateWindowEx(0, L"BUTTON", L"Калибровка", WS_VISIBLE | WS_CHILD, 400, 350, 190, 50, hWndMain, (HMENU)BTN_CALIBRATION, 
+	CreateWindowEx(0, L"BUTTON", L"Калибровка", WS_VISIBLE | WS_CHILD, 400, 350, 190, 50, hWndMain, (HMENU)BTN_CALIBRATION,
 		hInstance, NULL);
-	CreateWindowEx(0, L"BUTTON", L"Начать", WS_VISIBLE | WS_CHILD, 400, 420, 190, 50, hWndMain, (HMENU)BTN_START, hInstance, 
+	CreateWindowEx(0, L"BUTTON", L"Начать", WS_VISIBLE | WS_CHILD, 400, 420, 190, 50, hWndMain, (HMENU)BTN_START, hInstance,
 		NULL);
 
 	// Label
-	CreateWindowEx(0, L"STATIC", L"IP", WS_CHILD | WS_VISIBLE, 400, 30, 190, 20, hWndMain, NULL, hInstance,	NULL);
+	CreateWindowEx(0, L"STATIC", L"IP", WS_CHILD | WS_VISIBLE, 400, 30, 190, 20, hWndMain, NULL, hInstance, NULL);
 	CreateWindowEx(0, L"STATIC", L"Max X angle", WS_CHILD | WS_VISIBLE, 400, 130, 190, 20, hWndMain, NULL, hInstance, NULL);
 	CreateWindowEx(0, L"STATIC", L"Max Y angle", WS_CHILD | WS_VISIBLE, 400, 230, 190, 20, hWndMain, NULL, hInstance, NULL);
 
@@ -177,6 +180,9 @@ LRESULT CALLBACK WndProcMain(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPar
 			maxXAngle = std::abs(Converter::GetFloat_FromWindowText(hTxtAngleX));
 			maxYAngle = std::abs(Converter::GetFloat_FromWindowText(hTxtAngleY));
 
+			userPoints = 0;
+			enemyPoints = 0;
+
 			KillTimer(hWnd, TIMER_CALIBRATION);
 
 			isReceiving = true;
@@ -192,6 +198,9 @@ LRESULT CALLBACK WndProcMain(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPar
 			SetTimer(hWndPaint, TIMER_LOG, 20, NULL);
 			SetTimer(hWndPaint, TIMER_LOAD, 20, NULL);
 			SetTimer(hWndPaint, TIMER_PAINT, 20, NULL);
+
+			target.SetCenter(Converter::ToCoord(reader.ReadLn()));
+			target.SetDelay(Converter::GetValue(reader.ReadLn()));
 			SetTimer(hWndPaint, TIMER_TARGET, target.GetDelay(), NULL);
 
 			ShowWindow(hWndMain, SW_HIDE);
@@ -226,7 +235,7 @@ LRESULT CALLBACK WndProcMain(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPar
 	}
 }
 
-LRESULT CALLBACK WndProcPaint(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam) 
+LRESULT CALLBACK WndProcPaint(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
 	HDC hdc;
 	PAINTSTRUCT ps;
@@ -239,7 +248,7 @@ LRESULT CALLBACK WndProcPaint(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPa
 	Axis xAxis(clientRect.left, clientRect.bottom / 2, clientRect.right, clientRect.bottom / 2);
 	Axis yAxis(clientRect.right / 2, clientRect.top, clientRect.right / 2, clientRect.bottom);
 
-	switch (message) 
+	switch (message)
 	{
 	case WM_CREATE:
 		D2D1CreateFactory(D2D1_FACTORY_TYPE_SINGLE_THREADED, &d2dFactory);
@@ -260,10 +269,10 @@ LRESULT CALLBACK WndProcPaint(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPa
 	case WM_LBUTTONDOWN:
 		enemy.SetCenter(POINT{ 1000, 1000 });
 		cursor.SetCenter({ 1000, 1000 });
-		
+
 		isGame = false;
 		isReceiving = false;
-		
+
 		KillTimer(hWnd, TIMER_LOG);
 		KillTimer(hWnd, TIMER_LOAD);
 		KillTimer(hWnd, TIMER_TARGET);
@@ -272,10 +281,19 @@ LRESULT CALLBACK WndProcPaint(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPa
 		WaitForSingleObject(hThread, INFINITE);
 		CloseHandle(hThread);
 
+		if (userPoints > enemyPoints)
+		{
+			MessageBox(hWnd, L"User won", L"Congratulations", MB_OK);
+		}
+		else
+		{
+			MessageBox(hWnd, L"Enemy won", L"Sorry", MB_OK);
+		}
+
 		InvalidateRect(hWnd, NULL, TRUE);
 		break;
 	case WM_TIMER:
-		if (wParam == TIMER_LOG) 
+		if (wParam == TIMER_LOG)
 		{
 			int xSpeed = 0;
 			int ySpeed = 0;
@@ -329,6 +347,11 @@ LRESULT CALLBACK WndProcPaint(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPa
 
 			cursor.AddCoordX(xSpeed);
 			cursor.AddCoordY(ySpeed);
+
+			if (enemy.Contains(cursor.Shot()))
+			{
+				userPoints += 10;
+			}
 		}
 
 		if (wParam == TIMER_LOAD)
@@ -338,8 +361,13 @@ LRESULT CALLBACK WndProcPaint(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPa
 
 			nextPoint = currentAngles;
 			newCenter = converter.ToCoord(nextPoint);
-			
+
 			enemy.SetCenter(newCenter);
+
+			if (target.Contains(enemy.Shot()))
+			{
+				enemyPoints += 5;
+			}
 
 			enemy_CoordLogger.LogLn(converter.ToLogCoord(newCenter));
 			enemy_AngleLogger.LogLn(nextPoint);
@@ -354,14 +382,22 @@ LRESULT CALLBACK WndProcPaint(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPa
 		{
 			InvalidateRect(hWnd, NULL, TRUE);
 		}
+		if (wParam == TIMER_TARGET)
+		{
+			target.SetCenter(Converter::ToCoord(reader.ReadLn()));
+			target.SetDelay(Converter::GetValue(reader.ReadLn()));
+
+			KillTimer(hWnd, TIMER_TARGET);
+			SetTimer(hWnd, TIMER_TARGET, target.GetDelay(), NULL);
+		}
 		break;
 
 	case WM_KEYDOWN:
-		if (wParam == VK_LEFT) 
+		if (wParam == VK_LEFT)
 		{
 			isLeftPressed = true;
 		}
-		if (wParam == VK_RIGHT) 
+		if (wParam == VK_RIGHT)
 		{
 			isRightPressed = true;
 		}
@@ -376,11 +412,11 @@ LRESULT CALLBACK WndProcPaint(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPa
 		break;
 
 	case WM_KEYUP:
-		if (wParam == VK_LEFT) 
+		if (wParam == VK_LEFT)
 		{
 			isLeftPressed = false;
 		}
-		if (wParam == VK_RIGHT) 
+		if (wParam == VK_RIGHT)
 		{
 			isRightPressed = false;
 		}
@@ -404,6 +440,7 @@ LRESULT CALLBACK WndProcPaint(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPa
 		yAxis.Draw(renderTarget, ProjConst::DEF_AXIS_COLOR);
 		enemy.Draw(renderTarget, ProjConst::DEF_TARGET_COLOR);
 		cursor.Draw(renderTarget, ProjConst::DEF_CURSOR_COLOR);
+		target.Draw(renderTarget, D2D1::ColorF::Green);
 
 		if (!isGame)
 		{
@@ -426,6 +463,7 @@ LRESULT CALLBACK WndProcPaint(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPa
 		break;
 
 	case WM_DESTROY:
+		ShowWindow(hWndPaint, SW_HIDE);
 		ShowWindow(hWndMain, SW_SHOW);
 		break;
 	default:

@@ -2,7 +2,7 @@
 
 #include <windows.h>
 #include <d2d1.h>
-#include <math.h>
+#include <cmath>
 
 class Circle
 {
@@ -28,10 +28,10 @@ public:
 	void AddCoordY(int dy);
 	void SetCenter(POINT center);
 	void SetOldRect(RECT oldRect);
+
 	RECT GetOldRect() const;
 
 	void Scale(RECT newRect);
-
 protected:
 	RECT oldRect;
 	POINT center;
