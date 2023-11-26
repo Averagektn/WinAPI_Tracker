@@ -20,8 +20,8 @@ public:
 	// Window coordinates
 	int ToCoordX(float angle);
 	int ToCoordY(float angle);
-	int ToCoordX_Log(int logCoord);
-	int ToCoordY_Log(int logCoord);
+	int ToCoordX_Log(int logCoord) const;
+	int ToCoordY_Log(int logCoord) const;
 	POINT ToCoord(std::string str);
 	POINT ToCoord(POINTFLOAT point);
 	POINT ToCoord(POINT logPoint);
@@ -36,8 +36,8 @@ public:
 	POINTFLOAT ToAngle_Log(POINT logPoint);
 
 	// Logical coordinates
-	int ToLogCoordX(int coord);
-	int ToLogCoordY(int coord);
+	int ToLogCoordX(int coord) const;
+	int ToLogCoordY(int coord) const;
 	int ToLogCoordX_Angle(float angle);
 	int ToLogCoordY_Angle(float angle);
 	POINT ToLogCoord(POINTFLOAT point);
@@ -70,9 +70,7 @@ protected:
 
 	int maxLogCoordX;
 	int maxLogCoordY;
-
 private:
 	std::string ReplaceCommas(std::string str);
-
 };
 

@@ -8,16 +8,11 @@ class FileReader
 {
 public:
 	FileReader(std::string filePath);
+	~FileReader();
 
 	std::string ReadLn();
 	std::string Read(int length);
-
-	~FileReader();
-
 protected:
 	std::ifstream inputFile;
 	std::string filePath;
-
-private:
-
 };

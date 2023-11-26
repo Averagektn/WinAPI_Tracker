@@ -47,27 +47,27 @@ bool Circle::Contains(POINT point)
 	return distance <= 1;
 }
 
-int Circle::GetLeft()
+int Circle::GetLeft() const
 {
 	return center.x - radius;
 }
 
-int Circle::GetTop()
+int Circle::GetTop() const
 {
 	return center.y - radius;
 }
 
-int Circle::GetBottom()
+int Circle::GetBottom() const
 {
 	return center.y + radius;
 }
 
-int Circle::GetRight()
+int Circle::GetRight() const
 {
 	return center.x + radius;
 }
 
-POINT Circle::GetCenter()
+POINT Circle::GetCenter() const
 {
 	return center;
 }
@@ -78,7 +78,11 @@ void Circle::Draw(ID2D1HwndRenderTarget* renderTarget, D2D1::ColorF color)
 	renderTarget->CreateSolidColorBrush(D2D1::ColorF(color), &brush);
 
 	D2D1_ELLIPSE ellipse = D2D1::Ellipse(D2D1::Point2<int>(center.x, center.y), radius, radius);
-	renderTarget->FillEllipse(ellipse, brush);
+
+	if (brush != 0)
+	{
+		renderTarget->FillEllipse(ellipse, brush);
+	}
 
 	brush->Release();
 }

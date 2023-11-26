@@ -15,12 +15,11 @@
 #include "view/header/PathDrawer.h"
 #include "view/header/Graph.h"
 
-#define TIMER_LOG 1
-#define TIMER_LOAD 2
-#define TIMER_TARGET 3
-#define TIMER_PAINT 4
+constexpr auto TIMER_LOG = 1;
+constexpr auto TIMER_LOAD = 2;
+constexpr auto TIMER_TARGET = 3;
+constexpr auto TIMER_PAINT = 4;
 
-// частота 100 герц
 ID2D1HwndRenderTarget* renderTarget;
 
 // def rb = 704, 681
@@ -55,7 +54,7 @@ POINTFLOAT currentAngles;
 HANDLE hThread;
 CRITICAL_SECTION gCriticalSection;
 BOOL isReceiving = true;
-DWORD WINAPI NetworkThread(LPVOID lpParam)
+static DWORD WINAPI NetworkThread(LPVOID lpParam)
 {
 	POINTFLOAT radianPoint;
 
@@ -76,9 +75,9 @@ DWORD WINAPI NetworkThread(LPVOID lpParam)
 	return 0;
 }
 
-int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow) 
+int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow)
 {
-	WNDCLASSEX wcex;
+	WNDCLASSEX wcex{};
 	HWND hWnd;
 	MSG msg;
 
@@ -155,6 +154,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		{
 			return 1;
 		}
+
 		break;
 	case WM_LBUTTONDOWN:
 		enemy.SetCenter(POINT{ 1000, 1000 });

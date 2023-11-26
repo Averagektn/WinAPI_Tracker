@@ -15,8 +15,8 @@ public:
 	Graph(FileReader reader, Converter converter);
 	Graph(std::vector<POINT> points);
 
-	void DrawWindRose(ID2D1HwndRenderTarget* renderTarget, D2D1::ColorF color, Converter converter, 
-		int segmentsNum, int radius);
+	void DrawWindRose(ID2D1HwndRenderTarget* renderTarget, D2D1::ColorF color, Converter converter, int segmentsNum, 
+		int radius);
 
 protected:
 	std::vector<std::vector<double>> GetClasses(int segmentsNum);

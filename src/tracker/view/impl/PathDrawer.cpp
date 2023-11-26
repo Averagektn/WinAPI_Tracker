@@ -36,7 +36,8 @@ void PathDrawer::Draw(ID2D1HwndRenderTarget* renderTarget, D2D1::ColorF color)
 	for (int i = 0; i < path.size() - 1; i++)
 	{
 		renderTarget->DrawLine(D2D1::Point2<int>(path[i].x, path[i].y), 
-			D2D1::Point2<int>(path[i + 1].x, path[i + 1].y), brush);
+			D2D1::Point2<int>(path[static_cast<std::vector<POINT, std::allocator<POINT>>::size_type>(i) + 1].x, 
+				path[static_cast<std::vector<POINT, std::allocator<POINT>>::size_type>(i) + 1].y), brush);
 	}
 
 	brush->Release();

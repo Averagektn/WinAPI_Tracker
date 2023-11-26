@@ -10,14 +10,14 @@ public:
 	Circle(int x, int y, int radius);
 	Circle(POINT center, int radius);
 
-	POINT GetCenter();
+	POINT GetCenter() const;
 
 	bool Contains(POINT point);
 
-	int GetLeft();
-	int GetTop();
-	int GetBottom();
-	int GetRight();
+	int GetLeft() const;
+	int GetTop() const;
+	int GetBottom() const;
+	int GetRight() const;
 
 	void Draw(ID2D1HwndRenderTarget* renderTarget, D2D1::ColorF color);
 	void SetCenterX(int x);

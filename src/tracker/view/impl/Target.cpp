@@ -10,11 +10,6 @@ Target::Target(POINT center, int radius) : Circle(center, radius)
 	delay = INFINITE;
 }
 
-void Target::SetCenter(std::string)
-{
-
-}
-
 void Target::SetCenter(POINT center)
 {
 	Circle::SetCenter(center);

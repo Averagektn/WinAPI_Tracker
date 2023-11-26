@@ -9,21 +9,17 @@ class Logger
 {
 public:
 	Logger(std::string filePath, char separator);
+	~Logger();
 
 	void LogLn(POINT point);
 	void LogLn(POINTFLOAT point);
+	void LogLn(std::string info);
+
 	void Log(POINT point);
 	void Log(POINTFLOAT point);
-	void LogLn(std::string info);
 	void Log(std::string info);
-
-	~Logger();
-
 protected:
 	std::ofstream outputFile;
 	std::string filePath;
 	char separator;
-
-private:
-
 };

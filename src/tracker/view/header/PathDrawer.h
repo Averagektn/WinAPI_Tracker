@@ -18,7 +18,4 @@ public:
 
 protected:
 	std::vector<POINT> path;
-
-private:
-
 };

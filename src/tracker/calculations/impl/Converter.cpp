@@ -29,12 +29,12 @@ int Converter::ToCoordY(float angle)
     return (int)round(angle * maxCoordY / angleHeight);
 }
 
-int Converter::ToCoordX_Log(int logCoord)
+int Converter::ToCoordX_Log(int logCoord) const
 {
     return logCoord + maxLogCoordX;
 }
 
-int Converter::ToCoordY_Log(int logCoord)
+int Converter::ToCoordY_Log(int logCoord) const
 {
     return maxLogCoordY - logCoord;
 }
@@ -105,12 +105,12 @@ POINTFLOAT Converter::ToAngle_Log(POINT logPoint)
     return { ToAngleX_Log(logPoint.x), ToAngleY_Log(logPoint.y) };
 }
 
-int Converter::ToLogCoordX(int coord)
+int Converter::ToLogCoordX(int coord) const
 {
     return coord - maxLogCoordX;
 }
 
-int Converter::ToLogCoordY(int coord)
+int Converter::ToLogCoordY(int coord) const
 {
     return maxLogCoordY - coord;
 }

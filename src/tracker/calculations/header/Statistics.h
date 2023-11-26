@@ -11,10 +11,5 @@ public:
 	static float Dispersion(std::vector<POINT> points);
 
 	static int Distance(POINT p1, POINT p2);
-
-protected:
-
-private:
-
 };
 
