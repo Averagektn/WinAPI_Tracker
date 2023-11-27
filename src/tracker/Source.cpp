@@ -28,6 +28,8 @@ constexpr auto TXT_IP = 2;
 constexpr auto BTN_CALIBRATION = 3;
 constexpr auto TXT_ANGLE_X = 4;
 constexpr auto TXT_ANGLE_Y = 5;
+constexpr auto BTN_CALIBRATE_X = 6;
+constexpr auto BTN_CALIBRATE_Y = 7;
 
 // def rb = 704, 681
 Cursor cursor(0, 0, ProjConst::CURSOR_RADIUS, { 0,0,0,0 });
@@ -47,6 +49,10 @@ Logger enemy_AngleLogger("data\\enemy\\angles.txt", ' ');
 Logger enemy_RadianLogger("data\\enemy\\radians.txt", ' ');
 
 FileReader reader("data\\target\\target.txt");
+
+bool isCalibrating = false;
+bool isCalibratingX = false;
+bool isCalibratingY = false;
 
 bool isLeftPressed = false;
 bool isRightPressed = false;
@@ -68,7 +74,7 @@ D2D1_RENDER_TARGET_PROPERTIES renderProps = D2D1::RenderTargetProperties
 	D2D1::PixelFormat(DXGI_FORMAT_UNKNOWN, D2D1_ALPHA_MODE_PREMULTIPLIED)
 );
 
-HWND hTxtIP, hTxtAngleX, hTxtAngleY;
+HWND hTxtIP, hTxtAngleX, hTxtAngleY, hBtnCalibrateX, hBtnCalibrateY;
 HWND hWndMain, hWndPaint;
 
 LRESULT CALLBACK WndProcPaint(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
@@ -91,7 +97,6 @@ static DWORD WINAPI NetworkThread(LPVOID lpParam)
 		{
 			currentAngles = Converter::ToAngle_FromRadian(radianPoint);
 		}
-		Sleep(20);
 	}
 
 	return 0;
@@ -122,22 +127,26 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLi
 		NULL, NULL, hInstance, NULL);
 
 	// Text box
-	hTxtIP = CreateWindowEx(0, L"EDIT", L"192.168.150.3", WS_VISIBLE | WS_CHILD | WS_BORDER | ES_AUTOHSCROLL, 400, 70, 190, 50,
+	hTxtIP = CreateWindowEx(0, L"EDIT", L"192.168.150.3", WS_VISIBLE | WS_CHILD | WS_BORDER | ES_AUTOHSCROLL, 400, 50, 190, 20,
 		hWndMain, (HMENU)TXT_IP, hInstance, NULL);
-	hTxtAngleX = CreateWindowEx(0, L"EDIT", L"20.0", WS_VISIBLE | WS_CHILD | WS_BORDER | ES_AUTOHSCROLL, 400, 170, 190, 50,
+	hTxtAngleX = CreateWindowEx(0, L"EDIT", L"20.0", WS_VISIBLE | WS_CHILD | WS_BORDER | ES_AUTOHSCROLL, 400, 130, 190, 20,
 		hWndMain, (HMENU)TXT_ANGLE_X, hInstance, NULL);
-	hTxtAngleY = CreateWindowEx(0, L"EDIT", L"20.0", WS_VISIBLE | WS_CHILD | WS_BORDER | ES_AUTOHSCROLL, 400, 270, 190, 50,
+	hTxtAngleY = CreateWindowEx(0, L"EDIT", L"20.0", WS_VISIBLE | WS_CHILD | WS_BORDER | ES_AUTOHSCROLL, 400, 270, 190, 20,
 		hWndMain, (HMENU)TXT_ANGLE_Y, hInstance, NULL);
 
 	// Button
-	CreateWindowEx(0, L"BUTTON", L"Калибровка", WS_VISIBLE | WS_CHILD, 400, 350, 190, 50, hWndMain, (HMENU)BTN_CALIBRATION,
+	hBtnCalibrateX = CreateWindowEx(0, L"BUTTON", L"Calibrate X", WS_VISIBLE | WS_CHILD | WS_DISABLED, 400, 170, 190, 40, 
+		hWndMain, (HMENU)BTN_CALIBRATE_X, hInstance, NULL);
+	hBtnCalibrateY = CreateWindowEx(0, L"BUTTON", L"Calibrate Y", WS_VISIBLE | WS_CHILD | WS_DISABLED, 400, 310, 190, 40, 
+		hWndMain, (HMENU)BTN_CALIBRATE_Y, hInstance, NULL);
+	CreateWindowEx(0, L"BUTTON", L"Calibration", WS_VISIBLE | WS_CHILD, 400, 370, 190, 40, hWndMain, (HMENU)BTN_CALIBRATION,
 		hInstance, NULL);
-	CreateWindowEx(0, L"BUTTON", L"Начать", WS_VISIBLE | WS_CHILD, 400, 420, 190, 50, hWndMain, (HMENU)BTN_START, hInstance,
+	CreateWindowEx(0, L"BUTTON", L"Start", WS_VISIBLE | WS_CHILD, 400, 430, 190, 40, hWndMain, (HMENU)BTN_START, hInstance,
 		NULL);
 
 	// Label
-	CreateWindowEx(0, L"STATIC", L"IP", WS_CHILD | WS_VISIBLE, 400, 30, 190, 20, hWndMain, NULL, hInstance, NULL);
-	CreateWindowEx(0, L"STATIC", L"Max X angle", WS_CHILD | WS_VISIBLE, 400, 130, 190, 20, hWndMain, NULL, hInstance, NULL);
+	CreateWindowEx(0, L"STATIC", L"IP", WS_CHILD | WS_VISIBLE, 400, 10, 190, 20, hWndMain, NULL, hInstance, NULL);
+	CreateWindowEx(0, L"STATIC", L"Max X angle", WS_CHILD | WS_VISIBLE, 400, 90, 190, 20, hWndMain, NULL, hInstance, NULL);
 	CreateWindowEx(0, L"STATIC", L"Max Y angle", WS_CHILD | WS_VISIBLE, 400, 230, 190, 20, hWndMain, NULL, hInstance, NULL);
 
 	wcexPaint.cbSize = sizeof(WNDCLASSEX);
@@ -177,9 +186,6 @@ LRESULT CALLBACK WndProcMain(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPar
 	case WM_COMMAND:
 		if (LOWORD(wParam) == BTN_START)
 		{
-			maxXAngle = std::abs(Converter::GetFloat_FromWindowText(hTxtAngleX));
-			maxYAngle = std::abs(Converter::GetFloat_FromWindowText(hTxtAngleY));
-
 			userPoints = 0;
 			enemyPoints = 0;
 
@@ -208,23 +214,66 @@ LRESULT CALLBACK WndProcMain(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPar
 		}
 		else if (LOWORD(wParam) == BTN_CALIBRATION)
 		{
-			SetTimer(hWnd, TIMER_CALIBRATION, 20, NULL);
-			isReceiving = true;
-			hThread = CreateThread(NULL, 0, NetworkThread, NULL, 0, NULL);
-			if (hThread == NULL)
+			if (isCalibrating)
 			{
-				return 1;
+				KillTimer(hWnd, TIMER_CALIBRATION);
+
+				isReceiving = false;
+				WaitForSingleObject(hThread, INFINITE);
+				CloseHandle(hThread);
+
+				EnableWindow(hBtnCalibrateX, FALSE);
+				EnableWindow(hBtnCalibrateY, FALSE);
+
+				isCalibratingX = false;
+				isCalibratingY = false;
+				isCalibrating = false;
 			}
+			else
+			{
+				SetTimer(hWnd, TIMER_CALIBRATION, 20, NULL);
+				isReceiving = true;
+				hThread = CreateThread(NULL, 0, NetworkThread, NULL, 0, NULL);
+				if (hThread == NULL)
+				{
+					return 1;
+				}
+
+				EnableWindow(hBtnCalibrateX, TRUE);
+				EnableWindow(hBtnCalibrateY, TRUE);
+
+				isCalibratingX = true;
+				isCalibratingY = true;
+				isCalibrating = true;
+			}
+		}
+		else if (LOWORD(wParam) == BTN_CALIBRATE_X)
+		{
+			maxXAngle = std::abs(Converter::GetFloat_FromWindowText(hTxtAngleX));
+			EnableWindow(hBtnCalibrateX, FALSE);
+			isCalibratingX = false;
+		}
+		else if (LOWORD(wParam) == BTN_CALIBRATE_Y)
+		{
+			maxYAngle = std::abs(Converter::GetFloat_FromWindowText(hTxtAngleY));
+			EnableWindow(hBtnCalibrateY, FALSE);
+			isCalibratingY = false;
 		}
 		break;
 	case WM_TIMER:
 		if (wParam == TIMER_CALIBRATION)
 		{
 			wchar_t buffer[50];
-			_snwprintf_s(buffer, 50, L"%.2f", currentAngles.x);
-			SetWindowTextW(hTxtAngleX, buffer);
-			_snwprintf_s(buffer, 50, L"%.2f", currentAngles.y);
-			SetWindowTextW(hTxtAngleY, buffer);
+			if (isCalibratingX)
+			{
+				_snwprintf_s(buffer, 50, L"%.2f", currentAngles.x);
+				SetWindowTextW(hTxtAngleX, buffer);
+			}
+			if (isCalibratingY)
+			{
+				_snwprintf_s(buffer, 50, L"%.2f", currentAngles.y);
+				SetWindowTextW(hTxtAngleY, buffer);
+			}
 		}
 		break;
 	case WM_DESTROY:
