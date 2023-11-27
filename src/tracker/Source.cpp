@@ -135,9 +135,9 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLi
 		hWndMain, (HMENU)TXT_ANGLE_Y, hInstance, NULL);
 
 	// Button
-	hBtnCalibrateX = CreateWindowEx(0, L"BUTTON", L"Calibrate X", WS_VISIBLE | WS_CHILD | WS_DISABLED, 400, 170, 190, 40, 
+	hBtnCalibrateX = CreateWindowEx(0, L"BUTTON", L"Calibrate X", WS_VISIBLE | WS_CHILD | WS_DISABLED, 400, 170, 190, 40,
 		hWndMain, (HMENU)BTN_CALIBRATE_X, hInstance, NULL);
-	hBtnCalibrateY = CreateWindowEx(0, L"BUTTON", L"Calibrate Y", WS_VISIBLE | WS_CHILD | WS_DISABLED, 400, 310, 190, 40, 
+	hBtnCalibrateY = CreateWindowEx(0, L"BUTTON", L"Calibrate Y", WS_VISIBLE | WS_CHILD | WS_DISABLED, 400, 310, 190, 40,
 		hWndMain, (HMENU)BTN_CALIBRATE_Y, hInstance, NULL);
 	CreateWindowEx(0, L"BUTTON", L"Calibration", WS_VISIBLE | WS_CHILD, 400, 370, 190, 40, hWndMain, (HMENU)BTN_CALIBRATION,
 		hInstance, NULL);
@@ -191,6 +191,7 @@ LRESULT CALLBACK WndProcMain(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPar
 
 			KillTimer(hWnd, TIMER_CALIBRATION);
 
+			isGame = true;
 			isReceiving = true;
 			if (hThread == NULL)
 			{
@@ -250,13 +251,17 @@ LRESULT CALLBACK WndProcMain(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPar
 		else if (LOWORD(wParam) == BTN_CALIBRATE_X)
 		{
 			maxXAngle = std::abs(Converter::GetFloat_FromWindowText(hTxtAngleX));
+
 			EnableWindow(hBtnCalibrateX, FALSE);
+
 			isCalibratingX = false;
 		}
 		else if (LOWORD(wParam) == BTN_CALIBRATE_Y)
 		{
 			maxYAngle = std::abs(Converter::GetFloat_FromWindowText(hTxtAngleY));
+
 			EnableWindow(hBtnCalibrateY, FALSE);
+
 			isCalibratingY = false;
 		}
 		break;
@@ -264,6 +269,7 @@ LRESULT CALLBACK WndProcMain(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPar
 		if (wParam == TIMER_CALIBRATION)
 		{
 			wchar_t buffer[50];
+
 			if (isCalibratingX)
 			{
 				_snwprintf_s(buffer, 50, L"%.2f", currentAngles.x);
@@ -292,7 +298,7 @@ LRESULT CALLBACK WndProcPaint(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPa
 	RECT clientRect;
 	GetClientRect(hWnd, &clientRect);
 
-	Converter converter(clientRect.right, clientRect.bottom, maxXAngle/*20.0f*/, maxYAngle/*20.0f*/);
+	Converter converter(clientRect.right, clientRect.bottom, maxXAngle, maxYAngle);
 
 	Axis xAxis(clientRect.left, clientRect.bottom / 2, clientRect.right, clientRect.bottom / 2);
 	Axis yAxis(clientRect.right / 2, clientRect.top, clientRect.right / 2, clientRect.bottom);
@@ -307,6 +313,12 @@ LRESULT CALLBACK WndProcPaint(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPa
 		target.SetOldRect(clientRect);
 		enemy.SetOldRect(clientRect);
 		break;
+	WM_SHOW:
+		cursor.SetCenter({ clientRect.right / 2, clientRect.bottom / 2 });
+		cursor.SetOldRect(clientRect);
+		target.SetOldRect(clientRect);
+		enemy.SetOldRect(clientRect);
+		break;
 	case WM_SIZE:
 		D2D1_SIZE_U size = D2D1::SizeU(clientRect.right - clientRect.left, clientRect.bottom - clientRect.top);
 		d2dFactory->CreateHwndRenderTarget(renderProps, D2D1::HwndRenderTargetProperties(hWnd, size), &renderTarget);
@@ -316,8 +328,8 @@ LRESULT CALLBACK WndProcPaint(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPa
 		target.Scale(clientRect);
 		break;
 	case WM_LBUTTONDOWN:
-		enemy.SetCenter(POINT{ 1000, 1000 });
-		cursor.SetCenter({ 1000, 1000 });
+		enemy.SetCenter(POINT{ 0, 0 });
+		cursor.SetCenter({ 0, 0 });
 
 		isGame = false;
 		isReceiving = false;
@@ -327,8 +339,9 @@ LRESULT CALLBACK WndProcPaint(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPa
 		KillTimer(hWnd, TIMER_TARGET);
 		KillTimer(hWnd, TIMER_PAINT);
 
-		WaitForSingleObject(hThread, INFINITE);
+		WaitForSingleObject(hThread, 1000);
 		CloseHandle(hThread);
+		hThread = NULL;
 
 		if (userPoints > enemyPoints)
 		{
@@ -510,10 +523,27 @@ LRESULT CALLBACK WndProcPaint(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPa
 
 		EndPaint(hWnd, &ps);
 		break;
+	case WM_CLOSE:
+		isGame = false;
+		isReceiving = false;
 
-	case WM_DESTROY:
+		KillTimer(hWnd, TIMER_LOG);
+		KillTimer(hWnd, TIMER_LOAD);
+		KillTimer(hWnd, TIMER_TARGET);
+		KillTimer(hWnd, TIMER_PAINT);
+
+		if (hThread != NULL)
+		{
+			WaitForSingleObject(hThread, 1000);
+			CloseHandle(hThread);
+			hThread = NULL;
+		}
+
 		ShowWindow(hWndPaint, SW_HIDE);
 		ShowWindow(hWndMain, SW_SHOW);
+		break;
+	case WM_DESTROY:
+		PostQuitMessage(0);
 		break;
 	default:
 		return DefWindowProc(hWnd, message, wParam, lParam);

@@ -146,6 +146,7 @@
     <ClCompile Include="view\impl\Target.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="resource.h" />
     <ClInclude Include="view\header\Axis.h" />
     <ClInclude Include="view\header\Circle.h" />
     <ClInclude Include="calculations\header\Classifier.h" />

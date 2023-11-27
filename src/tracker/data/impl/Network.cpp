@@ -1,7 +1,8 @@
 #include "../header/Network.h"
 
-Network::Network(const char* serverAddress, int serverPort) : logger("data\\received\\network.txt", ' '),
-serverAddress_(serverAddress), serverPort_(serverPort), clientSocket_(INVALID_SOCKET), serverAddressInfo_()
+Network::Network(const char* serverAddress, int serverPort) : 
+	logger("data\\received\\network.txt", ' '),
+	serverAddress_(serverAddress), serverPort_(serverPort), clientSocket_(INVALID_SOCKET), serverAddressInfo_()
 {
 	if (WSAStartup(MAKEWORD(2, 2), &wsaData_) != 0)
 	{
@@ -15,6 +16,7 @@ Network::~Network()
 	{
 		closesocket(clientSocket_);
 	}
+
 	WSACleanup();
 }
 
