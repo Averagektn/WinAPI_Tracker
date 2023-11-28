@@ -13,8 +13,13 @@ namespace ProjConst
 	const float DIAGONAL_SPEED_CORRECTION = 1.41;
 
 	// SIZES
-	const int WND_DEF_HEIGHT = 540;
-	const int WND_DEF_WIDTH = 990;
+	const int WND_DEF_HEIGHT = 600;
+	const int WND_DEF_WIDTH = 800;
+
+	const int CONTROL_DEF_WIDTH = 190;
+	const int CONTROL_DEF_HEIGHT = 20;
+	const int BTN_DEF_HEIGHT = CONTROL_DEF_HEIGHT * 2;
+
 	const D2D1::ColorF DEF_ENEMY_COLOR = D2D1::ColorF::Green;
 	const D2D1::ColorF DEF_CURSOR_COLOR = D2D1::ColorF::Red;
 	const D2D1::ColorF DEF_TARGET_COLOR = D2D1::ColorF::Blue;

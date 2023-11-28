@@ -14,8 +14,7 @@ Circle::Circle(int x, int y, int radius)
 {
 	center.x = x;
 	center.y = y;
-	this->radiusX = radius;
-	this->radiusY = radius;
+	this->radius = radius;
 	this->oldRect = { 0,0,0,0 };
 }
 
@@ -23,8 +22,7 @@ Circle::Circle(POINT center, int radius)
 {
 	oldRect = { 0,0,0,0 };
 	this->center = center;
-	this->radiusX = radius;
-	this->radiusY = radius;
+	this->radius = radius;
 }
 
 void Circle::SetCenterX(int x)
@@ -69,38 +67,37 @@ void Circle::Scale(RECT newRect)
 
 	this->SetCenter({ (int)(center.x * xScale), (int)(center.y * yScale) });
 
-	radiusX *= xScale;
-	radiusY *= yScale;
+	radius *= (xScale + yScale) / 2;
 
 	oldRect = newRect;
 }
 
 bool Circle::Contains(POINT point)
 {
-	float result = std::pow((static_cast<float>(point.x) - center.x) / radiusX, 2) +
-		std::pow((static_cast<float>(point.y) - center.y) / radiusY, 2);
+	float result = std::pow((static_cast<float>(point.x) - center.x) / radius, 2) +
+		std::pow((static_cast<float>(point.y) - center.y) / radius, 2);
 
 	return result <= 1.0f;
 }
 
 int Circle::GetLeft() const
 {
-	return center.x - radiusX;
+	return center.x - radius;
 }
 
 int Circle::GetTop() const
 {
-	return center.y - radiusY;
+	return center.y - radius;
 }
 
 int Circle::GetBottom() const
 {
-	return center.y + radiusY;
+	return center.y + radius;
 }
 
 int Circle::GetRight() const
 {
-	return center.x + radiusX;
+	return center.x + radius;
 }
 
 POINT Circle::GetCenter() const
@@ -113,7 +110,7 @@ void Circle::Draw(ID2D1HwndRenderTarget* renderTarget, D2D1::ColorF color)
 	ID2D1SolidColorBrush* brush;
 	renderTarget->CreateSolidColorBrush(D2D1::ColorF(color), &brush);
 
-	D2D1_ELLIPSE ellipse = D2D1::Ellipse(D2D1::Point2<int>(center.x, center.y), radiusX, radiusY);
+	D2D1_ELLIPSE ellipse = D2D1::Ellipse(D2D1::Point2<int>(center.x, center.y), radius, radius);
 
 	if (brush != 0)
 	{

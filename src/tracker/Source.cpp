@@ -127,27 +127,31 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLi
 		NULL, NULL, hInstance, NULL);
 
 	// Text box
-	hTxtIP = CreateWindowEx(0, L"EDIT", L"192.168.150.3", WS_VISIBLE | WS_CHILD | WS_BORDER | ES_AUTOHSCROLL, 400, 50, 190, 20,
-		hWndMain, (HMENU)TXT_IP, hInstance, NULL);
-	hTxtAngleX = CreateWindowEx(0, L"EDIT", L"20.0", WS_VISIBLE | WS_CHILD | WS_BORDER | ES_AUTOHSCROLL, 400, 130, 190, 20,
-		hWndMain, (HMENU)TXT_ANGLE_X, hInstance, NULL);
-	hTxtAngleY = CreateWindowEx(0, L"EDIT", L"20.0", WS_VISIBLE | WS_CHILD | WS_BORDER | ES_AUTOHSCROLL, 400, 270, 190, 20,
-		hWndMain, (HMENU)TXT_ANGLE_Y, hInstance, NULL);
+	int xCoord = ProjConst::WND_DEF_WIDTH / 2 - ProjConst::CONTROL_DEF_WIDTH / 2;
+	hTxtIP = CreateWindowEx(0, L"EDIT", L"192.168.150.3", WS_VISIBLE | WS_CHILD | WS_BORDER | ES_AUTOHSCROLL, 
+		xCoord, 50, ProjConst::CONTROL_DEF_WIDTH, ProjConst::CONTROL_DEF_HEIGHT, hWndMain, (HMENU)TXT_IP, hInstance, NULL);
+	hTxtAngleX = CreateWindowEx(0, L"EDIT", L"20.0", WS_VISIBLE | WS_CHILD | WS_BORDER | ES_AUTOHSCROLL, xCoord, 130, 
+		ProjConst::CONTROL_DEF_WIDTH, ProjConst::CONTROL_DEF_HEIGHT, hWndMain, (HMENU)TXT_ANGLE_X, hInstance, NULL);
+	hTxtAngleY = CreateWindowEx(0, L"EDIT", L"20.0", WS_VISIBLE | WS_CHILD | WS_BORDER | ES_AUTOHSCROLL, xCoord, 270, 
+		ProjConst::CONTROL_DEF_WIDTH, ProjConst::CONTROL_DEF_HEIGHT, hWndMain, (HMENU)TXT_ANGLE_Y, hInstance, NULL);
 
 	// Button
-	hBtnCalibrateX = CreateWindowEx(0, L"BUTTON", L"Calibrate X", WS_VISIBLE | WS_CHILD | WS_DISABLED, 400, 170, 190, 40,
-		hWndMain, (HMENU)BTN_CALIBRATE_X, hInstance, NULL);
-	hBtnCalibrateY = CreateWindowEx(0, L"BUTTON", L"Calibrate Y", WS_VISIBLE | WS_CHILD | WS_DISABLED, 400, 310, 190, 40,
-		hWndMain, (HMENU)BTN_CALIBRATE_Y, hInstance, NULL);
-	CreateWindowEx(0, L"BUTTON", L"Calibration", WS_VISIBLE | WS_CHILD, 400, 370, 190, 40, hWndMain, (HMENU)BTN_CALIBRATION,
-		hInstance, NULL);
-	CreateWindowEx(0, L"BUTTON", L"Start", WS_VISIBLE | WS_CHILD, 400, 430, 190, 40, hWndMain, (HMENU)BTN_START, hInstance,
-		NULL);
+	hBtnCalibrateX = CreateWindowEx(0, L"BUTTON", L"Calibrate X", WS_VISIBLE | WS_CHILD | WS_DISABLED, xCoord, 170, 
+		ProjConst::CONTROL_DEF_WIDTH, ProjConst::BTN_DEF_HEIGHT, hWndMain, (HMENU)BTN_CALIBRATE_X, hInstance, NULL);
+	hBtnCalibrateY = CreateWindowEx(0, L"BUTTON", L"Calibrate Y", WS_VISIBLE | WS_CHILD | WS_DISABLED, xCoord, 310, 
+		ProjConst::CONTROL_DEF_WIDTH, ProjConst::BTN_DEF_HEIGHT, hWndMain, (HMENU)BTN_CALIBRATE_Y, hInstance, NULL);
+	CreateWindowEx(0, L"BUTTON", L"Calibration", WS_VISIBLE | WS_CHILD, xCoord, 370, ProjConst::CONTROL_DEF_WIDTH, 
+		ProjConst::BTN_DEF_HEIGHT, hWndMain, (HMENU)BTN_CALIBRATION, hInstance, NULL);
+	CreateWindowEx(0, L"BUTTON", L"Start", WS_VISIBLE | WS_CHILD, xCoord, 430, ProjConst::CONTROL_DEF_WIDTH, 
+		ProjConst::BTN_DEF_HEIGHT, hWndMain, (HMENU)BTN_START, hInstance, NULL);
 
 	// Label
-	CreateWindowEx(0, L"STATIC", L"IP", WS_CHILD | WS_VISIBLE, 400, 10, 190, 20, hWndMain, NULL, hInstance, NULL);
-	CreateWindowEx(0, L"STATIC", L"Max X angle", WS_CHILD | WS_VISIBLE, 400, 90, 190, 20, hWndMain, NULL, hInstance, NULL);
-	CreateWindowEx(0, L"STATIC", L"Max Y angle", WS_CHILD | WS_VISIBLE, 400, 230, 190, 20, hWndMain, NULL, hInstance, NULL);
+	CreateWindowEx(0, L"STATIC", L"IP", WS_CHILD | WS_VISIBLE, xCoord, 10, ProjConst::CONTROL_DEF_WIDTH, 
+		ProjConst::CONTROL_DEF_HEIGHT, hWndMain, NULL, hInstance, NULL);
+	CreateWindowEx(0, L"STATIC", L"Max X angle", WS_CHILD | WS_VISIBLE, xCoord, 90, ProjConst::CONTROL_DEF_WIDTH, 
+		ProjConst::CONTROL_DEF_HEIGHT, hWndMain, NULL, hInstance, NULL);
+	CreateWindowEx(0, L"STATIC", L"Max Y angle", WS_CHILD | WS_VISIBLE, xCoord, 230, ProjConst::CONTROL_DEF_WIDTH, 
+		ProjConst::CONTROL_DEF_HEIGHT, hWndMain, NULL, hInstance, NULL);
 
 	wcexPaint.cbSize = sizeof(WNDCLASSEX);
 	wcexPaint.style = CS_DBLCLKS;
