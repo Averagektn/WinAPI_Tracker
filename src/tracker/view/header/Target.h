@@ -1,21 +1,22 @@
 #pragma once
 
 #include <windows.h>
-#include "Circle.h"
 #include <string>
+
+#include "Circle.h"
 
 class Target : public Circle
 {
 public:
-	Target(int x, int y, int radius, RECT rect);
-	Target(POINT center, int radius, RECT rect);
-	Target(int x, int y, int radius);
-	Target(POINT center, int radius);
+	Target(INT x, INT y, INT radius, RECT rect);
+	Target(POINT center, INT radius, RECT rect);
+	Target(INT x, INT y, INT radius);
+	Target(POINT center, INT radius);
 
-	void SetCenter(POINT center);
-	void SetDelay(int delay);
+	VOID SetCenter(POINT center);
+	VOID SetDelay(INT delay);
 
-	int GetDelay() const;
+	INT GetDelay() const;
 private:
-	int delay;
+	INT delay;
 };

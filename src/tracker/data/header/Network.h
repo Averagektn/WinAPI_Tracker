@@ -5,29 +5,30 @@
 #include <string>
 #include <iostream>
 #include <Windows.h>
+
 #include "Logger.h"
 
 class Network
 {
 public:
-	Network(const char* serverAddress, int serverPort);
+	Network(const CHAR* serverAddress, INT serverPort);
 	~Network();
 
-	bool Connect();
+	BOOL Connect();
 
-	bool NextXY(POINTFLOAT& point);
-	bool NextYZ(POINTFLOAT& point);
-	bool NextXZ(POINTFLOAT& point);
-	bool NextZX(POINTFLOAT& point);
-	bool NextZY(POINTFLOAT& point);
-	bool NextYX(POINTFLOAT& point);
+	BOOL NextXY(POINTFLOAT& point);
+	BOOL NextYZ(POINTFLOAT& point);
+	BOOL NextXZ(POINTFLOAT& point);
+	BOOL NextZX(POINTFLOAT& point);
+	BOOL NextZY(POINTFLOAT& point);
+	BOOL NextYX(POINTFLOAT& point);
 
-	static const char* GetIp(HWND hText);
+	static const CHAR* GetIp(HWND hText);
 protected:
-	bool GetCoord(float& coord);
+	BOOL GetCoord(FLOAT& coord);
 private:
-	const char* serverAddress_;
-	int serverPort_;
+	const CHAR* serverAddress_;
+	INT serverPort_;
 
 	WSADATA wsaData_;
 	SOCKET clientSocket_;

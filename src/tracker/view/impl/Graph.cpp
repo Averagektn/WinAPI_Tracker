@@ -28,19 +28,19 @@ Graph::Graph(std::vector<POINT> points)
 	this->points = points;
 }
 
-void Graph::DrawWindRose(ID2D1HwndRenderTarget* renderTarget, D2D1::ColorF color, Converter converter, int segmentsNum,
-	int radius)
+VOID Graph::DrawWindRose(ID2D1HwndRenderTarget* renderTarget, D2D1::ColorF color, Converter converter, INT segmentsNum,
+	INT radius)
 {
-	std::vector<std::vector<double>> angles = GetClasses(segmentsNum);
+	std::vector<std::vector<DOUBLE>> angles = GetClasses(segmentsNum);
 	std::vector<POINT> nodes = GetGeometryPoints(angles, converter, segmentsNum, radius);
 
-	ID2D1Factory* d2dFactory = nullptr;
+	ID2D1Factory* d2dFactory = NULL;
 	renderTarget->GetFactory(&d2dFactory);
 
-	ID2D1PathGeometry* polygonGeometry = nullptr;
+	ID2D1PathGeometry* polygonGeometry = NULL;
 	d2dFactory->CreatePathGeometry(&polygonGeometry);
 
-	ID2D1GeometrySink* polygonSink = nullptr;
+	ID2D1GeometrySink* polygonSink = NULL;
 	polygonGeometry->Open(&polygonSink);
 
 	polygonSink->BeginFigure(D2D1::Point2F(nodes[0].x, nodes[0].y), D2D1_FIGURE_BEGIN_FILLED);
@@ -66,14 +66,14 @@ void Graph::DrawWindRose(ID2D1HwndRenderTarget* renderTarget, D2D1::ColorF color
 	polygonGeometry->Release();
 }
 
-std::vector<std::vector<double>> Graph::GetClasses(int segmentsNum)
+std::vector<std::vector<DOUBLE>> Graph::GetClasses(INT segmentsNum)
 {
-	std::vector<std::vector<double>> segments(segmentsNum);
-	double angleDelta = 360.0f / segmentsNum;
-	double angle;
-	int part;
+	std::vector<std::vector<DOUBLE>> segments(segmentsNum);
+	DOUBLE angleDelta = 360.0f / segmentsNum;
+	DOUBLE angle;
+	INT part;
 
-	for (int i = 0; i < points.size(); i++)
+	for (INT i = 0; i < points.size(); i++)
 	{
 		angle = GetAngle(points[i]);
 
@@ -82,57 +82,58 @@ std::vector<std::vector<double>> Graph::GetClasses(int segmentsNum)
 			angle = 0;
 		}
 
-		part = static_cast<int>(angle / (360.0 / segmentsNum));
+		part = static_cast<INT>(angle / (360.0 / segmentsNum));
 		segments[part].push_back(angle);
 	}
 
 	return segments;
 }
 
-std::vector<POINT> Graph::GetGeometryPoints(std::vector<std::vector<double>> angles, Converter converter,
-	int segmentsNum, int radius)
+std::vector<POINT> Graph::GetGeometryPoints(std::vector<std::vector<DOUBLE>> angles, Converter converter,
+	INT segmentsNum, INT radius)
 {
 	std::vector<POINT> res;
 
-	int coeff = GetMaxLength(angles);
+	INT coeff = GetMaxLength(angles);
 
-	double ang = 360.0f / segmentsNum / 2;
-	double angleStep = 360.0f / segmentsNum;
+	DOUBLE ang = 360.0f / segmentsNum / 2;
+	DOUBLE angleStep = 360.0f / segmentsNum;
 
-	for (int i = 0; i < segmentsNum; i++)
+	for (INT i = 0; i < segmentsNum; i++)
 	{
-		double x = radius * cos(ToRadians(ang));
-		x = x * (float)angles[i].size() / coeff;
+		DOUBLE x = radius * cos(ToRadians(ang));
+		x *= (FLOAT)angles[i].size() / coeff;
 
-		double y = radius * sin(ToRadians(ang));
-		y = y * (float)angles[i].size() / coeff;
+		DOUBLE y = radius * sin(ToRadians(ang));
+		y *= (FLOAT)angles[i].size() / coeff;
 
-		x = converter.ToCoordX_Log((int)x);
-		y = converter.ToCoordY_Log((int)y);
+		x = converter.ToCoordX_Log((INT)x);
+		y = converter.ToCoordY_Log((INT)y);
 
-		res.push_back({ (int)x, (int)y });
+		res.push_back({ (INT)x, (INT)y });
 		ang += angleStep;
 	}
 
 	return res;
 }
 
-double Graph::GetAngle(POINT point)
+DOUBLE Graph::GetAngle(POINT point)
 {
-	double angle = atan2(static_cast<double>(point.y), static_cast<double>(point.x)) * (180.0 / 3.14);
+	DOUBLE angle = atan2(static_cast<DOUBLE>(point.y), static_cast<DOUBLE>(point.x)) * (180.0 / 3.14);
 
-	if (angle < 0) {
+	if (angle < 0) 
+	{
 		angle += 360.0;
 	}
 
 	return angle;
 }
 
-int Graph::GetMaxLength(std::vector<std::vector<double>> angles)
+INT Graph::GetMaxLength(std::vector<std::vector<DOUBLE>> angles)
 {
-	int res = angles[0].size();
+	INT res = angles[0].size();
 
-	for (int i = 1; i < angles.size(); i++)
+	for (INT i = 1; i < angles.size(); i++)
 	{
 		if (res < angles[i].size())
 		{
@@ -143,7 +144,7 @@ int Graph::GetMaxLength(std::vector<std::vector<double>> angles)
 	return res;
 }
 
-double Graph::ToRadians(double angle)
+DOUBLE Graph::ToRadians(DOUBLE angle)
 {
 	return angle * 3.14 / 180;
 }

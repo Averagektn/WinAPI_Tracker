@@ -52,25 +52,25 @@ Logger enemy_RadianLogger("data\\enemy\\radians.txt", ' ');
 
 FileReader reader("data\\target\\target.txt");
 
-bool isCalibrating = false;
-bool isCalibratingX = false;
-bool isCalibratingY = false;
+BOOL isCalibrating = FALSE;
+BOOL isCalibratingX = FALSE;
+BOOL isCalibratingY = FALSE;
 
-bool isLeftPressed = false;
-bool isRightPressed = false;
-bool isUpPressed = false;
-bool isDownPressed = false;
+BOOL isLeftPressed = FALSE;
+BOOL isRightPressed = FALSE;
+BOOL isUpPressed = FALSE;
+BOOL isDownPressed = FALSE;
 
-bool isGame = true;
+BOOL isGame = TRUE;
 
-long userPoints = 0;
-long enemyPoints = 0;
+LONG userPoints = 0;
+LONG enemyPoints = 0;
 
-float maxXAngle = ProjConst::DEF_MAX_X_ANGLE;
-float maxYAngle = ProjConst::DEF_MAX_Y_ANGLE;
+FLOAT maxXAngle = ProjConst::DEF_MAX_X_ANGLE;
+FLOAT maxYAngle = ProjConst::DEF_MAX_Y_ANGLE;
 
-float centerAngleX = 0;
-float centerAngleY = 0;
+FLOAT centerAngleX = 0;
+FLOAT centerAngleY = 0;
 
 ID2D1HwndRenderTarget* renderTarget;
 ID2D1Factory* d2dFactory;
@@ -89,7 +89,7 @@ LRESULT CALLBACK WndProcMain(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPar
 // Network multithreading
 POINTFLOAT currentAngles;
 HANDLE hThread;
-BOOL isReceiving = false;
+BOOL isReceiving = FALSE;
 static DWORD WINAPI NetworkThread(LPVOID lpParam)
 {
 	POINTFLOAT radianPoint;
@@ -110,7 +110,7 @@ static DWORD WINAPI NetworkThread(LPVOID lpParam)
 	return 0;
 }
 
-int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow)
+INT APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow)
 {
 	WNDCLASSEX wcexMain
 	{
@@ -134,7 +134,7 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLi
 		NULL, NULL, hInstance, NULL);
 
 	// Text box
-	int xCoord = ProjConst::WND_DEF_WIDTH / 2 - ProjConst::CONTROL_DEF_WIDTH / 2;
+	INT xCoord = ProjConst::WND_DEF_WIDTH / 2 - ProjConst::CONTROL_DEF_WIDTH / 2;
 	hTxtIP = CreateWindowEx(0, L"EDIT", ProjConst::DEF_IP, WS_VISIBLE | WS_CHILD | WS_BORDER | ES_AUTOHSCROLL,
 		xCoord, 50, ProjConst::CONTROL_DEF_WIDTH, ProjConst::CONTROL_DEF_HEIGHT, hWndMain, (HMENU)TXT_IP, hInstance, NULL);
 	hTxtAngleX = CreateWindowEx(0, L"EDIT", ProjConst::DEF_MAX_X_ANGLE_STR, WS_VISIBLE | WS_CHILD | WS_BORDER | ES_AUTOHSCROLL, 
@@ -176,7 +176,7 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLi
 		DispatchMessage(&msg);
 	}
 
-	return (int)msg.wParam;
+	return (INT)msg.wParam;
 }
 
 LRESULT CALLBACK WndProcMain(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
@@ -191,8 +191,8 @@ LRESULT CALLBACK WndProcMain(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPar
 
 			KillTimer(hWnd, TIMER_CALIBRATION);
 
-			isGame = true;
-			isReceiving = true;
+			isGame = TRUE;
+			isReceiving = TRUE;
 
 			if (hThread == NULL)
 			{
@@ -220,22 +220,22 @@ LRESULT CALLBACK WndProcMain(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPar
 			{
 				KillTimer(hWnd, TIMER_CALIBRATION);
 
-				isReceiving = false;
+				isReceiving = FALSE;
 				WaitForSingleObject(hThread, ProjConst::TIMER_WAITING);
 				CloseHandle(hThread);
 
 				EnableWindow(hBtnCalibrateX, FALSE);
 				EnableWindow(hBtnCalibrateY, FALSE);
 
-				isCalibratingX = false;
-				isCalibratingY = false;
-				isCalibrating = false;
+				isCalibratingX = FALSE;
+				isCalibratingY = FALSE;
+				isCalibrating = FALSE;
 			}
 			else
 			{
 				SetTimer(hWnd, TIMER_CALIBRATION, ProjConst::DEF_TIMER_TIME, NULL);
 
-				isReceiving = true;
+				isReceiving = TRUE;
 
 				hThread = CreateThread(NULL, 0, NetworkThread, NULL, 0, NULL);
 				if (hThread == NULL)
@@ -246,9 +246,9 @@ LRESULT CALLBACK WndProcMain(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPar
 				EnableWindow(hBtnCalibrateX, TRUE);
 				EnableWindow(hBtnCalibrateY, TRUE);
 
-				isCalibratingX = true;
-				isCalibratingY = true;
-				isCalibrating = true;
+				isCalibratingX = TRUE;
+				isCalibratingY = TRUE;
+				isCalibrating = TRUE;
 			}
 		}
 		else if (LOWORD(wParam) == BTN_CALIBRATE_X)
@@ -257,7 +257,7 @@ LRESULT CALLBACK WndProcMain(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPar
 
 			EnableWindow(hBtnCalibrateX, FALSE);
 
-			isCalibratingX = false;
+			isCalibratingX = FALSE;
 		}
 		else if (LOWORD(wParam) == BTN_CALIBRATE_Y)
 		{
@@ -265,7 +265,7 @@ LRESULT CALLBACK WndProcMain(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPar
 
 			EnableWindow(hBtnCalibrateY, FALSE);
 
-			isCalibratingY = false;
+			isCalibratingY = FALSE;
 		}
 		else if (LOWORD(wParam) == BTN_CENTRALIZE)
 		{
@@ -342,8 +342,8 @@ LRESULT CALLBACK WndProcPaint(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPa
 		enemy.SetCenter(POINT{ 0, 0 });
 		cursor.SetCenter({ 0, 0 });
 
-		isGame = false;
-		isReceiving = false;
+		isGame = FALSE;
+		isReceiving = FALSE;
 
 		KillTimer(hWnd, TIMER_LOG);
 		KillTimer(hWnd, TIMER_LOAD);
@@ -368,9 +368,9 @@ LRESULT CALLBACK WndProcPaint(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPa
 	case WM_TIMER:
 		if (wParam == TIMER_LOG)
 		{
-			int xSpeed = 0;
-			int ySpeed = 0;
-			int speed = ProjConst::SPEED;
+			INT xSpeed = 0;
+			INT ySpeed = 0;
+			INT speed = ProjConst::SPEED;
 
 			POINT center = cursor.Shot();
 
@@ -467,37 +467,37 @@ LRESULT CALLBACK WndProcPaint(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPa
 	case WM_KEYDOWN:
 		if (wParam == VK_LEFT)
 		{
-			isLeftPressed = true;
+			isLeftPressed = TRUE;
 		}
 		if (wParam == VK_RIGHT)
 		{
-			isRightPressed = true;
+			isRightPressed = TRUE;
 		}
 		if (wParam == VK_UP)
 		{
-			isUpPressed = true;
+			isUpPressed = TRUE;
 		}
 		if (wParam == VK_DOWN)
 		{
-			isDownPressed = true;
+			isDownPressed = TRUE;
 		}
 		break;
 	case WM_KEYUP:
 		if (wParam == VK_LEFT)
 		{
-			isLeftPressed = false;
+			isLeftPressed = FALSE;
 		}
 		if (wParam == VK_RIGHT)
 		{
-			isRightPressed = false;
+			isRightPressed = FALSE;
 		}
 		if (wParam == VK_UP)
 		{
-			isUpPressed = false;
+			isUpPressed = FALSE;
 		}
 		if (wParam == VK_DOWN)
 		{
-			isDownPressed = false;
+			isDownPressed = FALSE;
 		}
 		break;
 	case WM_PAINT:
@@ -535,8 +535,8 @@ LRESULT CALLBACK WndProcPaint(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPa
 		EndPaint(hWnd, &ps);
 		break;
 	case WM_CLOSE:
-		isGame = false;
-		isReceiving = false;
+		isGame = FALSE;
+		isReceiving = FALSE;
 
 		KillTimer(hWnd, TIMER_LOG);
 		KillTimer(hWnd, TIMER_LOAD);

@@ -6,10 +6,10 @@
 class Axis
 {
 public:
-	Axis(int xLeft, int yLeft, int xRight, int yRight);
+	Axis(INT xLeft, INT yLeft, INT xRight, INT yRight);
 	Axis(POINT left, POINT right);
 
-	void Draw(ID2D1HwndRenderTarget* renderTarget, D2D1::ColorF color);
+	VOID Draw(ID2D1HwndRenderTarget* renderTarget, D2D1::ColorF color);
 protected:
 	POINT left, right;
 };

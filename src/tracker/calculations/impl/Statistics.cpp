@@ -1,21 +1,21 @@
 #include "../header/Statistics.h"
 
-float Statistics::MathExpectation(std::vector<POINT> points)
+FLOAT Statistics::MathExpectation(std::vector<POINT> points)
 {
 	return 0.0f;
 }
 
-float Statistics::StandartDeviation(std::vector<POINT> points)
+FLOAT Statistics::StandartDeviation(std::vector<POINT> points)
 {
 	return 0.0f;
 }
 
-float Statistics::Dispersion(std::vector<POINT> points)
+FLOAT Statistics::Dispersion(std::vector<POINT> points)
 {
 	return 0.0f;
 }
 
-int Statistics::Distance(POINT p1, POINT p2)
+INT Statistics::Distance(POINT p1, POINT p2)
 {
 	return 0;
 }

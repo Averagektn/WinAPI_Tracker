@@ -7,33 +7,33 @@
 class Circle
 {
 public:
-	Circle(int x, int y, int radius, RECT rect);
-	Circle(POINT center, int radius, RECT rect);
-	Circle(int x, int y, int radius);
-	Circle(POINT center, int radius);
+	Circle(INT x, INT y, INT radius, RECT rect);
+	Circle(POINT center, INT radius, RECT rect);
+	Circle(INT x, INT y, INT radius);
+	Circle(POINT center, INT radius);
 
 	POINT GetCenter() const;
 
-	bool Contains(POINT point);
+	BOOL Contains(POINT point);
 
-	int GetLeft() const;
-	int GetTop() const;
-	int GetBottom() const;
-	int GetRight() const;
+	INT GetLeft() const;
+	INT GetTop() const;
+	INT GetBottom() const;
+	INT GetRight() const;
 
-	void Draw(ID2D1HwndRenderTarget* renderTarget, D2D1::ColorF color);
-	void SetCenterX(int x);
-	void SetCenterY(int y);
-	void AddCoordX(int dx);
-	void AddCoordY(int dy);
-	void SetCenter(POINT center);
-	void SetOldRect(RECT oldRect);
+	VOID Draw(ID2D1HwndRenderTarget* renderTarget, D2D1::ColorF color);
+	VOID SetCenterX(INT x);
+	VOID SetCenterY(INT y);
+	VOID AddCoordX(INT dx);
+	VOID AddCoordY(INT dy);
+	VOID SetCenter(POINT center);
+	VOID SetOldRect(RECT oldRect);
 
 	RECT GetOldRect() const;
 
-	void Scale(RECT newRect);
+	VOID Scale(RECT newRect);
 protected:
 	RECT oldRect;
 	POINT center;
-	int radius;
+	INT radius;
 };

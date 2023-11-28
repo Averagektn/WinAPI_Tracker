@@ -6,10 +6,10 @@
 class Statistics
 {
 public:
-	static float MathExpectation(std::vector<POINT> points);
-	static float StandartDeviation(std::vector<POINT> points);
-	static float Dispersion(std::vector<POINT> points);
+	static FLOAT MathExpectation(std::vector<POINT> points);
+	static FLOAT StandartDeviation(std::vector<POINT> points);
+	static FLOAT Dispersion(std::vector<POINT> points);
 
-	static int Distance(POINT p1, POINT p2);
+	static INT Distance(POINT p1, POINT p2);
 };
 

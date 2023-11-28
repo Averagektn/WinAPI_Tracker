@@ -1,6 +1,6 @@
 #include "../header/Converter.h"
 
-Converter::Converter(int width, int height, float maxAngleX, float maxAngleY)
+Converter::Converter(INT width, INT height, FLOAT maxAngleX, FLOAT maxAngleY)
 {
 	maxCoordX = width;
 	maxCoordY = height;
@@ -15,26 +15,26 @@ Converter::Converter(int width, int height, float maxAngleX, float maxAngleY)
 	maxLogCoordY = height / 2;
 }
 
-int Converter::ToCoordX(float angle)
+INT Converter::ToCoordX(FLOAT angle)
 {
 	angle = -angle + maxAngleX;
 
-	return (int)round(angle * maxCoordX / angleWidth);
+	return (INT)round(angle * maxCoordX / angleWidth);
 }
 
-int Converter::ToCoordY(float angle)
+INT Converter::ToCoordY(FLOAT angle)
 {
 	angle = -angle + maxAngleY;
 
-	return (int)round(angle * maxCoordY / angleHeight);
+	return (INT)round(angle * maxCoordY / angleHeight);
 }
 
-int Converter::ToCoordX_Log(int logCoord) const
+INT Converter::ToCoordX_Log(INT logCoord) const
 {
 	return logCoord + maxLogCoordX;
 }
 
-int Converter::ToCoordY_Log(int logCoord) const
+INT Converter::ToCoordY_Log(INT logCoord) const
 {
 	return maxLogCoordY - logCoord;
 }
@@ -62,22 +62,22 @@ POINT Converter::ToCoord(POINT logPoint)
 	return { ToCoordX_Log(logPoint.x), ToCoordY_Log(logPoint.y) };
 }
 
-float Converter::ToAngleX(int coord) const
+FLOAT Converter::ToAngleX(INT coord) const
 {
 	return ToLogCoordX(coord) * angleWidth / maxCoordX;
 }
 
-float Converter::ToAngleY(int coord) const
+FLOAT Converter::ToAngleY(INT coord) const
 {
 	return ToLogCoordY(coord) * angleHeight / maxCoordY;
 }
 
-float Converter::ToAngleX_Log(int logCoord) const
+FLOAT Converter::ToAngleX_Log(INT logCoord) const
 {
 	return ToAngleX(logCoord + maxLogCoordX);
 }
 
-float Converter::ToAngleY_Log(int logCoord) const
+FLOAT Converter::ToAngleY_Log(INT logCoord) const
 {
 	return ToAngleX(logCoord + maxLogCoordY);
 }
@@ -106,22 +106,22 @@ POINTFLOAT Converter::ToAngle_Log(POINT logPoint)
 	return { ToAngleX_Log(logPoint.x), ToAngleY_Log(logPoint.y) };
 }
 
-int Converter::ToLogCoordX(int coord) const
+INT Converter::ToLogCoordX(INT coord) const
 {
 	return coord - maxLogCoordX;
 }
 
-int Converter::ToLogCoordY(int coord) const
+INT Converter::ToLogCoordY(INT coord) const
 {
 	return maxLogCoordY - coord;
 }
 
-int Converter::ToLogCoordX_Angle(float angle)
+INT Converter::ToLogCoordX_Angle(FLOAT angle)
 {
 	return ToLogCoordX(ToCoordX(angle));
 }
 
-int Converter::ToLogCoordY_Angle(float angle)
+INT Converter::ToLogCoordY_Angle(FLOAT angle)
 {
 	return ToLogCoordY(ToCoordY(angle));
 }
@@ -171,12 +171,12 @@ POINTFLOAT Converter::ToAngle_FromCoordString(std::string str)
 	return ToAngle(ToCoord(str));
 }
 
-float Converter::ToAngle_FromRadian(float radian)
+FLOAT Converter::ToAngle_FromRadian(FLOAT radian)
 {
 	return radian * 180 / 3.14;
 }
 
-float Converter::ToRadian_FromAngle(float angle)
+FLOAT Converter::ToRadian_FromAngle(FLOAT angle)
 {
 	return angle * 3.14 / 180;
 }
@@ -191,7 +191,7 @@ POINTFLOAT Converter::ToRadian_FromAngle(POINTFLOAT angle)
 	return POINTFLOAT{ ToRadian_FromAngle(angle.x), ToRadian_FromAngle(angle.y) };
 }
 
-float Converter::GetFloat_FromWindowText(HWND hWnd)
+FLOAT Converter::GetFloat_FromWindowText(HWND hWnd)
 {
 	wchar_t buffer[256];
 	GetWindowText(hWnd, buffer, 256);
@@ -202,9 +202,9 @@ float Converter::GetFloat_FromWindowText(HWND hWnd)
 	return std::stof(strX);
 }
 
-int Converter::GetValue(std::string str)
+INT Converter::GetValue(std::string str)
 {
-	int result = 0;
+	INT result = 0;
 	std::istringstream iss(str);
 
 	if (iss >> result)

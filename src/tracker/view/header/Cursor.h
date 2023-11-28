@@ -7,8 +7,8 @@
 class Cursor : public Circle
 {
 public:
-	Cursor(int x, int y, int radius, RECT oldRect);
-	Cursor(POINT center, int radius, RECT oldRect);
+	Cursor(INT x, INT y, INT radius, RECT oldRect);
+	Cursor(POINT center, INT radius, RECT oldRect);
 
 	POINT Shot() const;
 };

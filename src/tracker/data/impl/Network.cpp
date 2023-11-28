@@ -1,6 +1,6 @@
 #include "../header/Network.h"
 
-Network::Network(const char* serverAddress, int serverPort) :
+Network::Network(const CHAR* serverAddress, INT serverPort) :
 	logger("data\\received\\network.txt", ' '),
 	serverAddress_(serverAddress), serverPort_(serverPort), clientSocket_(INVALID_SOCKET), serverAddressInfo_()
 {
@@ -20,17 +20,17 @@ Network::~Network()
 	WSACleanup();
 }
 
-bool Network::Connect()
+BOOL Network::Connect()
 {
-	char receivedByte;
-	int bytesRead, bytesSent;
+	CHAR receivedByte;
+	INT bytesRead, bytesSent;
 
 	clientSocket_ = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
 
 	if (clientSocket_ == INVALID_SOCKET)
 	{
 		std::cerr << "Failed to create socket\n";
-		return false;
+		return FALSE;
 	}
 
 	serverAddressInfo_.sin_family = AF_INET;
@@ -40,122 +40,122 @@ bool Network::Connect()
 	if (connect(clientSocket_, (struct sockaddr*)&serverAddressInfo_, sizeof(serverAddressInfo_)) == SOCKET_ERROR)
 	{
 		closesocket(clientSocket_);
-		return false;
+		return FALSE;
 	}
 
 	bytesRead = recv(clientSocket_, &receivedByte, sizeof(receivedByte), 0);
 	if (bytesRead == SOCKET_ERROR || bytesRead == 0 || receivedByte != 23)
 	{
 		closesocket(clientSocket_);
-		return false;
+		return FALSE;
 	}
 
 	bytesSent = send(clientSocket_, &receivedByte, sizeof(receivedByte), 0);
 	if (bytesSent == SOCKET_ERROR)
 	{
 		closesocket(clientSocket_);
-		return false;
+		return FALSE;
 	}
 
-	return true;
+	return TRUE;
 }
 
-bool Network::NextXY(POINTFLOAT& point)
+BOOL Network::NextXY(POINTFLOAT& point)
 {
-	float x, y, z;
+	FLOAT x, y, z;
 
 	if (GetCoord(x) && GetCoord(y) && GetCoord(z))
 	{
 		point = { x, y };
 
-		return true;
+		return TRUE;
 	}
 
-	return false;
+	return FALSE;
 }
 
-bool Network::NextYZ(POINTFLOAT& point)
+BOOL Network::NextYZ(POINTFLOAT& point)
 {
-	float x, y, z;
+	FLOAT x, y, z;
 
 	if (GetCoord(x) && GetCoord(y) && GetCoord(z))
 	{
 		point = { y, z };
-		return true;
+		return TRUE;
 	}
 
-	return false;
+	return FALSE;
 }
 
-bool Network::NextXZ(POINTFLOAT& point)
+BOOL Network::NextXZ(POINTFLOAT& point)
 {
-	float x, y, z;
+	FLOAT x, y, z;
 
 	if (GetCoord(x) && GetCoord(y) && GetCoord(z))
 	{
 		point = { x, z };
 
-		return true;
+		return TRUE;
 	}
 
-	return false;
+	return FALSE;
 }
 
-bool Network::NextZX(POINTFLOAT& point)
+BOOL Network::NextZX(POINTFLOAT& point)
 {
-	float x, y, z;
+	FLOAT x, y, z;
 
 	if (GetCoord(x) && GetCoord(y) && GetCoord(z))
 	{
 		point = { z, x };
 
-		return true;
+		return TRUE;
 	}
 
-	return false;
+	return FALSE;
 }
 
-bool Network::NextZY(POINTFLOAT& point)
+BOOL Network::NextZY(POINTFLOAT& point)
 {
-	float x, y, z;
+	FLOAT x, y, z;
 
 	if (GetCoord(x) && GetCoord(y) && GetCoord(z))
 	{
 		point = { z, y };
 
-		return true;
+		return TRUE;
 	}
 
-	return false;
+	return FALSE;
 }
 
-bool Network::NextYX(POINTFLOAT& point)
+BOOL Network::NextYX(POINTFLOAT& point)
 {
-	float x, y, z;
+	FLOAT x, y, z;
 
 	if (GetCoord(x) && GetCoord(y) && GetCoord(z))
 	{
 		point = { y, x };
 
-		return true;
+		return TRUE;
 	}
 
-	return false;
+	return FALSE;
 }
 
-const char* Network::GetIp(HWND hText)
+const CHAR* Network::GetIp(HWND hText)
 {
-	int textLength = GetWindowTextLength(hText);
-	wchar_t* buffer = new wchar_t[textLength + 1];
+	INT textLength = GetWindowTextLength(hText);
+	LPWSTR buffer = new wchar_t[textLength + 1];
 
 	GetWindowText(hText, buffer, textLength + 1);
 
-	int bufferSize = WideCharToMultiByte(CP_UTF8, 0, buffer, -1, nullptr, 0, nullptr, nullptr);
-	char* charBuffer = new char[bufferSize];
-	WideCharToMultiByte(CP_UTF8, 0, buffer, -1, charBuffer, bufferSize, nullptr, nullptr);
+	INT bufferSize = WideCharToMultiByte(CP_UTF8, 0, buffer, -1, NULL, 0, NULL, NULL);
+	CHAR* charBuffer = new char[bufferSize];
+	WideCharToMultiByte(CP_UTF8, 0, buffer, -1, charBuffer, bufferSize, NULL, NULL);
 
-	const char* ip = new char[bufferSize];
-	strcpy_s(const_cast<char*>(ip), bufferSize, charBuffer);
+	const PCHAR ip = new CHAR[bufferSize];
+	strcpy_s(const_cast<PCHAR>(ip), bufferSize, charBuffer);
 
 	delete[] buffer;
 	delete[] charBuffer;
@@ -163,25 +163,25 @@ const char* Network::GetIp(HWND hText)
 	return ip;
 }
 
-bool Network::GetCoord(float& coord)
+BOOL Network::GetCoord(FLOAT& coord)
 {
-	char buffer[4];
-	int bytesRead = recv(clientSocket_, buffer, sizeof(buffer), 0);
+	CHAR buffer[4];
+	INT bytesRead = recv(clientSocket_, buffer, sizeof(buffer), 0);
 
 	if (bytesRead == SOCKET_ERROR)
 	{
-		return false;
+		return FALSE;
 	}
 	else if (bytesRead == 0)
 	{
-		return false;
+		return FALSE;
 	}
 	else if (bytesRead != sizeof(buffer))
 	{
-		return false;
+		return FALSE;
 	}
 
-	coord = reinterpret_cast<float*>(buffer)[0];
+	coord = reinterpret_cast<PFLOAT>(buffer)[0];
 
-	return true;
+	return TRUE;
 }

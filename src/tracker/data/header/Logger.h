@@ -8,19 +8,19 @@
 class Logger
 {
 public:
-	Logger(std::string filePath, char separator);
+	Logger(std::string filePath, CHAR separator);
 	~Logger();
 
-	void LogLn(POINT point);
-	void LogLn(POINTFLOAT point);
-	void LogLn(std::string info);
+	VOID LogLn(POINT point);
+	VOID LogLn(POINTFLOAT point);
+	VOID LogLn(std::string info);
 
-	void Log(POINT point);
-	void Log(POINTFLOAT point);
-	void Log(std::string info);
+	VOID Log(POINT point);
+	VOID Log(POINTFLOAT point);
+	VOID Log(std::string info);
 protected:
 	std::ofstream outputFile;
 	std::string filePath;
 
-	char separator;
+	CHAR separator;
 };

@@ -28,15 +28,15 @@ PathDrawer::PathDrawer(std::vector<POINT> path)
 	this->path = path;
 }
 
-void PathDrawer::Draw(ID2D1HwndRenderTarget* renderTarget, D2D1::ColorF color)
+VOID PathDrawer::Draw(ID2D1HwndRenderTarget* renderTarget, D2D1::ColorF color)
 {
 	ID2D1SolidColorBrush* brush;
 	renderTarget->CreateSolidColorBrush(D2D1::ColorF(color), &brush);
 
-	for (int i = 0; i < path.size() - 1; i++)
+	for (INT i = 0; i < path.size() - 1; i++)
 	{
-		renderTarget->DrawLine(D2D1::Point2<int>(path[i].x, path[i].y),
-			D2D1::Point2<int>(path[static_cast<std::vector<POINT, std::allocator<POINT>>::size_type>(i) + 1].x,
+		renderTarget->DrawLine(D2D1::Point2<INT>(path[i].x, path[i].y),
+			D2D1::Point2<INT>(path[static_cast<std::vector<POINT, std::allocator<POINT>>::size_type>(i) + 1].x,
 				path[static_cast<std::vector<POINT, std::allocator<POINT>>::size_type>(i) + 1].y), brush);
 	}
 

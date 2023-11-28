@@ -3,6 +3,7 @@
 #include <string>
 #include <iostream>
 #include <fstream>
+#include <windows.h>
 
 class FileReader
 {
@@ -11,7 +12,7 @@ public:
 	~FileReader();
 
 	std::string ReadLn();
-	std::string Read(int length);
+	std::string Read(INT length);
 protected:
 	std::ifstream inputFile;
 	std::string filePath;

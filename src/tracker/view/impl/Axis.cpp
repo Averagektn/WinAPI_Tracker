@@ -1,6 +1,6 @@
 #include "../header/Axis.h"
 
-Axis::Axis(int xLeft, int yLeft, int xRight, int yRight)
+Axis::Axis(INT xLeft, INT yLeft, INT xRight, INT yRight)
 {
 	left.x = xLeft;
 	left.y = yLeft;
@@ -22,7 +22,7 @@ void Axis::Draw(ID2D1HwndRenderTarget* renderTarget, D2D1::ColorF color)
 
 	if (brush != NULL)
 	{
-		renderTarget->DrawLine(D2D1::Point2<int>(left.x, left.y), D2D1::Point2<int>(right.x, right.y), brush);
+		renderTarget->DrawLine(D2D1::Point2<INT>(left.x, left.y), D2D1::Point2<INT>(right.x, right.y), brush);
 	}
 
 	brush->Release();

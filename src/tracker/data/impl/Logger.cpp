@@ -1,6 +1,6 @@
 #include "../header/Logger.h"
 
-Logger::Logger(std::string filePath, char separator)
+Logger::Logger(std::string filePath, CHAR separator)
 {
 	this->separator = separator;
 	this->filePath = filePath;
@@ -13,35 +13,35 @@ Logger::Logger(std::string filePath, char separator)
 	}
 }
 
-void Logger::LogLn(POINT point)
+VOID Logger::LogLn(POINT point)
 {
 	std::string str = std::to_string(point.x) + separator + std::to_string(point.y);
 
 	LogLn(str);
 }
 
-void Logger::LogLn(POINTFLOAT point)
+VOID Logger::LogLn(POINTFLOAT point)
 {
 	std::string str = std::to_string(point.x) + separator + std::to_string(point.y);
 
 	LogLn(str);
 }
 
-void Logger::Log(POINT point)
+VOID Logger::Log(POINT point)
 {
 	std::string str = std::to_string(point.x) + separator + std::to_string(point.y);
 
 	LogLn(str);
 }
 
-void Logger::Log(POINTFLOAT point)
+VOID Logger::Log(POINTFLOAT point)
 {
 	std::string str = std::to_string(point.x) + separator + std::to_string(point.y);
 
 	Log(str);
 }
 
-void Logger::LogLn(std::string info)
+VOID Logger::LogLn(std::string info)
 {
 	if (outputFile.is_open())
 	{
@@ -53,7 +53,7 @@ void Logger::LogLn(std::string info)
 	}
 }
 
-void Logger::Log(std::string info)
+VOID Logger::Log(std::string info)
 {
 	if (outputFile.is_open())
 	{

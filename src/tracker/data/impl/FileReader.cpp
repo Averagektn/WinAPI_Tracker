@@ -21,11 +21,11 @@ std::string FileReader::ReadLn()
 	return line;
 }
 
-std::string FileReader::Read(int length)
+std::string FileReader::Read(INT length)
 {
 	std::string content;
-	char c;
-	int count = 0;
+	CHAR c;
+	INT count = 0;
 
 	while (inputFile.get(c) && count < length)
 	{

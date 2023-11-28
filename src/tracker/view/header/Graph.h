@@ -15,17 +15,17 @@ public:
 	Graph(FileReader reader, Converter converter);
 	Graph(std::vector<POINT> points);
 
-	void DrawWindRose(ID2D1HwndRenderTarget* renderTarget, D2D1::ColorF color, Converter converter, int segmentsNum,
-		int radius);
+	VOID DrawWindRose(ID2D1HwndRenderTarget* renderTarget, D2D1::ColorF color, Converter converter, INT segmentsNum,
+		INT radius);
 protected:
-	std::vector<std::vector<double>> GetClasses(int segmentsNum);
-	std::vector<POINT> GetGeometryPoints(std::vector<std::vector<double>> angles, Converter converter,
-		int segmentsNum, int radius);
+	std::vector<std::vector<DOUBLE>> GetClasses(INT segmentsNum);
+	std::vector<POINT> GetGeometryPoints(std::vector<std::vector<DOUBLE>> angles, Converter converter,
+		INT segmentsNum, INT radius);
 	std::vector<POINT> points;
 
-	double GetAngle(POINT point);
+	DOUBLE GetAngle(POINT point);
 private:
-	int GetMaxLength(std::vector<std::vector<double>> angles);
+	INT GetMaxLength(std::vector<std::vector<DOUBLE>> angles);
 
-	double ToRadians(double angle);
+	DOUBLE ToRadians(DOUBLE angle);
 };

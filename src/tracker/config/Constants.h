@@ -1,44 +1,46 @@
 #pragma once
 
+#include <windows.h>
+
 namespace ProjConst
 {
-	const int SCREEN_WIDTH[9]{ 800, 1280, 1600, 1920, 2560, 3200, 3840, 6016, 7680 };
-	const int SCREEN_HEIGHT[9]{ 600, 720, 900, 1080, 1440, 1800, 2160, 3384, 4320 };
+	const INT SCREEN_WIDTH[9]{ 800, 1280, 1600, 1920, 2560, 3200, 3840, 6016, 7680 };
+	const INT SCREEN_HEIGHT[9]{ 600, 720, 900, 1080, 1440, 1800, 2160, 3384, 4320 };
 
 	const LPCWSTR DEF_IP = L"192.168.150.2";
 
 	const LPCWSTR DEF_MAX_X_ANGLE_STR = L"20.0";
 	const LPCWSTR DEF_MAX_Y_ANGLE_STR = L"20.0";
 
-	const int DEF_WINDROSE_SIDES = 4;
-	const int CIRCLE_MAX_ANGLE = 360;
+	const INT DEF_WINDROSE_SIDES = 4;
+	const INT CIRCLE_MAX_ANGLE = 360;
 
-	const float DEF_MAX_X_ANGLE = 20.0f;
-	const float DEF_MAX_Y_ANGLE = 20.0f;
+	const FLOAT DEF_MAX_X_ANGLE = 20.0f;
+	const FLOAT DEF_MAX_Y_ANGLE = 20.0f;
 
-	const int DEF_ENEMY_POINTS_INC = 5;
-	const int DEF_USER_POINTS_INC = 10;
+	const INT DEF_ENEMY_POINTS_INC = 5;
+	const INT DEF_USER_POINTS_INC = 10;
 
 	// NAMES
-	const wchar_t* PAINT_WND_NAME = L"Tracker";
-	const wchar_t* MAIN_WND_NAME = L"Main";
+	const LPCWSTR PAINT_WND_NAME = L"Tracker";
+	const LPCWSTR MAIN_WND_NAME = L"Main";
 
-	const int DEF_PANEL_WIDTH = 300;
+	const INT DEF_PANEL_WIDTH = 300;
 
 	// DRAWING
-	const int SPEED = 6;
-	const float DIAGONAL_SPEED_CORRECTION = 1.41;
+	const INT SPEED = 6;
+	const FLOAT DIAGONAL_SPEED_CORRECTION = 1.41;
 
 	// SIZES
-	const int WND_DEF_HEIGHT = 600;
-	const int WND_DEF_WIDTH = 800;
+	const INT WND_DEF_HEIGHT = 600;
+	const INT WND_DEF_WIDTH = 800;
 
-	const int CONTROL_DEF_WIDTH = 190;
-	const int CONTROL_DEF_HEIGHT = 20;
-	const int BTN_DEF_HEIGHT = CONTROL_DEF_HEIGHT * 2;
+	const INT CONTROL_DEF_WIDTH = 190;
+	const INT CONTROL_DEF_HEIGHT = 20;
+	const INT BTN_DEF_HEIGHT = CONTROL_DEF_HEIGHT * 2;
 
-	const float DX_ANGLE = 1.0f;
-	const float DY_ANGLE = 1.0f;
+	const FLOAT DX_ANGLE = 1.0f;
+	const FLOAT DY_ANGLE = 1.0f;
 
 	const D2D1::ColorF DEF_ENEMY_COLOR = D2D1::ColorF::Blue;
 	const D2D1::ColorF DEF_CURSOR_COLOR = D2D1::ColorF::Red;
@@ -51,18 +53,18 @@ namespace ProjConst
 
 	const COLORREF WND_DEF_COLOR = RGB(255, 255, 255);
 	const D2D1::ColorF DEF_BACKGROUND_COLOR = D2D1::ColorF::White;
-	const int LOAD_TIMEOUT = 10;
+	const INT LOAD_TIMEOUT = 10;
 
-	const int BORDER_BOTTOM = WND_DEF_HEIGHT - 40;
-	const int BORDER_TOP = 0;
-	const int BORDER_RIGHT = WND_DEF_WIDTH + 20;
-	const int BORDER_LEFT = -35;
+	const INT BORDER_BOTTOM = WND_DEF_HEIGHT - 40;
+	const INT BORDER_TOP = 0;
+	const INT BORDER_RIGHT = WND_DEF_WIDTH + 20;
+	const INT BORDER_LEFT = -35;
 
-	const int DEF_TIMER_TIME = 20;
-	const int DEF_PORT = 9998;
-	const int TIMER_WAITING = 500;
+	const INT DEF_TIMER_TIME = 20;
+	const INT DEF_PORT = 9998;
+	const INT TIMER_WAITING = 500;
 
-	const int CURSOR_RADIUS = 5;
-	const int ENEMY_RADIUS = 10;
-	const int TARGET_RADIUS = 20;
+	const INT CURSOR_RADIUS = 5;
+	const INT ENEMY_RADIUS = 10;
+	const INT TARGET_RADIUS = 20;
 }
