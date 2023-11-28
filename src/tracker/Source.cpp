@@ -135,12 +135,12 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLi
 
 	// Text box
 	int xCoord = ProjConst::WND_DEF_WIDTH / 2 - ProjConst::CONTROL_DEF_WIDTH / 2;
-	hTxtIP = CreateWindowEx(0, L"EDIT", L"192.168.150.3", WS_VISIBLE | WS_CHILD | WS_BORDER | ES_AUTOHSCROLL,
+	hTxtIP = CreateWindowEx(0, L"EDIT", ProjConst::DEF_IP, WS_VISIBLE | WS_CHILD | WS_BORDER | ES_AUTOHSCROLL,
 		xCoord, 50, ProjConst::CONTROL_DEF_WIDTH, ProjConst::CONTROL_DEF_HEIGHT, hWndMain, (HMENU)TXT_IP, hInstance, NULL);
-	hTxtAngleX = CreateWindowEx(0, L"EDIT", L"20.0", WS_VISIBLE | WS_CHILD | WS_BORDER | ES_AUTOHSCROLL, xCoord, 130,
-		ProjConst::CONTROL_DEF_WIDTH, ProjConst::CONTROL_DEF_HEIGHT, hWndMain, (HMENU)TXT_ANGLE_X, hInstance, NULL);
-	hTxtAngleY = CreateWindowEx(0, L"EDIT", L"20.0", WS_VISIBLE | WS_CHILD | WS_BORDER | ES_AUTOHSCROLL, xCoord, 270,
-		ProjConst::CONTROL_DEF_WIDTH, ProjConst::CONTROL_DEF_HEIGHT, hWndMain, (HMENU)TXT_ANGLE_Y, hInstance, NULL);
+	hTxtAngleX = CreateWindowEx(0, L"EDIT", ProjConst::DEF_MAX_X_ANGLE_STR, WS_VISIBLE | WS_CHILD | WS_BORDER | ES_AUTOHSCROLL, 
+		xCoord, 130, ProjConst::CONTROL_DEF_WIDTH, ProjConst::CONTROL_DEF_HEIGHT, hWndMain, (HMENU)TXT_ANGLE_X, hInstance, NULL);
+	hTxtAngleY = CreateWindowEx(0, L"EDIT", ProjConst::DEF_MAX_Y_ANGLE_STR, WS_VISIBLE | WS_CHILD | WS_BORDER | ES_AUTOHSCROLL, 
+		xCoord, 270, ProjConst::CONTROL_DEF_WIDTH, ProjConst::CONTROL_DEF_HEIGHT, hWndMain, (HMENU)TXT_ANGLE_Y, hInstance, NULL);
 
 	// Button
 	hBtnCalibrateX = CreateWindowEx(0, L"BUTTON", L"Calibrate X", WS_VISIBLE | WS_CHILD | WS_DISABLED, xCoord, 170,

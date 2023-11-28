@@ -2,6 +2,11 @@
 
 namespace ProjConst
 {
+	const LPCWSTR DEF_IP = L"192.168.150.2";
+
+	const LPCWSTR DEF_MAX_X_ANGLE_STR = L"20.0";
+	const LPCWSTR DEF_MAX_Y_ANGLE_STR = L"20.0";
+
 	const int DEF_WINDROSE_SIDES = 4;
 	const int CIRCLE_MAX_ANGLE = 360;
 
