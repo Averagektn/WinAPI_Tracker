@@ -34,9 +34,9 @@ constexpr auto BTN_CALIBRATE_Y = 7;
 constexpr auto BTN_CENTRALIZE = 8;
 
 // def rb = 704, 681
-Cursor cursor(0, 0, ProjConst::CURSOR_RADIUS, { 0,0,0,0 });
-Cursor enemy(0, 0, 10, { 0,0,0,0 });
-Target target(0, 0, 20, { 0,0,0,0 });
+Cursor cursor(0, 0, ProjConst::CURSOR_RADIUS, { 0, 0, 0, 0 });
+Cursor enemy(0, 0, ProjConst::ENEMY_RADIUS, { 0, 0, 0, 0 });
+Target target(0, 0, ProjConst::TARGET_RADIUS, { 0, 0, 0, 0 });
 
 // User data
 Logger user_RealLogger("data\\user\\realCoords.txt", ' ');
@@ -121,7 +121,7 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLi
 	WNDCLASSEX wcexPaint
 	{
 		sizeof(WNDCLASSEX), CS_DBLCLKS, WndProcPaint, 0, 0, hInstance, LoadIcon(NULL, IDI_APPLICATION),
-		LoadCursor(NULL, IDC_ARROW), HBRUSH(CreateSolidBrush(ProjConst::WND_DEF_COLOR)), NULL, ProjConst::PROJ_NAME,
+		LoadCursor(NULL, IDC_ARROW), HBRUSH(CreateSolidBrush(ProjConst::WND_DEF_COLOR)), NULL, ProjConst::PAINT_WND_NAME,
 		wcexPaint.hIcon
 	};
 	MSG msg;
@@ -129,7 +129,7 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLi
 	RegisterClassEx(&wcexMain);
 
 	// Initial window
-	hWndMain = CreateWindow(wcexMain.lpszClassName, ProjConst::WND_CAPTION, WS_SYSMENU,
+	hWndMain = CreateWindow(wcexMain.lpszClassName, ProjConst::MAIN_WND_NAME, WS_SYSMENU,
 		CW_USEDEFAULT, CW_USEDEFAULT, ProjConst::WND_DEF_WIDTH, ProjConst::WND_DEF_HEIGHT,
 		NULL, NULL, hInstance, NULL);
 
@@ -164,7 +164,7 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLi
 
 	RegisterClassEx(&wcexPaint);
 
-	hWndPaint = CreateWindow(wcexPaint.lpszClassName, ProjConst::WND_CAPTION, WS_SYSMENU | WS_MAXIMIZEBOX,
+	hWndPaint = CreateWindow(wcexPaint.lpszClassName, ProjConst::PAINT_WND_NAME, WS_SYSMENU | WS_MAXIMIZEBOX,
 		CW_USEDEFAULT, CW_USEDEFAULT, ProjConst::WND_DEF_WIDTH, ProjConst::WND_DEF_HEIGHT, NULL, NULL, hInstance, NULL);
 
 	ShowWindow(hWndMain, nCmdShow);
@@ -448,7 +448,7 @@ LRESULT CALLBACK WndProcPaint(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPa
 			enemy_RadianLogger.LogLn(converter.ToRadian_FromAngle(nextPoint));
 
 			wchar_t buffer[50];
-			_snwprintf_s(buffer, 50, L"%d %d", userPoints, enemyPoints);
+			_snwprintf_s(buffer, 50, L"User points: %d | Enemy points: %d", userPoints, enemyPoints);
 			SetWindowTextW(hWnd, buffer);
 		}
 		if (wParam == TIMER_PAINT)
@@ -505,27 +505,29 @@ LRESULT CALLBACK WndProcPaint(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPa
 
 		renderTarget->BeginDraw();
 
-		renderTarget->Clear(D2D1::ColorF(D2D1::ColorF::White));
+		renderTarget->Clear(ProjConst::DEF_BACKGROUND_COLOR);
 
 		xAxis.Draw(renderTarget, ProjConst::DEF_AXIS_COLOR);
 		yAxis.Draw(renderTarget, ProjConst::DEF_AXIS_COLOR);
-		enemy.Draw(renderTarget, ProjConst::DEF_TARGET_COLOR);
+		target.Draw(renderTarget, ProjConst::DEF_TARGET_COLOR);
+		enemy.Draw(renderTarget, ProjConst::DEF_ENEMY_COLOR);
 		cursor.Draw(renderTarget, ProjConst::DEF_CURSOR_COLOR);
-		target.Draw(renderTarget, D2D1::ColorF::Green);
 
 		if (!isGame)
 		{
-			//Graph enemy_graph("data\\enemy\\coords.txt", converter);
-			//enemy_graph.DrawWindRose(renderTarget, D2D1::ColorF::DarkSlateGray, converter, 4, 360);
+			Graph enemy_graph("data\\enemy\\coords.txt", converter);
+			enemy_graph.DrawWindRose(renderTarget, ProjConst::DEF_ENEMY_WINDROSE_COLOR, converter, ProjConst::DEF_WINDROSE_SIDES, 
+				ProjConst::CIRCLE_MAX_ANGLE);
 
 			Graph user_graph("data\\user\\coords.txt", converter);
-			user_graph.DrawWindRose(renderTarget, D2D1::ColorF::DimGray, converter, 4, 360);
+			user_graph.DrawWindRose(renderTarget, ProjConst::DEF_USER_WINDROSE_COLOR, converter, ProjConst::DEF_WINDROSE_SIDES,
+				ProjConst::CIRCLE_MAX_ANGLE);
 
 			PathDrawer enemy_drawer("data\\enemy\\coords.txt", converter);
-			enemy_drawer.Draw(renderTarget, D2D1::ColorF::Blue);
+			enemy_drawer.Draw(renderTarget, ProjConst::DEF_ENEMY_COLOR);
 
 			PathDrawer user_drawer("data\\user\\coords.txt", converter);
-			user_drawer.Draw(renderTarget, D2D1::ColorF::Red);
+			user_drawer.Draw(renderTarget, ProjConst::DEF_CURSOR_COLOR);
 		}
 
 		renderTarget->EndDraw();

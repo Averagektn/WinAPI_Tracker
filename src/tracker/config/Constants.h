@@ -2,6 +2,9 @@
 
 namespace ProjConst
 {
+	const int DEF_WINDROSE_SIDES = 4;
+	const int CIRCLE_MAX_ANGLE = 360;
+
 	const float DEF_MAX_X_ANGLE = 20.0f;
 	const float DEF_MAX_Y_ANGLE = 20.0f;
 
@@ -9,8 +12,7 @@ namespace ProjConst
 	const int DEF_USER_POINTS_INC = 10;
 
 	// NAMES
-	const wchar_t* PROJ_NAME = L"Tracker";
-	const wchar_t* WND_CAPTION = L"Tracker";
+	const wchar_t* PAINT_WND_NAME = L"Tracker";
 	const wchar_t* MAIN_WND_NAME = L"Main";
 
 	const int DEF_PANEL_WIDTH = 300;
@@ -30,14 +32,17 @@ namespace ProjConst
 	const float DX_ANGLE = 1.0f;
 	const float DY_ANGLE = 1.0f;
 
-	const D2D1::ColorF DEF_ENEMY_COLOR = D2D1::ColorF::Green;
+	const D2D1::ColorF DEF_ENEMY_COLOR = D2D1::ColorF::Blue;
 	const D2D1::ColorF DEF_CURSOR_COLOR = D2D1::ColorF::Red;
-	const D2D1::ColorF DEF_TARGET_COLOR = D2D1::ColorF::Blue;
+	const D2D1::ColorF DEF_TARGET_COLOR = D2D1::ColorF::Green;
+
 	const D2D1::ColorF DEF_AXIS_COLOR = D2D1::ColorF::Black;
-	const D2D1::ColorF DEF_PATH_COLOR = D2D1::ColorF::Green;
-	const D2D1::ColorF DEF_WINDROSE_COLOR = D2D1::ColorF::LightGray;
+
+	const D2D1::ColorF DEF_USER_WINDROSE_COLOR = D2D1::ColorF::DimGray;
+	const D2D1::ColorF DEF_ENEMY_WINDROSE_COLOR = D2D1::ColorF::DarkSlateGray;
 
 	const COLORREF WND_DEF_COLOR = RGB(255, 255, 255);
+	const D2D1::ColorF DEF_BACKGROUND_COLOR = D2D1::ColorF::White;
 	const int LOAD_TIMEOUT = 10;
 
 	const int BORDER_BOTTOM = WND_DEF_HEIGHT - 40;
@@ -47,7 +52,9 @@ namespace ProjConst
 
 	const int DEF_TIMER_TIME = 20;
 	const int DEF_PORT = 9998;
-	const int TIMER_WAITING = 1000;
+	const int TIMER_WAITING = 500;
 
 	const int CURSOR_RADIUS = 5;
+	const int ENEMY_RADIUS = 10;
+	const int TARGET_RADIUS = 20;
 }
