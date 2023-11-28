@@ -27,10 +27,10 @@ public:
 	POINT ToCoord(POINT logPoint);
 
 	// Angle coordinates
-	float ToAngleX(int coord);
-	float ToAngleY(int coord);
-	float ToAngleX_Log(int logCoord);
-	float ToAngleY_Log(int logCoord);
+	float ToAngleX(int coord) const;
+	float ToAngleY(int coord) const;
+	float ToAngleX_Log(int logCoord) const;
+	float ToAngleY_Log(int logCoord) const;
 	POINTFLOAT ToAngle(std::string str);
 	POINTFLOAT ToAngle(POINT point);
 	POINTFLOAT ToAngle_Log(POINT logPoint);
@@ -75,4 +75,3 @@ protected:
 private:
 	std::string ReplaceCommas(std::string str);
 };
-

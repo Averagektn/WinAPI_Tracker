@@ -21,5 +21,6 @@ public:
 protected:
 	std::ofstream outputFile;
 	std::string filePath;
+
 	char separator;
 };

@@ -15,7 +15,6 @@ public:
 	PathDrawer(std::vector<POINT> path);
 
 	void Draw(ID2D1HwndRenderTarget* renderTarget, D2D1::ColorF color);
-
 protected:
 	std::vector<POINT> path;
 };

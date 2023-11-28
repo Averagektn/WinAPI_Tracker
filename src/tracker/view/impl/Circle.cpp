@@ -14,13 +14,16 @@ Circle::Circle(int x, int y, int radius)
 {
 	center.x = x;
 	center.y = y;
+
 	this->radius = radius;
+
 	this->oldRect = { 0,0,0,0 };
 }
 
 Circle::Circle(POINT center, int radius)
 {
 	oldRect = { 0,0,0,0 };
+
 	this->center = center;
 	this->radius = radius;
 }
@@ -112,7 +115,7 @@ void Circle::Draw(ID2D1HwndRenderTarget* renderTarget, D2D1::ColorF color)
 
 	D2D1_ELLIPSE ellipse = D2D1::Ellipse(D2D1::Point2<int>(center.x, center.y), radius, radius);
 
-	if (brush != 0)
+	if (brush != NULL)
 	{
 		renderTarget->FillEllipse(ellipse, brush);
 	}

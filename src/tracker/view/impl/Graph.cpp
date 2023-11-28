@@ -28,8 +28,8 @@ Graph::Graph(std::vector<POINT> points)
 	this->points = points;
 }
 
-void Graph::DrawWindRose(ID2D1HwndRenderTarget* renderTarget, D2D1::ColorF color, Converter converter,
-	int segmentsNum, int radius)
+void Graph::DrawWindRose(ID2D1HwndRenderTarget* renderTarget, D2D1::ColorF color, Converter converter, int segmentsNum,
+	int radius)
 {
 	std::vector<std::vector<double>> angles = GetClasses(segmentsNum);
 	std::vector<POINT> nodes = GetGeometryPoints(angles, converter, segmentsNum, radius);
@@ -54,10 +54,10 @@ void Graph::DrawWindRose(ID2D1HwndRenderTarget* renderTarget, D2D1::ColorF color
 	polygonSink->Close();
 	polygonSink->Release();
 
-	ID2D1SolidColorBrush* brush = nullptr;
+	ID2D1SolidColorBrush* brush = NULL;
 	renderTarget->CreateSolidColorBrush(color, &brush);
 
-	if (polygonGeometry != 0 && brush != 0)
+	if (polygonGeometry != NULL && brush != NULL)
 	{
 		renderTarget->FillGeometry(polygonGeometry, brush);
 	}

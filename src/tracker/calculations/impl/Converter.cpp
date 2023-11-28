@@ -48,6 +48,7 @@ POINT Converter::ToCoord(std::string str)
 	{
 		return result;
 	}
+
 	return result;
 }
 
@@ -61,22 +62,22 @@ POINT Converter::ToCoord(POINT logPoint)
 	return { ToCoordX_Log(logPoint.x), ToCoordY_Log(logPoint.y) };
 }
 
-float Converter::ToAngleX(int coord)
+float Converter::ToAngleX(int coord) const
 {
 	return ToLogCoordX(coord) * angleWidth / maxCoordX;
 }
 
-float Converter::ToAngleY(int coord)
+float Converter::ToAngleY(int coord) const
 {
 	return ToLogCoordY(coord) * angleHeight / maxCoordY;
 }
 
-float Converter::ToAngleX_Log(int logCoord)
+float Converter::ToAngleX_Log(int logCoord) const
 {
 	return ToAngleX(logCoord + maxLogCoordX);
 }
 
-float Converter::ToAngleY_Log(int logCoord)
+float Converter::ToAngleY_Log(int logCoord) const
 {
 	return ToAngleX(logCoord + maxLogCoordY);
 }
@@ -210,6 +211,7 @@ int Converter::GetValue(std::string str)
 	{
 		return result;
 	}
+
 	return result;
 }
 

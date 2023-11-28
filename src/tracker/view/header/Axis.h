@@ -10,11 +10,6 @@ public:
 	Axis(POINT left, POINT right);
 
 	void Draw(ID2D1HwndRenderTarget* renderTarget, D2D1::ColorF color);
-
 protected:
 	POINT left, right;
-
-private:
-
 };
-

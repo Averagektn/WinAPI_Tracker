@@ -4,6 +4,7 @@ Axis::Axis(int xLeft, int yLeft, int xRight, int yRight)
 {
 	left.x = xLeft;
 	left.y = yLeft;
+
 	right.x = xRight;
 	right.y = yRight;
 }

@@ -3,6 +3,7 @@
 FileReader::FileReader(std::string filePath)
 {
 	this->filePath = filePath;
+
 	inputFile.open(filePath);
 
 	if (!inputFile.is_open())
@@ -14,7 +15,9 @@ FileReader::FileReader(std::string filePath)
 std::string FileReader::ReadLn()
 {
 	std::string line;
+
 	std::getline(inputFile, line);
+
 	return line;
 }
 

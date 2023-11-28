@@ -1,6 +1,6 @@
 #include "../header/Network.h"
 
-Network::Network(const char* serverAddress, int serverPort) : 
+Network::Network(const char* serverAddress, int serverPort) :
 	logger("data\\received\\network.txt", ' '),
 	serverAddress_(serverAddress), serverPort_(serverPort), clientSocket_(INVALID_SOCKET), serverAddressInfo_()
 {
@@ -22,7 +22,11 @@ Network::~Network()
 
 bool Network::Connect()
 {
+	char receivedByte;
+	int bytesRead, bytesSent;
+
 	clientSocket_ = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
+
 	if (clientSocket_ == INVALID_SOCKET)
 	{
 		std::cerr << "Failed to create socket\n";
@@ -39,15 +43,14 @@ bool Network::Connect()
 		return false;
 	}
 
-	char receivedByte;
-	int bytesRead = recv(clientSocket_, &receivedByte, sizeof(receivedByte), 0);
+	bytesRead = recv(clientSocket_, &receivedByte, sizeof(receivedByte), 0);
 	if (bytesRead == SOCKET_ERROR || bytesRead == 0 || receivedByte != 23)
 	{
 		closesocket(clientSocket_);
 		return false;
 	}
 
-	int bytesSent = send(clientSocket_, &receivedByte, sizeof(receivedByte), 0);
+	bytesSent = send(clientSocket_, &receivedByte, sizeof(receivedByte), 0);
 	if (bytesSent == SOCKET_ERROR)
 	{
 		closesocket(clientSocket_);
@@ -144,6 +147,7 @@ const char* Network::GetIp(HWND hText)
 {
 	int textLength = GetWindowTextLength(hText);
 	wchar_t* buffer = new wchar_t[textLength + 1];
+
 	GetWindowText(hText, buffer, textLength + 1);
 
 	int bufferSize = WideCharToMultiByte(CP_UTF8, 0, buffer, -1, nullptr, 0, nullptr, nullptr);
@@ -177,8 +181,7 @@ bool Network::GetCoord(float& coord)
 		return false;
 	}
 
-	float* floatArray = reinterpret_cast<float*>(buffer);
-	coord = floatArray[0];
+	coord = reinterpret_cast<float*>(buffer)[0];
 
 	return true;
 }

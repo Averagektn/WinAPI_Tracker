@@ -16,7 +16,6 @@ public:
 	void SetDelay(int delay);
 
 	int GetDelay() const;
-
 private:
 	int delay;
 };

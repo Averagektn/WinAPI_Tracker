@@ -7,8 +7,6 @@
 #include <Windows.h>
 #include "Logger.h"
 
-#pragma comment(lib, "Ws2_32.lib")
-
 class Network
 {
 public:
@@ -30,6 +28,7 @@ protected:
 private:
 	const char* serverAddress_;
 	int serverPort_;
+
 	WSADATA wsaData_;
 	SOCKET clientSocket_;
 	sockaddr_in serverAddressInfo_;
