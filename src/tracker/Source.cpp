@@ -1,21 +1,22 @@
-#include "data/header/Network.h"
+#define WIN32_LEAN_AND_MEAN
 
 #include <windows.h>
-#include <wingdi.h>
 #include <iostream>
 #include <d2d1.h>
-#include <cmath>
 
-#include "config/Constants.h"
+#include "config\\Constants.h"
 
-#include "view/header/Cursor.h"
-#include "view/header/Target.h"
-#include "data/header/Logger.h"
-#include "view/header/Axis.h"
-#include "data/header/FileReader.h"
-#include "calculations/header/Converter.h"
-#include "view/header/PathDrawer.h"
-#include "view/header/Graph.h"
+#include "data\\header\\Network.h"
+#include "data\\header\\Logger.h"
+#include "data\\header\\FileReader.h"
+
+#include "calculations\\header\\Converter.h"
+
+#include "view\\header\\Cursor.h"
+#include "view\\header\\Target.h"
+#include "view\\header\\Axis.h"
+#include "view\\header\\PathDrawer.h"
+#include "view\\header\\Graph.h"
 
 constexpr auto TIMER_LOG = 1;
 constexpr auto TIMER_LOAD = 2;
@@ -30,6 +31,7 @@ constexpr auto TXT_ANGLE_X = 4;
 constexpr auto TXT_ANGLE_Y = 5;
 constexpr auto BTN_CALIBRATE_X = 6;
 constexpr auto BTN_CALIBRATE_Y = 7;
+constexpr auto BTN_CENTRALIZE = 8;
 
 // def rb = 704, 681
 Cursor cursor(0, 0, ProjConst::CURSOR_RADIUS, { 0,0,0,0 });
@@ -58,13 +60,17 @@ bool isLeftPressed = false;
 bool isRightPressed = false;
 bool isUpPressed = false;
 bool isDownPressed = false;
+
 bool isGame = true;
 
 long userPoints = 0;
 long enemyPoints = 0;
 
-float maxXAngle = 20.0f;
-float maxYAngle = 20.0f;
+float maxXAngle = ProjConst::DEF_MAX_X_ANGLE;
+float maxYAngle = ProjConst::DEF_MAX_Y_ANGLE;
+
+float centerAngleX = 0;
+float centerAngleY = 0;
 
 ID2D1HwndRenderTarget* renderTarget;
 ID2D1Factory* d2dFactory;
@@ -88,7 +94,7 @@ static DWORD WINAPI NetworkThread(LPVOID lpParam)
 {
 	POINTFLOAT radianPoint;
 
-	Network network(Network::GetIp(hTxtIP), 9998);
+	Network network(Network::GetIp(hTxtIP), ProjConst::DEF_PORT);
 	network.Connect();
 
 	while (isReceiving)
@@ -96,6 +102,8 @@ static DWORD WINAPI NetworkThread(LPVOID lpParam)
 		if (network.NextXY(radianPoint))
 		{
 			currentAngles = Converter::ToAngle_FromRadian(radianPoint);
+			currentAngles.x += centerAngleX;
+			currentAngles.y += centerAngleY;
 		}
 	}
 
@@ -104,7 +112,8 @@ static DWORD WINAPI NetworkThread(LPVOID lpParam)
 
 int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow)
 {
-	WNDCLASSEX wcexMain{}, wcexPaint{};
+	WNDCLASSEX wcexMain{};
+	WNDCLASSEX wcexPaint{};
 	MSG msg;
 
 	wcexMain.cbSize = sizeof(WNDCLASSEX);
@@ -117,7 +126,7 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLi
 	wcexMain.hCursor = LoadCursor(NULL, IDC_ARROW);
 	wcexMain.hbrBackground = HBRUSH(CreateSolidBrush(ProjConst::WND_DEF_COLOR));
 	wcexMain.lpszMenuName = NULL;
-	wcexMain.lpszClassName = L"MAIN";
+	wcexMain.lpszClassName = ProjConst::MAIN_WND_NAME;
 	wcexMain.hIconSm = wcexMain.hIcon;
 	RegisterClassEx(&wcexMain);
 
@@ -140,9 +149,11 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLi
 		ProjConst::CONTROL_DEF_WIDTH, ProjConst::BTN_DEF_HEIGHT, hWndMain, (HMENU)BTN_CALIBRATE_X, hInstance, NULL);
 	hBtnCalibrateY = CreateWindowEx(0, L"BUTTON", L"Calibrate Y", WS_VISIBLE | WS_CHILD | WS_DISABLED, xCoord, 310, 
 		ProjConst::CONTROL_DEF_WIDTH, ProjConst::BTN_DEF_HEIGHT, hWndMain, (HMENU)BTN_CALIBRATE_Y, hInstance, NULL);
-	CreateWindowEx(0, L"BUTTON", L"Calibration", WS_VISIBLE | WS_CHILD, xCoord, 370, ProjConst::CONTROL_DEF_WIDTH, 
+	CreateWindowEx(0, L"BUTTON", L"Centralize", WS_VISIBLE | WS_CHILD, xCoord, 370, 
+		ProjConst::CONTROL_DEF_WIDTH, ProjConst::BTN_DEF_HEIGHT, hWndMain, (HMENU)BTN_CENTRALIZE, hInstance, NULL);
+	CreateWindowEx(0, L"BUTTON", L"Calibration", WS_VISIBLE | WS_CHILD, xCoord, 430, ProjConst::CONTROL_DEF_WIDTH, 
 		ProjConst::BTN_DEF_HEIGHT, hWndMain, (HMENU)BTN_CALIBRATION, hInstance, NULL);
-	CreateWindowEx(0, L"BUTTON", L"Start", WS_VISIBLE | WS_CHILD, xCoord, 430, ProjConst::CONTROL_DEF_WIDTH, 
+	CreateWindowEx(0, L"BUTTON", L"Start", WS_VISIBLE | WS_CHILD, xCoord, 490, ProjConst::CONTROL_DEF_WIDTH, 
 		ProjConst::BTN_DEF_HEIGHT, hWndMain, (HMENU)BTN_START, hInstance, NULL);
 
 	// Label
@@ -206,9 +217,9 @@ LRESULT CALLBACK WndProcMain(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPar
 				return 1;
 			}
 
-			SetTimer(hWndPaint, TIMER_LOG, 20, NULL);
-			SetTimer(hWndPaint, TIMER_LOAD, 20, NULL);
-			SetTimer(hWndPaint, TIMER_PAINT, 20, NULL);
+			SetTimer(hWndPaint, TIMER_LOG, ProjConst::DEF_TIMER_TIME, NULL);
+			SetTimer(hWndPaint, TIMER_LOAD, ProjConst::DEF_TIMER_TIME, NULL);
+			SetTimer(hWndPaint, TIMER_PAINT, ProjConst::DEF_TIMER_TIME, NULL);
 
 			target.SetCenter(Converter::ToCoord(reader.ReadLn()));
 			target.SetDelay(Converter::GetValue(reader.ReadLn()));
@@ -224,7 +235,7 @@ LRESULT CALLBACK WndProcMain(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPar
 				KillTimer(hWnd, TIMER_CALIBRATION);
 
 				isReceiving = false;
-				WaitForSingleObject(hThread, INFINITE);
+				WaitForSingleObject(hThread, ProjConst::TIMER_WAITING);
 				CloseHandle(hThread);
 
 				EnableWindow(hBtnCalibrateX, FALSE);
@@ -236,7 +247,7 @@ LRESULT CALLBACK WndProcMain(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPar
 			}
 			else
 			{
-				SetTimer(hWnd, TIMER_CALIBRATION, 20, NULL);
+				SetTimer(hWnd, TIMER_CALIBRATION, ProjConst::DEF_TIMER_TIME, NULL);
 				isReceiving = true;
 				hThread = CreateThread(NULL, 0, NetworkThread, NULL, 0, NULL);
 				if (hThread == NULL)
@@ -254,7 +265,7 @@ LRESULT CALLBACK WndProcMain(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPar
 		}
 		else if (LOWORD(wParam) == BTN_CALIBRATE_X)
 		{
-			maxXAngle = std::abs(Converter::GetFloat_FromWindowText(hTxtAngleX));
+			maxXAngle = std::abs(Converter::GetFloat_FromWindowText(hTxtAngleX)) + ProjConst::DX_ANGLE;
 
 			EnableWindow(hBtnCalibrateX, FALSE);
 
@@ -262,11 +273,16 @@ LRESULT CALLBACK WndProcMain(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPar
 		}
 		else if (LOWORD(wParam) == BTN_CALIBRATE_Y)
 		{
-			maxYAngle = std::abs(Converter::GetFloat_FromWindowText(hTxtAngleY));
+			maxYAngle = std::abs(Converter::GetFloat_FromWindowText(hTxtAngleY)) + ProjConst::DY_ANGLE;
 
 			EnableWindow(hBtnCalibrateY, FALSE);
 
 			isCalibratingY = false;
+		}
+		else if (LOWORD(wParam) == BTN_CENTRALIZE)
+		{
+			centerAngleX = -Converter::GetFloat_FromWindowText(hTxtAngleX);
+			centerAngleY = -Converter::GetFloat_FromWindowText(hTxtAngleY);
 		}
 		break;
 	case WM_TIMER:
@@ -343,7 +359,7 @@ LRESULT CALLBACK WndProcPaint(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPa
 		KillTimer(hWnd, TIMER_TARGET);
 		KillTimer(hWnd, TIMER_PAINT);
 
-		WaitForSingleObject(hThread, 1000);
+		WaitForSingleObject(hThread, ProjConst::TIMER_WAITING);
 		CloseHandle(hThread);
 		hThread = NULL;
 
@@ -416,7 +432,7 @@ LRESULT CALLBACK WndProcPaint(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPa
 
 			if (enemy.Contains(cursor.Shot()))
 			{
-				userPoints += 10;
+				userPoints += ProjConst::DEF_ENEMY_POINTS_INC;
 			}
 		}
 
@@ -432,7 +448,7 @@ LRESULT CALLBACK WndProcPaint(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPa
 
 			if (target.Contains(enemy.Shot()))
 			{
-				enemyPoints += 5;
+				enemyPoints += ProjConst::DEF_ENEMY_POINTS_INC;
 			}
 
 			enemy_CoordLogger.LogLn(converter.ToLogCoord(newCenter));
@@ -441,7 +457,7 @@ LRESULT CALLBACK WndProcPaint(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPa
 			enemy_RadianLogger.LogLn(converter.ToRadian_FromAngle(nextPoint));
 
 			wchar_t buffer[50];
-			_snwprintf_s(buffer, 50, L"%.2f %.2f", currentAngles.x, currentAngles.y);
+			_snwprintf_s(buffer, 50, L"%d %d", userPoints, enemyPoints);
 			SetWindowTextW(hWnd, buffer);
 		}
 		if (wParam == TIMER_PAINT)
@@ -538,7 +554,7 @@ LRESULT CALLBACK WndProcPaint(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPa
 
 		if (hThread != NULL)
 		{
-			WaitForSingleObject(hThread, 1000);
+			WaitForSingleObject(hThread, ProjConst::TIMER_WAITING);
 			CloseHandle(hThread);
 			hThread = NULL;
 		}
