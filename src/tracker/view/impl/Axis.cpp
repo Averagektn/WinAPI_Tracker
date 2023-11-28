@@ -20,7 +20,7 @@ void Axis::Draw(ID2D1HwndRenderTarget* renderTarget, D2D1::ColorF color)
 	ID2D1SolidColorBrush* brush;
 	renderTarget->CreateSolidColorBrush(D2D1::ColorF(color), &brush);
 
-	if (brush != 0)
+	if (brush != NULL)
 	{
 		renderTarget->DrawLine(D2D1::Point2<int>(left.x, left.y), D2D1::Point2<int>(right.x, right.y), brush);
 	}

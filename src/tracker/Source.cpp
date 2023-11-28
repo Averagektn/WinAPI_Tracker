@@ -121,7 +121,7 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLi
 	WNDCLASSEX wcexPaint
 	{
 		sizeof(WNDCLASSEX), CS_DBLCLKS, WndProcPaint, 0, 0, hInstance, LoadIcon(NULL, IDI_APPLICATION),
-		LoadCursor(NULL, IDC_ARROW), HBRUSH(CreateSolidBrush(ProjConst::WND_DEF_COLOR)), NULL, ProjConst::PAINT_WND_NAME,
+		LoadCursor(NULL, IDC_ARROW), /*HBRUSH(CreateSolidBrush(ProjConst::WND_DEF_COLOR))*/NULL, NULL, ProjConst::PAINT_WND_NAME,
 		wcexPaint.hIcon
 	};
 	MSG msg;
@@ -515,9 +515,9 @@ LRESULT CALLBACK WndProcPaint(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPa
 
 		if (!isGame)
 		{
-			Graph enemy_graph("data\\enemy\\coords.txt", converter);
-			enemy_graph.DrawWindRose(renderTarget, ProjConst::DEF_ENEMY_WINDROSE_COLOR, converter, ProjConst::DEF_WINDROSE_SIDES, 
-				ProjConst::CIRCLE_MAX_ANGLE);
+			//Graph enemy_graph("data\\enemy\\coords.txt", converter);
+			//enemy_graph.DrawWindRose(renderTarget, ProjConst::DEF_ENEMY_WINDROSE_COLOR, converter, 
+			//	ProjConst::DEF_WINDROSE_SIDES, ProjConst::CIRCLE_MAX_ANGLE);
 
 			Graph user_graph("data\\user\\coords.txt", converter);
 			user_graph.DrawWindRose(renderTarget, ProjConst::DEF_USER_WINDROSE_COLOR, converter, ProjConst::DEF_WINDROSE_SIDES,

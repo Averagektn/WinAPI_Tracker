@@ -2,6 +2,9 @@
 
 namespace ProjConst
 {
+	const int SCREEN_WIDTH[9]{ 800, 1280, 1600, 1920, 2560, 3200, 3840, 6016, 7680 };
+	const int SCREEN_HEIGHT[9]{ 600, 720, 900, 1080, 1440, 1800, 2160, 3384, 4320 };
+
 	const LPCWSTR DEF_IP = L"192.168.150.2";
 
 	const LPCWSTR DEF_MAX_X_ANGLE_STR = L"20.0";
