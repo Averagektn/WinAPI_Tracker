@@ -131,6 +131,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="TimerAction.cpp" />
     <ClCompile Include="view\impl\Axis.cpp" />
     <ClCompile Include="view\impl\Circle.cpp" />
     <ClCompile Include="calculations\impl\Classifier.cpp" />
@@ -146,6 +147,7 @@
     <ClCompile Include="view\impl\Target.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="TimerAction.h" />
     <ClInclude Include="view\header\Axis.h" />
     <ClInclude Include="view\header\Circle.h" />
     <ClInclude Include="calculations\header\Classifier.h" />

@@ -34,8 +34,8 @@ constexpr auto BTN_CALIBRATE_Y = 7;
 constexpr auto BTN_CENTRALIZE = 8;
 
 // def rb = 704, 681
-Cursor cursor(0, 0, ProjConst::CURSOR_RADIUS, { 0, 0, 0, 0 });
-Cursor enemy(0, 0, ProjConst::ENEMY_RADIUS, { 0, 0, 0, 0 });
+Cursor cursor(0, 0, ProjConst::CURSOR_RADIUS, { 0, 0, 0, 0 }, ProjConst::SPEED);
+Target enemy(0, 0, ProjConst::ENEMY_RADIUS, { 0, 0, 0, 0 });
 Target target(0, 0, ProjConst::TARGET_RADIUS, { 0, 0, 0, 0 });
 
 // User data
@@ -324,12 +324,12 @@ LRESULT CALLBACK WndProcPaint(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPa
 		target.SetOldRect(clientRect);
 		enemy.SetOldRect(clientRect);
 		break;
-	WM_SHOW:
-		cursor.SetCenter({ clientRect.right / 2, clientRect.bottom / 2 });
-		cursor.SetOldRect(clientRect);
-		target.SetOldRect(clientRect);
-		enemy.SetOldRect(clientRect);
-		break;
+	//case WM_SHOW:
+	//	cursor.SetCenter({ clientRect.right / 2, clientRect.bottom / 2 });
+	//	cursor.SetOldRect(clientRect);
+	//	target.SetOldRect(clientRect);
+	//	enemy.SetOldRect(clientRect);
+	//	break;
 	case WM_SIZE:
 		D2D1_SIZE_U size = D2D1::SizeU(clientRect.right - clientRect.left, clientRect.bottom - clientRect.top);
 		d2dFactory->CreateHwndRenderTarget(renderProps, D2D1::HwndRenderTargetProperties(hWnd, size), &renderTarget);
@@ -368,10 +368,6 @@ LRESULT CALLBACK WndProcPaint(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPa
 	case WM_TIMER:
 		if (wParam == TIMER_LOG)
 		{
-			INT xSpeed = 0;
-			INT ySpeed = 0;
-			INT speed = ProjConst::SPEED;
-
 			POINT center = cursor.Shot();
 
 			user_AngleLogger.LogLn(converter.ToAngle(center));
@@ -379,47 +375,7 @@ LRESULT CALLBACK WndProcPaint(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPa
 			user_RealLogger.LogLn(center);
 			user_RadianLogger.LogLn(converter.ToRadian_FromAngle(converter.ToAngle(center)));
 
-			if ((isUpPressed || isDownPressed) && (isLeftPressed || isRightPressed))
-			{
-				speed /= ProjConst::DIAGONAL_SPEED_CORRECTION;
-			}
-
-			if (isUpPressed)
-			{
-				ySpeed -= speed;
-			}
-			if (isDownPressed)
-			{
-				ySpeed += speed;
-			}
-			if (isLeftPressed)
-			{
-				xSpeed -= speed;
-			}
-			if (isRightPressed)
-			{
-				xSpeed += speed;
-			}
-
-			if (cursor.GetLeft() <= clientRect.left && xSpeed < 0)
-			{
-				xSpeed = 0;
-			}
-			if (cursor.GetRight() >= clientRect.right && xSpeed > 0)
-			{
-				xSpeed = 0;
-			}
-			if (cursor.GetTop() <= clientRect.top && ySpeed < 0)
-			{
-				ySpeed = 0;
-			}
-			if (cursor.GetBottom() >= clientRect.bottom && ySpeed > 0)
-			{
-				ySpeed = 0;
-			}
-
-			cursor.AddCoordX(xSpeed);
-			cursor.AddCoordY(ySpeed);
+			cursor.Move(isUpPressed, isRightPressed, isDownPressed, isLeftPressed, clientRect);
 
 			if (enemy.Contains(cursor.Shot()))
 			{
@@ -437,7 +393,7 @@ LRESULT CALLBACK WndProcPaint(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPa
 
 			enemy.SetCenter(newCenter);
 
-			if (target.Contains(enemy.Shot()))
+			if (target.Contains(enemy.GetCenter()))
 			{
 				enemyPoints += ProjConst::DEF_ENEMY_POINTS_INC;
 			}
