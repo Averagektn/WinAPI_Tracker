@@ -82,5 +82,4 @@ VOID Cursor::Move(BOOL moveTop, BOOL moveRight, BOOL moveBottom, BOOL moveLeft, 
 
 	AddCoordX(xSpeed);
 	AddCoordY(ySpeed);
-
 }

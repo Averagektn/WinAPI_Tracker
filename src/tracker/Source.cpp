@@ -18,39 +18,24 @@
 #include "view\\header\\PathDrawer.h"
 #include "view\\header\\Graph.h"
 
-constexpr auto TIMER_LOG = 1;
-constexpr auto TIMER_LOAD = 2;
-constexpr auto TIMER_TARGET = 3;
-constexpr auto TIMER_PAINT = 4;
-constexpr auto TIMER_CALIBRATION = 5;
-
-constexpr auto BTN_START = 1;
-constexpr auto TXT_IP = 2;
-constexpr auto BTN_CALIBRATION = 3;
-constexpr auto TXT_ANGLE_X = 4;
-constexpr auto TXT_ANGLE_Y = 5;
-constexpr auto BTN_CALIBRATE_X = 6;
-constexpr auto BTN_CALIBRATE_Y = 7;
-constexpr auto BTN_CENTRALIZE = 8;
-
-// def rb = 704, 681
-Cursor cursor(0, 0, ProjConst::CURSOR_RADIUS, { 0, 0, 0, 0 }, ProjConst::SPEED);
-Target enemy(0, 0, ProjConst::ENEMY_RADIUS, { 0, 0, 0, 0 });
-Target target(0, 0, ProjConst::TARGET_RADIUS, { 0, 0, 0, 0 });
+Cursor cursor(0, 0, constant::CURSOR_RADIUS, { 0, 0, 0, 0 }, constant::SPEED);
+Target enemy(0, 0, constant::ENEMY_RADIUS, { 0, 0, 0, 0 });
+Target target(0, 0, constant::TARGET_RADIUS, { 0, 0, 0, 0 });
 
 // User data
-Logger user_RealLogger("data\\user\\realCoords.txt", ' ');
-Logger user_CoordLogger("data\\user\\coords.txt", ' ');
-Logger user_AngleLogger("data\\user\\angles.txt", ' ');
-Logger user_RadianLogger("data\\user\\radians.txt", ' ');
+Logger user_RealLogger(constant::FILEPATH_USER_REAL_COORDINATES, constant::DEF_SEPARATOR);
+Logger user_CoordLogger(constant::FILEPATH_USER_COORDINATES, constant::DEF_SEPARATOR);
+Logger user_AngleLogger(constant::FILEPATH_USER_ANGLES, constant::DEF_SEPARATOR);
+Logger user_RadianLogger(constant::FILEPATH_USER_RADIANS, constant::DEF_SEPARATOR);
 
 // Enemy data
-Logger enemy_RealLogger("data\\enemy\\realCoords.txt", ' ');
-Logger enemy_CoordLogger("data\\enemy\\coords.txt", ' ');
-Logger enemy_AngleLogger("data\\enemy\\angles.txt", ' ');
-Logger enemy_RadianLogger("data\\enemy\\radians.txt", ' ');
+Logger enemy_RealLogger(constant::FILEPATH_ENEMY_REAL_COORDINATES, constant::DEF_SEPARATOR);
+Logger enemy_CoordLogger(constant::FILEPATH_ENEMY_COORDINATES, constant::DEF_SEPARATOR);
+Logger enemy_AngleLogger(constant::FILEPATH_ENEMY_ANGLES, constant::DEF_SEPARATOR);
+Logger enemy_RadianLogger(constant::FILEPATH_ENEMY_RADIANS, constant::DEF_SEPARATOR);
 
-FileReader reader("data\\target\\target.txt");
+// Target coordinates
+FileReader reader(constant::FILEPATH_TARGET_COORDINATES);
 
 BOOL isCalibrating = FALSE;
 BOOL isCalibratingX = FALSE;
@@ -66,8 +51,8 @@ BOOL isGame = TRUE;
 LONG userPoints = 0;
 LONG enemyPoints = 0;
 
-FLOAT maxXAngle = ProjConst::DEF_MAX_X_ANGLE;
-FLOAT maxYAngle = ProjConst::DEF_MAX_Y_ANGLE;
+FLOAT maxXAngle = constant::DEF_MAX_X_ANGLE;
+FLOAT maxYAngle = constant::DEF_MAX_Y_ANGLE;
 
 FLOAT centerAngleX = 0;
 FLOAT centerAngleY = 0;
@@ -86,15 +71,16 @@ HWND hWndMain, hWndPaint;
 LRESULT CALLBACK WndProcPaint(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
 LRESULT CALLBACK WndProcMain(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
 
+HANDLE hThread;
+
 // Network multithreading
 POINTFLOAT currentAngles;
-HANDLE hThread;
 BOOL isReceiving = FALSE;
 static DWORD WINAPI NetworkThread(LPVOID lpParam)
 {
 	POINTFLOAT radianPoint;
 
-	Network network(Network::GetIp(hTxtIP), ProjConst::DEF_PORT);
+	Network network(Network::GetIp(hTxtIP), constant::DEF_PORT);
 	network.Connect();
 
 	while (isReceiving)
@@ -115,13 +101,13 @@ INT APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLi
 	WNDCLASSEX wcexMain
 	{
 		sizeof(WNDCLASSEX), CS_DBLCLKS, WndProcMain, 0, 0, hInstance, LoadIcon(NULL, IDI_APPLICATION),
-		LoadCursor(NULL, IDC_ARROW), HBRUSH(CreateSolidBrush(ProjConst::WND_DEF_COLOR)), NULL, ProjConst::MAIN_WND_NAME,
+		LoadCursor(NULL, IDC_ARROW), HBRUSH(CreateSolidBrush(constant::WND_DEF_COLOR)), NULL, constant::MAIN_WND_NAME,
 		wcexMain.hIcon
 	};
 	WNDCLASSEX wcexPaint
 	{
 		sizeof(WNDCLASSEX), CS_DBLCLKS, WndProcPaint, 0, 0, hInstance, LoadIcon(NULL, IDI_APPLICATION),
-		LoadCursor(NULL, IDC_ARROW), /*HBRUSH(CreateSolidBrush(ProjConst::WND_DEF_COLOR))*/NULL, NULL, ProjConst::PAINT_WND_NAME,
+		LoadCursor(NULL, IDC_ARROW), NULL, NULL, constant::PAINT_WND_NAME,
 		wcexPaint.hIcon
 	};
 	MSG msg;
@@ -129,43 +115,45 @@ INT APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLi
 	RegisterClassEx(&wcexMain);
 
 	// Initial window
-	hWndMain = CreateWindow(wcexMain.lpszClassName, ProjConst::MAIN_WND_NAME, WS_SYSMENU,
-		CW_USEDEFAULT, CW_USEDEFAULT, ProjConst::WND_DEF_WIDTH, ProjConst::WND_DEF_HEIGHT,
+	hWndMain = CreateWindow(wcexMain.lpszClassName, constant::MAIN_WND_NAME, WS_SYSMENU,
+		CW_USEDEFAULT, CW_USEDEFAULT, constant::WND_DEF_WIDTH, constant::WND_DEF_HEIGHT,
 		NULL, NULL, hInstance, NULL);
 
 	// Text box
-	INT xCoord = ProjConst::WND_DEF_WIDTH / 2 - ProjConst::CONTROL_DEF_WIDTH / 2;
-	hTxtIP = CreateWindowEx(0, L"EDIT", ProjConst::DEF_IP, WS_VISIBLE | WS_CHILD | WS_BORDER | ES_AUTOHSCROLL,
-		xCoord, 50, ProjConst::CONTROL_DEF_WIDTH, ProjConst::CONTROL_DEF_HEIGHT, hWndMain, (HMENU)TXT_IP, hInstance, NULL);
-	hTxtAngleX = CreateWindowEx(0, L"EDIT", ProjConst::DEF_MAX_X_ANGLE_STR, WS_VISIBLE | WS_CHILD | WS_BORDER | ES_AUTOHSCROLL, 
-		xCoord, 130, ProjConst::CONTROL_DEF_WIDTH, ProjConst::CONTROL_DEF_HEIGHT, hWndMain, (HMENU)TXT_ANGLE_X, hInstance, NULL);
-	hTxtAngleY = CreateWindowEx(0, L"EDIT", ProjConst::DEF_MAX_Y_ANGLE_STR, WS_VISIBLE | WS_CHILD | WS_BORDER | ES_AUTOHSCROLL, 
-		xCoord, 270, ProjConst::CONTROL_DEF_WIDTH, ProjConst::CONTROL_DEF_HEIGHT, hWndMain, (HMENU)TXT_ANGLE_Y, hInstance, NULL);
+	INT xCoord = constant::WND_DEF_WIDTH / 2 - constant::CONTROL_DEF_WIDTH / 2;
+	hTxtIP = CreateWindowEx(0, L"EDIT", constant::DEF_IP, WS_VISIBLE | WS_CHILD | WS_BORDER | ES_AUTOHSCROLL, xCoord, 50,
+		constant::CONTROL_DEF_WIDTH, constant::CONTROL_DEF_HEIGHT, hWndMain, (HMENU)constant::TXT_IP, hInstance, NULL);
+	hTxtAngleX = CreateWindowEx(0, L"EDIT", constant::DEF_MAX_X_ANGLE_STR, WS_VISIBLE | WS_CHILD | WS_BORDER | ES_AUTOHSCROLL,
+		xCoord, 130, constant::CONTROL_DEF_WIDTH, constant::CONTROL_DEF_HEIGHT, hWndMain, (HMENU)constant::TXT_ANGLE_X,
+		hInstance, NULL);
+	hTxtAngleY = CreateWindowEx(0, L"EDIT", constant::DEF_MAX_Y_ANGLE_STR, WS_VISIBLE | WS_CHILD | WS_BORDER | ES_AUTOHSCROLL,
+		xCoord, 270, constant::CONTROL_DEF_WIDTH, constant::CONTROL_DEF_HEIGHT, hWndMain, (HMENU)constant::TXT_ANGLE_Y,
+		hInstance, NULL);
 
 	// Button
 	hBtnCalibrateX = CreateWindowEx(0, L"BUTTON", L"Calibrate X", WS_VISIBLE | WS_CHILD | WS_DISABLED, xCoord, 170,
-		ProjConst::CONTROL_DEF_WIDTH, ProjConst::BTN_DEF_HEIGHT, hWndMain, (HMENU)BTN_CALIBRATE_X, hInstance, NULL);
+		constant::CONTROL_DEF_WIDTH, constant::BTN_DEF_HEIGHT, hWndMain, (HMENU)constant::BTN_CALIBRATE_X, hInstance, NULL);
 	hBtnCalibrateY = CreateWindowEx(0, L"BUTTON", L"Calibrate Y", WS_VISIBLE | WS_CHILD | WS_DISABLED, xCoord, 310,
-		ProjConst::CONTROL_DEF_WIDTH, ProjConst::BTN_DEF_HEIGHT, hWndMain, (HMENU)BTN_CALIBRATE_Y, hInstance, NULL);
+		constant::CONTROL_DEF_WIDTH, constant::BTN_DEF_HEIGHT, hWndMain, (HMENU)constant::BTN_CALIBRATE_Y, hInstance, NULL);
 	CreateWindowEx(0, L"BUTTON", L"Centralize", WS_VISIBLE | WS_CHILD, xCoord, 370,
-		ProjConst::CONTROL_DEF_WIDTH, ProjConst::BTN_DEF_HEIGHT, hWndMain, (HMENU)BTN_CENTRALIZE, hInstance, NULL);
-	CreateWindowEx(0, L"BUTTON", L"Calibration", WS_VISIBLE | WS_CHILD, xCoord, 430, ProjConst::CONTROL_DEF_WIDTH,
-		ProjConst::BTN_DEF_HEIGHT, hWndMain, (HMENU)BTN_CALIBRATION, hInstance, NULL);
-	CreateWindowEx(0, L"BUTTON", L"Start", WS_VISIBLE | WS_CHILD, xCoord, 490, ProjConst::CONTROL_DEF_WIDTH,
-		ProjConst::BTN_DEF_HEIGHT, hWndMain, (HMENU)BTN_START, hInstance, NULL);
+		constant::CONTROL_DEF_WIDTH, constant::BTN_DEF_HEIGHT, hWndMain, (HMENU)constant::BTN_CENTRALIZE, hInstance, NULL);
+	CreateWindowEx(0, L"BUTTON", L"Calibration", WS_VISIBLE | WS_CHILD, xCoord, 430, constant::CONTROL_DEF_WIDTH,
+		constant::BTN_DEF_HEIGHT, hWndMain, (HMENU)constant::BTN_CALIBRATION, hInstance, NULL);
+	CreateWindowEx(0, L"BUTTON", L"Start", WS_VISIBLE | WS_CHILD, xCoord, 490, constant::CONTROL_DEF_WIDTH,
+		constant::BTN_DEF_HEIGHT, hWndMain, (HMENU)constant::BTN_START, hInstance, NULL);
 
 	// Label
-	CreateWindowEx(0, L"STATIC", L"IP", WS_CHILD | WS_VISIBLE, xCoord, 10, ProjConst::CONTROL_DEF_WIDTH,
-		ProjConst::CONTROL_DEF_HEIGHT, hWndMain, NULL, hInstance, NULL);
-	CreateWindowEx(0, L"STATIC", L"Max X angle", WS_CHILD | WS_VISIBLE, xCoord, 90, ProjConst::CONTROL_DEF_WIDTH,
-		ProjConst::CONTROL_DEF_HEIGHT, hWndMain, NULL, hInstance, NULL);
-	CreateWindowEx(0, L"STATIC", L"Max Y angle", WS_CHILD | WS_VISIBLE, xCoord, 230, ProjConst::CONTROL_DEF_WIDTH,
-		ProjConst::CONTROL_DEF_HEIGHT, hWndMain, NULL, hInstance, NULL);
+	CreateWindowEx(0, L"STATIC", L"IP", WS_CHILD | WS_VISIBLE, xCoord, 10, constant::CONTROL_DEF_WIDTH,
+		constant::CONTROL_DEF_HEIGHT, hWndMain, NULL, hInstance, NULL);
+	CreateWindowEx(0, L"STATIC", L"Max X angle", WS_CHILD | WS_VISIBLE, xCoord, 90, constant::CONTROL_DEF_WIDTH,
+		constant::CONTROL_DEF_HEIGHT, hWndMain, NULL, hInstance, NULL);
+	CreateWindowEx(0, L"STATIC", L"Max Y angle", WS_CHILD | WS_VISIBLE, xCoord, 230, constant::CONTROL_DEF_WIDTH,
+		constant::CONTROL_DEF_HEIGHT, hWndMain, NULL, hInstance, NULL);
 
 	RegisterClassEx(&wcexPaint);
 
-	hWndPaint = CreateWindow(wcexPaint.lpszClassName, ProjConst::PAINT_WND_NAME, WS_SYSMENU | WS_MAXIMIZEBOX,
-		CW_USEDEFAULT, CW_USEDEFAULT, ProjConst::WND_DEF_WIDTH, ProjConst::WND_DEF_HEIGHT, NULL, NULL, hInstance, NULL);
+	hWndPaint = CreateWindow(wcexPaint.lpszClassName, constant::PAINT_WND_NAME, WS_SYSMENU | WS_MAXIMIZEBOX,
+		CW_USEDEFAULT, CW_USEDEFAULT, constant::WND_DEF_WIDTH, constant::WND_DEF_HEIGHT, NULL, NULL, hInstance, NULL);
 
 	ShowWindow(hWndMain, nCmdShow);
 	UpdateWindow(hWndMain);
@@ -184,12 +172,12 @@ LRESULT CALLBACK WndProcMain(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPar
 	switch (message)
 	{
 	case WM_COMMAND:
-		if (LOWORD(wParam) == BTN_START)
+		if (LOWORD(wParam) == constant::BTN_START)
 		{
 			userPoints = 0;
 			enemyPoints = 0;
 
-			KillTimer(hWnd, TIMER_CALIBRATION);
+			KillTimer(hWnd, constant::TIMER_CALIBRATION);
 
 			isGame = TRUE;
 			isReceiving = TRUE;
@@ -203,25 +191,25 @@ LRESULT CALLBACK WndProcMain(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPar
 				return 1;
 			}
 
-			SetTimer(hWndPaint, TIMER_LOG, ProjConst::DEF_TIMER_TIME, NULL);
-			SetTimer(hWndPaint, TIMER_LOAD, ProjConst::DEF_TIMER_TIME, NULL);
-			SetTimer(hWndPaint, TIMER_PAINT, ProjConst::DEF_TIMER_TIME, NULL);
+			SetTimer(hWndPaint, constant::TIMER_LOG, constant::DEF_TIMER_TIME, NULL);
+			SetTimer(hWndPaint, constant::TIMER_LOAD, constant::DEF_TIMER_TIME, NULL);
+			SetTimer(hWndPaint, constant::TIMER_PAINT, constant::DEF_TIMER_TIME, NULL);
 
 			target.SetCenter(Converter::ToCoord(reader.ReadLn()));
 			target.SetDelay(Converter::GetValue(reader.ReadLn()));
-			SetTimer(hWndPaint, TIMER_TARGET, target.GetDelay(), NULL);
+			SetTimer(hWndPaint, constant::TIMER_TARGET, target.GetDelay(), NULL);
 
 			ShowWindow(hWndMain, SW_HIDE);
 			ShowWindow(hWndPaint, SW_SHOW);
 		}
-		else if (LOWORD(wParam) == BTN_CALIBRATION)
+		else if (LOWORD(wParam) == constant::BTN_CALIBRATION)
 		{
 			if (isCalibrating)
 			{
-				KillTimer(hWnd, TIMER_CALIBRATION);
+				KillTimer(hWnd, constant::TIMER_CALIBRATION);
 
 				isReceiving = FALSE;
-				WaitForSingleObject(hThread, ProjConst::TIMER_WAITING);
+				WaitForSingleObject(hThread, constant::TIMER_WAITING);
 				CloseHandle(hThread);
 
 				EnableWindow(hBtnCalibrateX, FALSE);
@@ -233,7 +221,7 @@ LRESULT CALLBACK WndProcMain(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPar
 			}
 			else
 			{
-				SetTimer(hWnd, TIMER_CALIBRATION, ProjConst::DEF_TIMER_TIME, NULL);
+				SetTimer(hWnd, constant::TIMER_CALIBRATION, constant::DEF_TIMER_TIME, NULL);
 
 				isReceiving = TRUE;
 
@@ -251,30 +239,30 @@ LRESULT CALLBACK WndProcMain(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPar
 				isCalibrating = TRUE;
 			}
 		}
-		else if (LOWORD(wParam) == BTN_CALIBRATE_X)
+		else if (LOWORD(wParam) == constant::BTN_CALIBRATE_X)
 		{
-			maxXAngle = std::abs(Converter::GetFloat_FromWindowText(hTxtAngleX)) + ProjConst::DX_ANGLE;
+			maxXAngle = std::abs(Converter::GetFloat_FromWindowText(hTxtAngleX)) + constant::DX_ANGLE;
 
 			EnableWindow(hBtnCalibrateX, FALSE);
 
 			isCalibratingX = FALSE;
 		}
-		else if (LOWORD(wParam) == BTN_CALIBRATE_Y)
+		else if (LOWORD(wParam) == constant::BTN_CALIBRATE_Y)
 		{
-			maxYAngle = std::abs(Converter::GetFloat_FromWindowText(hTxtAngleY)) + ProjConst::DY_ANGLE;
+			maxYAngle = std::abs(Converter::GetFloat_FromWindowText(hTxtAngleY)) + constant::DY_ANGLE;
 
 			EnableWindow(hBtnCalibrateY, FALSE);
 
 			isCalibratingY = FALSE;
 		}
-		else if (LOWORD(wParam) == BTN_CENTRALIZE)
+		else if (LOWORD(wParam) == constant::BTN_CENTRALIZE)
 		{
 			centerAngleX = -Converter::GetFloat_FromWindowText(hTxtAngleX);
 			centerAngleY = -Converter::GetFloat_FromWindowText(hTxtAngleY);
 		}
 		break;
 	case WM_TIMER:
-		if (wParam == TIMER_CALIBRATION)
+		if (wParam == constant::TIMER_CALIBRATION)
 		{
 			wchar_t buffer[50];
 
@@ -324,12 +312,6 @@ LRESULT CALLBACK WndProcPaint(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPa
 		target.SetOldRect(clientRect);
 		enemy.SetOldRect(clientRect);
 		break;
-	//case WM_SHOW:
-	//	cursor.SetCenter({ clientRect.right / 2, clientRect.bottom / 2 });
-	//	cursor.SetOldRect(clientRect);
-	//	target.SetOldRect(clientRect);
-	//	enemy.SetOldRect(clientRect);
-	//	break;
 	case WM_SIZE:
 		D2D1_SIZE_U size = D2D1::SizeU(clientRect.right - clientRect.left, clientRect.bottom - clientRect.top);
 		d2dFactory->CreateHwndRenderTarget(renderProps, D2D1::HwndRenderTargetProperties(hWnd, size), &renderTarget);
@@ -345,12 +327,12 @@ LRESULT CALLBACK WndProcPaint(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPa
 		isGame = FALSE;
 		isReceiving = FALSE;
 
-		KillTimer(hWnd, TIMER_LOG);
-		KillTimer(hWnd, TIMER_LOAD);
-		KillTimer(hWnd, TIMER_TARGET);
-		KillTimer(hWnd, TIMER_PAINT);
+		KillTimer(hWnd, constant::TIMER_LOG);
+		KillTimer(hWnd, constant::TIMER_LOAD);
+		KillTimer(hWnd, constant::TIMER_TARGET);
+		KillTimer(hWnd, constant::TIMER_PAINT);
 
-		WaitForSingleObject(hThread, ProjConst::TIMER_WAITING);
+		WaitForSingleObject(hThread, constant::TIMER_WAITING);
 		CloseHandle(hThread);
 		hThread = NULL;
 
@@ -366,7 +348,7 @@ LRESULT CALLBACK WndProcPaint(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPa
 		InvalidateRect(hWnd, NULL, TRUE);
 		break;
 	case WM_TIMER:
-		if (wParam == TIMER_LOG)
+		if (wParam == constant::TIMER_LOG)
 		{
 			POINT center = cursor.Shot();
 
@@ -379,11 +361,11 @@ LRESULT CALLBACK WndProcPaint(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPa
 
 			if (enemy.Contains(cursor.Shot()))
 			{
-				userPoints += ProjConst::DEF_ENEMY_POINTS_INC;
+				userPoints += constant::DEF_ENEMY_POINTS_INC;
 			}
 		}
 
-		if (wParam == TIMER_LOAD)
+		if (wParam == constant::TIMER_LOAD)
 		{
 			POINTFLOAT nextPoint;
 			POINT newCenter;
@@ -395,7 +377,7 @@ LRESULT CALLBACK WndProcPaint(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPa
 
 			if (target.Contains(enemy.GetCenter()))
 			{
-				enemyPoints += ProjConst::DEF_ENEMY_POINTS_INC;
+				enemyPoints += constant::DEF_ENEMY_POINTS_INC;
 			}
 
 			enemy_CoordLogger.LogLn(converter.ToLogCoord(newCenter));
@@ -407,17 +389,17 @@ LRESULT CALLBACK WndProcPaint(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPa
 			_snwprintf_s(buffer, 50, L"User points: %d | Enemy points: %d", userPoints, enemyPoints);
 			SetWindowTextW(hWnd, buffer);
 		}
-		if (wParam == TIMER_PAINT)
+		if (wParam == constant::TIMER_PAINT)
 		{
 			InvalidateRect(hWnd, NULL, TRUE);
 		}
-		if (wParam == TIMER_TARGET)
+		if (wParam == constant::TIMER_TARGET)
 		{
 			target.SetCenter(Converter::ToCoord(reader.ReadLn()));
 			target.SetDelay(Converter::GetValue(reader.ReadLn()));
 
-			KillTimer(hWnd, TIMER_TARGET);
-			SetTimer(hWnd, TIMER_TARGET, target.GetDelay(), NULL);
+			KillTimer(hWnd, constant::TIMER_TARGET);
+			SetTimer(hWnd, constant::TIMER_TARGET, target.GetDelay(), NULL);
 		}
 		break;
 	case WM_KEYDOWN:
@@ -461,29 +443,29 @@ LRESULT CALLBACK WndProcPaint(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPa
 
 		renderTarget->BeginDraw();
 
-		renderTarget->Clear(ProjConst::DEF_BACKGROUND_COLOR);
+		renderTarget->Clear(constant::DEF_BACKGROUND_COLOR);
 
-		xAxis.Draw(renderTarget, ProjConst::DEF_AXIS_COLOR);
-		yAxis.Draw(renderTarget, ProjConst::DEF_AXIS_COLOR);
-		target.Draw(renderTarget, ProjConst::DEF_TARGET_COLOR);
-		enemy.Draw(renderTarget, ProjConst::DEF_ENEMY_COLOR);
-		cursor.Draw(renderTarget, ProjConst::DEF_CURSOR_COLOR);
+		xAxis.Draw(renderTarget, constant::DEF_AXIS_COLOR);
+		yAxis.Draw(renderTarget, constant::DEF_AXIS_COLOR);
+		target.Draw(renderTarget, constant::DEF_TARGET_COLOR);
+		enemy.Draw(renderTarget, constant::DEF_ENEMY_COLOR);
+		cursor.Draw(renderTarget, constant::DEF_CURSOR_COLOR);
 
 		if (!isGame)
 		{
-			//Graph enemy_graph("data\\enemy\\coords.txt", converter);
-			//enemy_graph.DrawWindRose(renderTarget, ProjConst::DEF_ENEMY_WINDROSE_COLOR, converter, 
-			//	ProjConst::DEF_WINDROSE_SIDES, ProjConst::CIRCLE_MAX_ANGLE);
+			//Graph enemy_graph(constant::FILEPATH_ENEMY_COORDINATES, converter);
+			//enemy_graph.DrawWindRose(renderTarget, constant::DEF_ENEMY_WINDROSE_COLOR, converter, constant::DEF_WINDROSE_SIDES,
+			//	constant::CIRCLE_MAX_ANGLE);
 
-			Graph user_graph("data\\user\\coords.txt", converter);
-			user_graph.DrawWindRose(renderTarget, ProjConst::DEF_USER_WINDROSE_COLOR, converter, ProjConst::DEF_WINDROSE_SIDES,
-				ProjConst::CIRCLE_MAX_ANGLE);
+			Graph user_graph(constant::FILEPATH_USER_COORDINATES, converter);
+			user_graph.DrawWindRose(renderTarget, constant::DEF_USER_WINDROSE_COLOR, converter, constant::DEF_WINDROSE_SIDES,
+				constant::CIRCLE_MAX_ANGLE);
 
-			PathDrawer enemy_drawer("data\\enemy\\coords.txt", converter);
-			enemy_drawer.Draw(renderTarget, ProjConst::DEF_ENEMY_COLOR);
+			PathDrawer enemy_drawer(constant::FILEPATH_ENEMY_COORDINATES, converter);
+			enemy_drawer.Draw(renderTarget, constant::DEF_ENEMY_COLOR);
 
-			PathDrawer user_drawer("data\\user\\coords.txt", converter);
-			user_drawer.Draw(renderTarget, ProjConst::DEF_CURSOR_COLOR);
+			PathDrawer user_drawer(constant::FILEPATH_USER_COORDINATES, converter);
+			user_drawer.Draw(renderTarget, constant::DEF_CURSOR_COLOR);
 		}
 
 		renderTarget->EndDraw();
@@ -494,14 +476,14 @@ LRESULT CALLBACK WndProcPaint(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPa
 		isGame = FALSE;
 		isReceiving = FALSE;
 
-		KillTimer(hWnd, TIMER_LOG);
-		KillTimer(hWnd, TIMER_LOAD);
-		KillTimer(hWnd, TIMER_TARGET);
-		KillTimer(hWnd, TIMER_PAINT);
+		KillTimer(hWnd, constant::TIMER_LOG);
+		KillTimer(hWnd, constant::TIMER_LOAD);
+		KillTimer(hWnd, constant::TIMER_TARGET);
+		KillTimer(hWnd, constant::TIMER_PAINT);
 
 		if (hThread != NULL)
 		{
-			WaitForSingleObject(hThread, ProjConst::TIMER_WAITING);
+			WaitForSingleObject(hThread, constant::TIMER_WAITING);
 			CloseHandle(hThread);
 			hThread = NULL;
 		}
