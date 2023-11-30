@@ -473,6 +473,8 @@ LRESULT CALLBACK WndProcPaint(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPa
 		EndPaint(hWnd, &ps);
 		break;
 	case WM_CLOSE:
+		cursor.SetCenter({ clientRect.right / 2, clientRect.bottom / 2 });
+
 		isGame = FALSE;
 		isReceiving = FALSE;
 

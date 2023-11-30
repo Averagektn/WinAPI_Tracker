@@ -5,6 +5,5 @@
 class TimerAction
 {
 public:
-private:
 };
 
