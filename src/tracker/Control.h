@@ -8,6 +8,7 @@ public:
 	Control(HWND hWnd);
 
 	VOID Scale(HWND hControl);
+	VOID ScaleComboBox(HWND hControl, INT nItems);
 
 	VOID UpdateClientRect();
 

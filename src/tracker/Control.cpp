@@ -28,6 +28,28 @@ VOID Control::Scale(HWND hControl)
     MoveWindow(hControl, x, y, width, height, TRUE);
 }
 
+VOID Control::ScaleComboBox(HWND hControl, INT nItems)
+{
+    RECT clientRect;
+    GetClientRect(hWnd, &clientRect);
+
+    FLOAT xScale = (FLOAT)clientRect.right / this->clientRect.right;
+    FLOAT yScale = (FLOAT)clientRect.bottom / this->clientRect.bottom;
+
+    RECT controlRect;
+    GetClientRect(hControl, &controlRect);
+
+    POINT controlPoint = { 0, 0 };
+    MapWindowPoints(hControl, hWnd, &controlPoint, 1);
+
+    INT x = controlPoint.x * xScale;
+    INT y = controlPoint.y * yScale;
+    INT width = (controlRect.right - controlRect.left) * xScale;
+    INT height = (controlRect.bottom - controlRect.top) * yScale * nItems;
+
+    MoveWindow(hControl, x, y, width, height, TRUE);
+}
+
 VOID Control::UpdateClientRect()
 {
     GetClientRect(hWnd, &clientRect);

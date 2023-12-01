@@ -39,6 +39,9 @@ Logger enemy_RadianLogger(constant::FILEPATH_ENEMY_RADIANS, constant::DEF_SEPARA
 // Target coordinates
 FileReader reader(constant::FILEPATH_TARGET_COORDINATES);
 
+// Constols scaling
+Control* scaler;
+
 BOOL isCalibrating = FALSE;
 BOOL isCalibratingX = FALSE;
 BOOL isCalibratingY = FALSE;
@@ -72,9 +75,8 @@ HWND hWndMain, hWndPaint;
 LRESULT CALLBACK WndProcPaint(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
 LRESULT CALLBACK WndProcMain(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
 
-HANDLE hThread;
-
 // Network multithreading
+HANDLE hThread;
 POINTFLOAT currentAngles;
 BOOL isReceiving = FALSE;
 static DWORD WINAPI NetworkThread(LPVOID lpParam)
@@ -97,8 +99,6 @@ static DWORD WINAPI NetworkThread(LPVOID lpParam)
 
 	return 0;
 }
-
-Control* scaler;
 
 INT APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow)
 {
@@ -196,6 +196,8 @@ INT APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLi
 
 LRESULT CALLBACK WndProcMain(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
+	HWND hComboBox;
+	INT selectedIndex;
 
 	switch (message)
 	{
@@ -212,11 +214,23 @@ LRESULT CALLBACK WndProcMain(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPar
 		scaler->Scale(GetDlgItem(hWnd, constant::LBL_ANGLE_X));
 		scaler->Scale(GetDlgItem(hWnd, constant::LBL_ANGLE_Y));
 
-		scaler->Scale(GetDlgItem(hWnd, constant::CB_RESOLUTION));
+		hComboBox = GetDlgItem(hWnd, constant::CB_RESOLUTION);
+		scaler->ScaleComboBox(hComboBox, SendMessage(hComboBox, CB_GETCOUNT, 0, 0));
 
 		scaler->UpdateClientRect();
 		break;
 	case WM_COMMAND:
+		if (LOWORD(wParam) == constant::CB_RESOLUTION && HIWORD(wParam) == CBN_SELCHANGE)
+		{
+			selectedIndex = SendMessage((HWND)lParam, CB_GETCURSEL, 0, 0);
+
+			SetWindowPos(hWnd, NULL, 0, 0, constant::SCREEN_WIDTH[selectedIndex], constant::SCREEN_HEIGHT[selectedIndex], 
+				SWP_NOZORDER | SWP_NOACTIVATE);
+			SetWindowPos(hWndPaint, NULL, 0, 0, constant::SCREEN_WIDTH[selectedIndex], constant::SCREEN_HEIGHT[selectedIndex],
+				SWP_NOZORDER | SWP_NOACTIVATE);
+
+			break;
+		}
 		if (LOWORD(wParam) == constant::BTN_START)
 		{
 			userPoints = 0;
