@@ -25,6 +25,8 @@ VOID Control::Scale(HWND hControl)
     INT width = (controlRect.right - controlRect.left) * xScale;
     INT height = (controlRect.bottom - controlRect.top) * yScale;
 
+    ScaleFont(hControl, xScale, yScale);
+
     MoveWindow(hControl, x, y, width, height, TRUE);
 }
 
@@ -45,7 +47,9 @@ VOID Control::ScaleComboBox(HWND hControl, INT nItems)
     INT x = controlPoint.x * xScale;
     INT y = controlPoint.y * yScale;
     INT width = (controlRect.right - controlRect.left) * xScale;
-    INT height = (controlRect.bottom - controlRect.top) * yScale * nItems;
+    INT height = clientRect.bottom;
+
+    ScaleFont(hControl, xScale, yScale);
 
     MoveWindow(hControl, x, y, width, height, TRUE);
 }
@@ -73,4 +77,18 @@ HWND Control::GetWindowHandler() const
 RECT Control::GetCurrentClientRect() const
 {
     return clientRect;
+}
+
+VOID Control::ScaleFont(HWND hControl, FLOAT xScale, FLOAT yScale)
+{
+    HFONT hButtonFont = (HFONT)SendMessage(hControl, WM_GETFONT, 0, 0);
+    LOGFONT lf{};
+
+    GetObject(hButtonFont, sizeof(LOGFONT), &lf);
+    
+    lf.lfWidth *= xScale;
+    lf.lfHeight *= yScale;
+    
+    HFONT hNewFont = CreateFontIndirect(&lf);
+    SendMessage(hControl, WM_SETFONT, (WPARAM)hNewFont, TRUE);
 }

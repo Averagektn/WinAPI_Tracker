@@ -18,6 +18,8 @@ public:
 	HWND GetWindowHandler() const;
 	RECT GetCurrentClientRect() const;
 private:
+	VOID ScaleFont(HWND hControl, FLOAT xScale, FLOAT yScale);
+
 	HWND hWnd;
 	RECT clientRect;
 };

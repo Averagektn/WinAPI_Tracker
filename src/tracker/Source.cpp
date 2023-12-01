@@ -130,51 +130,63 @@ INT APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLi
 
 	// Text box
 	INT xCoord = constant::WND_DEF_WIDTH / 2 - constant::CONTROL_DEF_WIDTH / 2;
-	//CreateWindowEx(0, L"EDIT", constant::DEF_IP, WS_VISIBLE | WS_CHILD | WS_BORDER | ES_AUTOHSCROLL, xCoord, 50,
+	//HWND hTxtIP = CreateWindowEx(0, L"EDIT", constant::DEF_IP, WS_VISIBLE | WS_CHILD | WS_BORDER | ES_AUTOHSCROLL, xCoord, 50,
 	//	constant::CONTROL_DEF_WIDTH, constant::CONTROL_DEF_HEIGHT, hWndMain, (HMENU)constant::TXT_IP, hInstance, NULL);
-	CreateWindowEx(0, L"EDIT", constant::DEF_MAX_X_ANGLE_STR, WS_VISIBLE | WS_CHILD | WS_BORDER | ES_AUTOHSCROLL,
-		xCoord, 50, constant::CONTROL_DEF_WIDTH, constant::CONTROL_DEF_HEIGHT, hWndMain, (HMENU)constant::TXT_ANGLE_X,
-		hInstance, NULL);
-	CreateWindowEx(0, L"EDIT", constant::DEF_MAX_Y_ANGLE_STR, WS_VISIBLE | WS_CHILD | WS_BORDER | ES_AUTOHSCROLL,
-		xCoord, 190, constant::CONTROL_DEF_WIDTH, constant::CONTROL_DEF_HEIGHT, hWndMain, (HMENU)constant::TXT_ANGLE_Y,
-		hInstance, NULL);
+	//SendMessage(hTxtIP, WM_SETFONT, (WPARAM)constant::DEF_FONT, TRUE);
+	HWND hTxtAngleX = CreateWindowEx(0, L"EDIT", constant::DEF_MAX_X_ANGLE_STR, WS_VISIBLE | WS_CHILD | WS_BORDER | 
+		ES_AUTOHSCROLL, xCoord, 50, constant::CONTROL_DEF_WIDTH, constant::CONTROL_DEF_HEIGHT, hWndMain, 
+		(HMENU)constant::TXT_ANGLE_X, hInstance, NULL);
+	SendMessage(hTxtAngleX, WM_SETFONT, (WPARAM)constant::DEF_FONT, TRUE);
+	HWND hTxtAngleY = CreateWindowEx(0, L"EDIT", constant::DEF_MAX_Y_ANGLE_STR, WS_VISIBLE | WS_CHILD | WS_BORDER | 
+		ES_AUTOHSCROLL, xCoord, 190, constant::CONTROL_DEF_WIDTH, constant::CONTROL_DEF_HEIGHT, hWndMain, 
+		(HMENU)constant::TXT_ANGLE_Y, hInstance, NULL);
+	SendMessage(hTxtAngleY, WM_SETFONT, (WPARAM)constant::DEF_FONT, TRUE);
 
 	// Button
-	CreateWindowEx(0, L"BUTTON", L"Calibrate X", WS_VISIBLE | WS_CHILD | WS_DISABLED, xCoord, 90,
+	HWND hBtnCalibrateX = CreateWindowEx(0, L"BUTTON", L"Calibrate X", WS_VISIBLE | WS_CHILD | WS_DISABLED, xCoord, 90,
 		constant::CONTROL_DEF_WIDTH, constant::BTN_DEF_HEIGHT, hWndMain, (HMENU)constant::BTN_CALIBRATE_X, hInstance, NULL);
-	CreateWindowEx(0, L"BUTTON", L"Calibrate Y", WS_VISIBLE | WS_CHILD | WS_DISABLED, xCoord, 240,
+	SendMessage(hBtnCalibrateX, WM_SETFONT, (WPARAM)constant::DEF_FONT, TRUE);
+	HWND hBtnCalibrateY = CreateWindowEx(0, L"BUTTON", L"Calibrate Y", WS_VISIBLE | WS_CHILD | WS_DISABLED, xCoord, 240,
 		constant::CONTROL_DEF_WIDTH, constant::BTN_DEF_HEIGHT, hWndMain, (HMENU)constant::BTN_CALIBRATE_Y, hInstance, NULL);
-	CreateWindowEx(0, L"BUTTON", L"Centralize", WS_VISIBLE | WS_CHILD, xCoord, 290,
+	SendMessage(hBtnCalibrateY, WM_SETFONT, (WPARAM)constant::DEF_FONT, TRUE);
+	HWND hBtnCentralize = CreateWindowEx(0, L"BUTTON", L"Centralize", WS_VISIBLE | WS_CHILD, xCoord, 290,
 		constant::CONTROL_DEF_WIDTH, constant::BTN_DEF_HEIGHT, hWndMain, (HMENU)constant::BTN_CENTRALIZE, hInstance, NULL);
-	CreateWindowEx(0, L"BUTTON", L"Calibration", WS_VISIBLE | WS_CHILD, xCoord, 350, constant::CONTROL_DEF_WIDTH,
-		constant::BTN_DEF_HEIGHT, hWndMain, (HMENU)constant::BTN_CALIBRATION, hInstance, NULL);
-	CreateWindowEx(0, L"BUTTON", L"Start", WS_VISIBLE | WS_CHILD, xCoord, 410, constant::CONTROL_DEF_WIDTH,
+	SendMessage(hBtnCentralize, WM_SETFONT, (WPARAM)constant::DEF_FONT, TRUE);
+	HWND hBtnCalibration = CreateWindowEx(0, L"BUTTON", L"Calibration", WS_VISIBLE | WS_CHILD, xCoord, 350, 
+		constant::CONTROL_DEF_WIDTH, constant::BTN_DEF_HEIGHT, hWndMain, (HMENU)constant::BTN_CALIBRATION, hInstance, NULL);
+	SendMessage(hBtnCalibration, WM_SETFONT, (WPARAM)constant::DEF_FONT, TRUE);
+	HWND hBtnStart = CreateWindowEx(0, L"BUTTON", L"Start", WS_VISIBLE | WS_CHILD, xCoord, 410, constant::CONTROL_DEF_WIDTH,
 		constant::BTN_DEF_HEIGHT, hWndMain, (HMENU)constant::BTN_START, hInstance, NULL);
+	SendMessage(hBtnStart, WM_SETFONT, (WPARAM)constant::DEF_FONT, TRUE);
 
 	// Label
-	//CreateWindowEx(0, L"STATIC", L"IP", WS_CHILD | WS_VISIBLE, xCoord, 10, constant::CONTROL_DEF_WIDTH,
+	//HWND hLblIP = CreateWindowEx(0, L"STATIC", L"IP", WS_CHILD | WS_VISIBLE, xCoord, 10, constant::CONTROL_DEF_WIDTH,
 	//	constant::CONTROL_DEF_HEIGHT, hWndMain, NULL, hInstance, NULL);
-	CreateWindowEx(0, L"STATIC", L"X angle", WS_CHILD | WS_VISIBLE, xCoord, 10, constant::CONTROL_DEF_WIDTH,
+	//SendMessage(hLblIP, WM_SETFONT, (WPARAM)constant::DEF_FONT, TRUE);
+	HWND hLblAngleX = CreateWindowEx(0, L"STATIC", L"X angle", WS_CHILD | WS_VISIBLE, xCoord, 10, constant::CONTROL_DEF_WIDTH,
 		constant::CONTROL_DEF_HEIGHT, hWndMain, (HMENU)constant::LBL_ANGLE_X, hInstance, NULL);
-	CreateWindowEx(0, L"STATIC", L"Y angle", WS_CHILD | WS_VISIBLE, xCoord, 150, constant::CONTROL_DEF_WIDTH,
+	SendMessage(hLblAngleX, WM_SETFONT, (WPARAM)constant::DEF_FONT, TRUE);
+	HWND hLblAngleY = CreateWindowEx(0, L"STATIC", L"Y angle", WS_CHILD | WS_VISIBLE, xCoord, 150, constant::CONTROL_DEF_WIDTH,
 		constant::CONTROL_DEF_HEIGHT, hWndMain, (HMENU)constant::LBL_ANGLE_Y, hInstance, NULL);
+	SendMessage(hLblAngleY, WM_SETFONT, (WPARAM)constant::DEF_FONT, TRUE);
 
-	// Resolution
-	HWND hComboBox = CreateWindowEx(0, L"COMBOBOX", NULL, WS_CHILD | WS_VISIBLE | CBS_DROPDOWNLIST, 10, 10, 
+	// Combo box
+	HWND hResolution = CreateWindowEx(0, L"COMBOBOX", NULL, WS_CHILD | WS_VISIBLE | CBS_DROPDOWNLIST, 10, 10, 
 		constant::CONTROL_DEF_WIDTH, constant::CONTROL_DEF_HEIGHT * resolutionArrSize, hWndMain, (HMENU)constant::CB_RESOLUTION, 
 		NULL, NULL);
+	SendMessage(hResolution, WM_SETFONT, (WPARAM)constant::DEF_FONT, TRUE);
 
-	if (hComboBox != NULL)
+	if (hResolution != NULL)
 	{
 		TCHAR buffer[32];
 		for (INT i = 0; i < resolutionArrSize && constant::SCREEN_WIDTH[i] <= screenWidth && 
 			constant::SCREEN_HEIGHT[i] <= screenHeight; i++)
 		{
 			wsprintf(buffer, L"%d X %d", constant::SCREEN_WIDTH[i], constant::SCREEN_HEIGHT[i]);
-			SendMessage(hComboBox, CB_ADDSTRING, 0, (LPARAM)buffer);
+			SendMessage(hResolution, CB_ADDSTRING, 0, (LPARAM)buffer);
 		}
 
-		SendMessage(hComboBox, CB_SETCURSEL, 0, 0);
+		SendMessage(hResolution, CB_SETCURSEL, 0, 0);
 	}
 
 	RegisterClassEx(&wcexPaint);
