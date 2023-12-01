@@ -103,19 +103,19 @@ namespace constant
 	const INT TARGET_RADIUS = 20;
 
 	const HFONT DEF_FONT = CreateFont(
-		20, // Font size
-		0, // Sybol width (0 - by default)
-		0, // Angle
-		0, // Angle
-		FW_DEMIBOLD, // Bold
-		FALSE, // Italic
-		FALSE, // Underline
-		FALSE, // Strike
-		DEFAULT_CHARSET, // Charset
-		OUT_DEFAULT_PRECIS, // Out precis
-		CLIP_DEFAULT_PRECIS, // Clip precis
-		DEFAULT_QUALITY, // Quality
-		DEFAULT_PITCH | FF_DONTCARE, // Step and family
-		L"Arial" // Name
+		20,								// Font size
+		0,								// Sybol width (0 - by default)
+		0,								// Angle
+		0,								// Angle
+		FW_DEMIBOLD,					// Bold
+		FALSE,							// Italic
+		FALSE,							// Underline
+		FALSE,							// Strike
+		DEFAULT_CHARSET,				// Charset
+		OUT_DEFAULT_PRECIS,				// Out precis
+		CLIP_DEFAULT_PRECIS,			// Clip precis
+		DEFAULT_QUALITY,				// Quality
+		DEFAULT_PITCH | FF_DONTCARE,	// Step and family
+		L"Arial"						// Name
 	);
 }
