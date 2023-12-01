@@ -11,6 +11,8 @@ public:
 	FileReader(std::string filePath);
 	~FileReader();
 
+	VOID Restart();
+
 	std::string ReadLn();
 	std::string Read(INT length);
 protected:

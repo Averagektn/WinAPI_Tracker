@@ -33,6 +33,5 @@ private:
 	WSADATA wsaData_;
 	SOCKET clientSocket_;
 	sockaddr_in serverAddressInfo_;
-	Logger logger;
 };
 

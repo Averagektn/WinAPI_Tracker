@@ -27,60 +27,60 @@ namespace constant
 	const std::string FILEPATH_USER_REAL_COORDINATES = DIRPATH_USER + FILENAME_REAL_COORDINATES;
 	const std::string FILEPATH_USER_RADIANS = DIRPATH_USER + FILENAME_RADIANS;
 
-	constexpr auto DEF_SEPARATOR = ' ';
+	const CHAR DEF_SEPARATOR = ' ';
 
-	constexpr auto TIMER_LOG = 1;
-	constexpr auto TIMER_LOAD = 2;
-	constexpr auto TIMER_TARGET = 3;
-	constexpr auto TIMER_PAINT = 4;
-	constexpr auto TIMER_CALIBRATION = 5;
+	const INT TIMER_LOG = 1;
+	const INT TIMER_LOAD = 2;
+	const INT TIMER_TARGET = 3;
+	const INT TIMER_PAINT = 4;
+	const INT TIMER_CALIBRATION = 5;
 
-	constexpr auto BTN_START = 1;
-	constexpr auto TXT_IP = 2;
-	constexpr auto BTN_CALIBRATION = 3;
-	constexpr auto TXT_ANGLE_X = 4;
-	constexpr auto TXT_ANGLE_Y = 5;
-	constexpr auto BTN_CALIBRATE_X = 6;
-	constexpr auto BTN_CALIBRATE_Y = 7;
-	constexpr auto BTN_CENTRALIZE = 8;
+	const INT BTN_START = 1;
+	const INT TXT_IP = 2;
+	const INT BTN_CALIBRATION = 3;
+	const INT TXT_ANGLE_X = 4;
+	const INT TXT_ANGLE_Y = 5;
+	const INT BTN_CALIBRATE_X = 6;
+	const INT BTN_CALIBRATE_Y = 7;
+	const INT BTN_CENTRALIZE = 8;
+	const INT LBL_ANGLE_X = 9;
+	const INT LBL_ANGLE_Y = 10;
+	const INT CB_RESOLUTION = 11;
 
 	const INT SCREEN_WIDTH[]{ 800, 1280, 1600, 1920, 2560, 3200, 3840, 6016, 7680 };
 	const INT SCREEN_HEIGHT[]{ 600, 720, 900, 1080, 1440, 1800, 2160, 3384, 4320 };
 
-	constexpr auto DEF_IP = L"192.168.150.2";
+	const CHAR* DEF_IP = "192.168.150.2";
 
-	constexpr auto DEF_MAX_X_ANGLE_STR = L"20.0";
-	constexpr auto DEF_MAX_Y_ANGLE_STR = L"20.0";
+	const LPCWSTR DEF_MAX_X_ANGLE_STR = L"20.0";
+	const LPCWSTR DEF_MAX_Y_ANGLE_STR = L"20.0";
 
-	constexpr auto DEF_WINDROSE_SIDES = 4;
-	constexpr auto CIRCLE_MAX_ANGLE = 360;
+	const INT DEF_WINDROSE_SIDES = 4;
+	const INT CIRCLE_MAX_ANGLE = 360;
 
-	constexpr auto DEF_MAX_X_ANGLE = 20.0f;
-	constexpr auto DEF_MAX_Y_ANGLE = 20.0f;
+	const INT DEF_MAX_X_ANGLE = 20.0f;
+	const INT DEF_MAX_Y_ANGLE = 20.0f;
 
-	constexpr auto DEF_ENEMY_POINTS_INC = 5;
-	constexpr auto DEF_USER_POINTS_INC = 10;
+	const INT DEF_ENEMY_POINTS_INC = 5;
+	const INT DEF_USER_POINTS_INC = 10;
 
 	// NAMES
-	constexpr auto PAINT_WND_NAME = L"Tracker";
-	constexpr auto MAIN_WND_NAME = L"Main";
-
-	constexpr auto DEF_PANEL_WIDTH = 300;
+	const LPCWSTR PAINT_WND_NAME = L"Tracker";
+	const LPCWSTR MAIN_WND_NAME = L"Main";
 
 	// DRAWING
-	constexpr auto SPEED = 6;
-	constexpr auto DIAGONAL_SPEED_CORRECTION = 1.41;
+	const INT SPEED = 5;
 
 	// SIZES
-	constexpr auto WND_DEF_HEIGHT = 600;
-	constexpr auto WND_DEF_WIDTH = 800;
+	const INT WND_DEF_HEIGHT = 600;
+	const INT WND_DEF_WIDTH = 800;
 
-	constexpr auto CONTROL_DEF_WIDTH = 190;
-	constexpr auto CONTROL_DEF_HEIGHT = 20;
-	constexpr auto BTN_DEF_HEIGHT = CONTROL_DEF_HEIGHT * 2;
+	const INT CONTROL_DEF_WIDTH = 190;
+	const INT CONTROL_DEF_HEIGHT = 20;
+	const INT BTN_DEF_HEIGHT = CONTROL_DEF_HEIGHT * 2;
 
-	constexpr auto DX_ANGLE = 1.0f;
-	constexpr auto DY_ANGLE = 1.0f;
+	const FLOAT DX_ANGLE = 1.0f;
+	const FLOAT DY_ANGLE = 1.0f;
 
 	const D2D1::ColorF DEF_ENEMY_COLOR = D2D1::ColorF::Blue;
 	const D2D1::ColorF DEF_CURSOR_COLOR = D2D1::ColorF::Red;
@@ -92,14 +92,13 @@ namespace constant
 	const D2D1::ColorF DEF_ENEMY_WINDROSE_COLOR = D2D1::ColorF::DarkSlateGray;
 
 	const D2D1::ColorF DEF_BACKGROUND_COLOR = D2D1::ColorF::White;
-	constexpr auto WND_DEF_COLOR = RGB(255, 255, 255);
-	constexpr auto LOAD_TIMEOUT = 10;
+	const COLORREF WND_DEF_COLOR = RGB(255, 255, 255);
 
-	constexpr auto DEF_TIMER_TIME = 15;
-	constexpr auto DEF_PORT = 9998;
-	constexpr auto TIMER_WAITING = 500;
+	const INT DEF_TIMER_TIME = 15;
+	const INT DEF_PORT = 9998;
+	const INT TIMER_WAITING = 500;
 
-	constexpr auto CURSOR_RADIUS = 5;
-	constexpr auto ENEMY_RADIUS = 10;
-	constexpr auto TARGET_RADIUS = 20;
+	const INT CURSOR_RADIUS = 5;
+	const INT ENEMY_RADIUS = 10;
+	const INT TARGET_RADIUS = 20;
 }

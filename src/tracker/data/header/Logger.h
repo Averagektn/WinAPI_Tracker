@@ -11,6 +11,8 @@ public:
 	Logger(std::string filePath, CHAR separator);
 	~Logger();
 
+	VOID Restart();
+
 	VOID LogLn(POINT point);
 	VOID LogLn(POINTFLOAT point);
 	VOID LogLn(std::string info);

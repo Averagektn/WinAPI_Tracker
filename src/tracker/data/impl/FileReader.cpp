@@ -43,3 +43,8 @@ FileReader::~FileReader()
 		inputFile.close();
 	}
 }
+
+VOID FileReader::Restart()
+{
+	inputFile.seekg(0, std::ios::beg);
+}

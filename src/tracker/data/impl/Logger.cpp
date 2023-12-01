@@ -72,3 +72,8 @@ Logger::~Logger()
 		outputFile.close();
 	}
 }
+
+VOID Logger::Restart()
+{
+	outputFile.seekp(0, std::ios::beg);
+}

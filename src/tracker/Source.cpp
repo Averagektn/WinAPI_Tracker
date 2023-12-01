@@ -4,6 +4,8 @@
 #include <iostream>
 #include <d2d1.h>
 
+#include "Control.h"
+
 #include "config\\Constants.h"
 
 #include "data\\header\\Network.h"
@@ -65,7 +67,6 @@ D2D1_RENDER_TARGET_PROPERTIES renderProps = D2D1::RenderTargetProperties
 	D2D1::PixelFormat(DXGI_FORMAT_UNKNOWN, D2D1_ALPHA_MODE_PREMULTIPLIED)
 );
 
-HWND hTxtIP, hTxtAngleX, hTxtAngleY, hBtnCalibrateX, hBtnCalibrateY;
 HWND hWndMain, hWndPaint;
 
 LRESULT CALLBACK WndProcPaint(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
@@ -80,7 +81,7 @@ static DWORD WINAPI NetworkThread(LPVOID lpParam)
 {
 	POINTFLOAT radianPoint;
 
-	Network network(Network::GetIp(hTxtIP), constant::DEF_PORT);
+	Network network(constant::DEF_IP, constant::DEF_PORT);
 	network.Connect();
 
 	while (isReceiving)
@@ -88,6 +89,7 @@ static DWORD WINAPI NetworkThread(LPVOID lpParam)
 		if (network.NextXY(radianPoint))
 		{
 			currentAngles = Converter::ToAngle_FromRadian(radianPoint);
+
 			currentAngles.x += centerAngleX;
 			currentAngles.y += centerAngleY;
 		}
@@ -95,6 +97,8 @@ static DWORD WINAPI NetworkThread(LPVOID lpParam)
 
 	return 0;
 }
+
+Control* scaler;
 
 INT APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow)
 {
@@ -119,36 +123,59 @@ INT APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLi
 		CW_USEDEFAULT, CW_USEDEFAULT, constant::WND_DEF_WIDTH, constant::WND_DEF_HEIGHT,
 		NULL, NULL, hInstance, NULL);
 
+	INT resolutionArrSize = sizeof(constant::SCREEN_WIDTH) / sizeof(constant::SCREEN_WIDTH[0]);
+	INT screenWidth = GetSystemMetrics(SM_CXSCREEN);
+	INT screenHeight = GetSystemMetrics(SM_CYSCREEN);
+	scaler = new Control(hWndMain);
+
 	// Text box
 	INT xCoord = constant::WND_DEF_WIDTH / 2 - constant::CONTROL_DEF_WIDTH / 2;
-	hTxtIP = CreateWindowEx(0, L"EDIT", constant::DEF_IP, WS_VISIBLE | WS_CHILD | WS_BORDER | ES_AUTOHSCROLL, xCoord, 50,
-		constant::CONTROL_DEF_WIDTH, constant::CONTROL_DEF_HEIGHT, hWndMain, (HMENU)constant::TXT_IP, hInstance, NULL);
-	hTxtAngleX = CreateWindowEx(0, L"EDIT", constant::DEF_MAX_X_ANGLE_STR, WS_VISIBLE | WS_CHILD | WS_BORDER | ES_AUTOHSCROLL,
-		xCoord, 130, constant::CONTROL_DEF_WIDTH, constant::CONTROL_DEF_HEIGHT, hWndMain, (HMENU)constant::TXT_ANGLE_X,
+	//CreateWindowEx(0, L"EDIT", constant::DEF_IP, WS_VISIBLE | WS_CHILD | WS_BORDER | ES_AUTOHSCROLL, xCoord, 50,
+	//	constant::CONTROL_DEF_WIDTH, constant::CONTROL_DEF_HEIGHT, hWndMain, (HMENU)constant::TXT_IP, hInstance, NULL);
+	CreateWindowEx(0, L"EDIT", constant::DEF_MAX_X_ANGLE_STR, WS_VISIBLE | WS_CHILD | WS_BORDER | ES_AUTOHSCROLL,
+		xCoord, 50, constant::CONTROL_DEF_WIDTH, constant::CONTROL_DEF_HEIGHT, hWndMain, (HMENU)constant::TXT_ANGLE_X,
 		hInstance, NULL);
-	hTxtAngleY = CreateWindowEx(0, L"EDIT", constant::DEF_MAX_Y_ANGLE_STR, WS_VISIBLE | WS_CHILD | WS_BORDER | ES_AUTOHSCROLL,
-		xCoord, 270, constant::CONTROL_DEF_WIDTH, constant::CONTROL_DEF_HEIGHT, hWndMain, (HMENU)constant::TXT_ANGLE_Y,
+	CreateWindowEx(0, L"EDIT", constant::DEF_MAX_Y_ANGLE_STR, WS_VISIBLE | WS_CHILD | WS_BORDER | ES_AUTOHSCROLL,
+		xCoord, 190, constant::CONTROL_DEF_WIDTH, constant::CONTROL_DEF_HEIGHT, hWndMain, (HMENU)constant::TXT_ANGLE_Y,
 		hInstance, NULL);
 
 	// Button
-	hBtnCalibrateX = CreateWindowEx(0, L"BUTTON", L"Calibrate X", WS_VISIBLE | WS_CHILD | WS_DISABLED, xCoord, 170,
+	CreateWindowEx(0, L"BUTTON", L"Calibrate X", WS_VISIBLE | WS_CHILD | WS_DISABLED, xCoord, 90,
 		constant::CONTROL_DEF_WIDTH, constant::BTN_DEF_HEIGHT, hWndMain, (HMENU)constant::BTN_CALIBRATE_X, hInstance, NULL);
-	hBtnCalibrateY = CreateWindowEx(0, L"BUTTON", L"Calibrate Y", WS_VISIBLE | WS_CHILD | WS_DISABLED, xCoord, 310,
+	CreateWindowEx(0, L"BUTTON", L"Calibrate Y", WS_VISIBLE | WS_CHILD | WS_DISABLED, xCoord, 240,
 		constant::CONTROL_DEF_WIDTH, constant::BTN_DEF_HEIGHT, hWndMain, (HMENU)constant::BTN_CALIBRATE_Y, hInstance, NULL);
-	CreateWindowEx(0, L"BUTTON", L"Centralize", WS_VISIBLE | WS_CHILD, xCoord, 370,
+	CreateWindowEx(0, L"BUTTON", L"Centralize", WS_VISIBLE | WS_CHILD, xCoord, 290,
 		constant::CONTROL_DEF_WIDTH, constant::BTN_DEF_HEIGHT, hWndMain, (HMENU)constant::BTN_CENTRALIZE, hInstance, NULL);
-	CreateWindowEx(0, L"BUTTON", L"Calibration", WS_VISIBLE | WS_CHILD, xCoord, 430, constant::CONTROL_DEF_WIDTH,
+	CreateWindowEx(0, L"BUTTON", L"Calibration", WS_VISIBLE | WS_CHILD, xCoord, 350, constant::CONTROL_DEF_WIDTH,
 		constant::BTN_DEF_HEIGHT, hWndMain, (HMENU)constant::BTN_CALIBRATION, hInstance, NULL);
-	CreateWindowEx(0, L"BUTTON", L"Start", WS_VISIBLE | WS_CHILD, xCoord, 490, constant::CONTROL_DEF_WIDTH,
+	CreateWindowEx(0, L"BUTTON", L"Start", WS_VISIBLE | WS_CHILD, xCoord, 410, constant::CONTROL_DEF_WIDTH,
 		constant::BTN_DEF_HEIGHT, hWndMain, (HMENU)constant::BTN_START, hInstance, NULL);
 
 	// Label
-	CreateWindowEx(0, L"STATIC", L"IP", WS_CHILD | WS_VISIBLE, xCoord, 10, constant::CONTROL_DEF_WIDTH,
-		constant::CONTROL_DEF_HEIGHT, hWndMain, NULL, hInstance, NULL);
-	CreateWindowEx(0, L"STATIC", L"Max X angle", WS_CHILD | WS_VISIBLE, xCoord, 90, constant::CONTROL_DEF_WIDTH,
-		constant::CONTROL_DEF_HEIGHT, hWndMain, NULL, hInstance, NULL);
-	CreateWindowEx(0, L"STATIC", L"Max Y angle", WS_CHILD | WS_VISIBLE, xCoord, 230, constant::CONTROL_DEF_WIDTH,
-		constant::CONTROL_DEF_HEIGHT, hWndMain, NULL, hInstance, NULL);
+	//CreateWindowEx(0, L"STATIC", L"IP", WS_CHILD | WS_VISIBLE, xCoord, 10, constant::CONTROL_DEF_WIDTH,
+	//	constant::CONTROL_DEF_HEIGHT, hWndMain, NULL, hInstance, NULL);
+	CreateWindowEx(0, L"STATIC", L"X angle", WS_CHILD | WS_VISIBLE, xCoord, 10, constant::CONTROL_DEF_WIDTH,
+		constant::CONTROL_DEF_HEIGHT, hWndMain, (HMENU)constant::LBL_ANGLE_X, hInstance, NULL);
+	CreateWindowEx(0, L"STATIC", L"Y angle", WS_CHILD | WS_VISIBLE, xCoord, 150, constant::CONTROL_DEF_WIDTH,
+		constant::CONTROL_DEF_HEIGHT, hWndMain, (HMENU)constant::LBL_ANGLE_Y, hInstance, NULL);
+
+	// Resolution
+	HWND hComboBox = CreateWindowEx(0, L"COMBOBOX", NULL, WS_CHILD | WS_VISIBLE | CBS_DROPDOWNLIST, 10, 10, 
+		constant::CONTROL_DEF_WIDTH, constant::CONTROL_DEF_HEIGHT * resolutionArrSize, hWndMain, (HMENU)constant::CB_RESOLUTION, 
+		NULL, NULL);
+
+	if (hComboBox != NULL)
+	{
+		TCHAR buffer[32];
+		for (INT i = 0; i < resolutionArrSize && constant::SCREEN_WIDTH[i] <= screenWidth && 
+			constant::SCREEN_HEIGHT[i] <= screenHeight; i++)
+		{
+			wsprintf(buffer, L"%d X %d", constant::SCREEN_WIDTH[i], constant::SCREEN_HEIGHT[i]);
+			SendMessage(hComboBox, CB_ADDSTRING, 0, (LPARAM)buffer);
+		}
+
+		SendMessage(hComboBox, CB_SETCURSEL, 0, 0);
+	}
 
 	RegisterClassEx(&wcexPaint);
 
@@ -169,8 +196,26 @@ INT APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLi
 
 LRESULT CALLBACK WndProcMain(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
+
 	switch (message)
 	{
+	case WM_SIZE:
+		scaler->Scale(GetDlgItem(hWnd, constant::BTN_START));
+		scaler->Scale(GetDlgItem(hWnd, constant::BTN_CALIBRATE_X));
+		scaler->Scale(GetDlgItem(hWnd, constant::BTN_CALIBRATE_Y));
+		scaler->Scale(GetDlgItem(hWnd, constant::BTN_CALIBRATION));
+		scaler->Scale(GetDlgItem(hWnd, constant::BTN_CENTRALIZE));
+
+		scaler->Scale(GetDlgItem(hWnd, constant::TXT_ANGLE_X));
+		scaler->Scale(GetDlgItem(hWnd, constant::TXT_ANGLE_Y));
+
+		scaler->Scale(GetDlgItem(hWnd, constant::LBL_ANGLE_X));
+		scaler->Scale(GetDlgItem(hWnd, constant::LBL_ANGLE_Y));
+
+		scaler->Scale(GetDlgItem(hWnd, constant::CB_RESOLUTION));
+
+		scaler->UpdateClientRect();
+		break;
 	case WM_COMMAND:
 		if (LOWORD(wParam) == constant::BTN_START)
 		{
@@ -212,8 +257,8 @@ LRESULT CALLBACK WndProcMain(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPar
 				WaitForSingleObject(hThread, constant::TIMER_WAITING);
 				CloseHandle(hThread);
 
-				EnableWindow(hBtnCalibrateX, FALSE);
-				EnableWindow(hBtnCalibrateY, FALSE);
+				EnableWindow(GetDlgItem(hWnd, constant::BTN_CALIBRATE_X), FALSE);
+				EnableWindow(GetDlgItem(hWnd, constant::BTN_CALIBRATE_Y), FALSE);
 
 				isCalibratingX = FALSE;
 				isCalibratingY = FALSE;
@@ -231,8 +276,8 @@ LRESULT CALLBACK WndProcMain(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPar
 					return 1;
 				}
 
-				EnableWindow(hBtnCalibrateX, TRUE);
-				EnableWindow(hBtnCalibrateY, TRUE);
+				EnableWindow(GetDlgItem(hWnd, constant::BTN_CALIBRATE_X), TRUE);
+				EnableWindow(GetDlgItem(hWnd, constant::BTN_CALIBRATE_Y), TRUE);
 
 				isCalibratingX = TRUE;
 				isCalibratingY = TRUE;
@@ -241,24 +286,24 @@ LRESULT CALLBACK WndProcMain(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPar
 		}
 		else if (LOWORD(wParam) == constant::BTN_CALIBRATE_X)
 		{
-			maxXAngle = std::abs(Converter::GetFloat_FromWindowText(hTxtAngleX)) + constant::DX_ANGLE;
+			maxXAngle = std::abs(Converter::GetFloat_FromWindowText(GetDlgItem(hWnd, constant::TXT_ANGLE_X))) + constant::DX_ANGLE;
 
-			EnableWindow(hBtnCalibrateX, FALSE);
+			EnableWindow(GetDlgItem(hWnd, constant::BTN_CALIBRATE_X), FALSE);
 
 			isCalibratingX = FALSE;
 		}
 		else if (LOWORD(wParam) == constant::BTN_CALIBRATE_Y)
 		{
-			maxYAngle = std::abs(Converter::GetFloat_FromWindowText(hTxtAngleY)) + constant::DY_ANGLE;
+			maxYAngle = std::abs(Converter::GetFloat_FromWindowText(GetDlgItem(hWnd, constant::TXT_ANGLE_Y))) + constant::DY_ANGLE;
 
-			EnableWindow(hBtnCalibrateY, FALSE);
+			EnableWindow(GetDlgItem(hWnd, constant::BTN_CALIBRATE_Y), FALSE);
 
 			isCalibratingY = FALSE;
 		}
 		else if (LOWORD(wParam) == constant::BTN_CENTRALIZE)
 		{
-			centerAngleX = -Converter::GetFloat_FromWindowText(hTxtAngleX);
-			centerAngleY = -Converter::GetFloat_FromWindowText(hTxtAngleY);
+			centerAngleX = -Converter::GetFloat_FromWindowText(GetDlgItem(hWnd, constant::TXT_ANGLE_X));
+			centerAngleY = -Converter::GetFloat_FromWindowText(GetDlgItem(hWnd, constant::TXT_ANGLE_Y));
 		}
 		break;
 	case WM_TIMER:
@@ -269,17 +314,19 @@ LRESULT CALLBACK WndProcMain(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPar
 			if (isCalibratingX)
 			{
 				_snwprintf_s(buffer, 50, L"%.2f", currentAngles.x);
-				SetWindowTextW(hTxtAngleX, buffer);
+				SetWindowTextW(GetDlgItem(hWnd, constant::TXT_ANGLE_X), buffer);
 			}
 
 			if (isCalibratingY)
 			{
 				_snwprintf_s(buffer, 50, L"%.2f", currentAngles.y);
-				SetWindowTextW(hTxtAngleY, buffer);
+				SetWindowTextW(GetDlgItem(hWnd, constant::TXT_ANGLE_Y), buffer);
 			}
 		}
 		break;
 	case WM_DESTROY:
+		delete scaler;
+
 		PostQuitMessage(0);
 		break;
 	default:
@@ -489,6 +536,18 @@ LRESULT CALLBACK WndProcPaint(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPa
 			CloseHandle(hThread);
 			hThread = NULL;
 		}
+
+		reader.Restart();
+
+		user_AngleLogger.Restart();
+		user_CoordLogger.Restart();
+		user_RadianLogger.Restart();
+		user_RealLogger.Restart();
+
+		enemy_AngleLogger.Restart();
+		enemy_CoordLogger.Restart();
+		enemy_RadianLogger.Restart();
+		enemy_RealLogger.Restart();
 
 		ShowWindow(hWndPaint, SW_HIDE);
 		ShowWindow(hWndMain, SW_SHOW);

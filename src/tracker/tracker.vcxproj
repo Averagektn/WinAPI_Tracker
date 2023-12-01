@@ -131,6 +131,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Control.cpp" />
     <ClCompile Include="TimerAction.cpp" />
     <ClCompile Include="view\impl\Axis.cpp" />
     <ClCompile Include="view\impl\Circle.cpp" />
@@ -147,6 +148,7 @@
     <ClCompile Include="view\impl\Target.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Control.h" />
     <ClInclude Include="TimerAction.h" />
     <ClInclude Include="view\header\Axis.h" />
     <ClInclude Include="view\header\Circle.h" />
