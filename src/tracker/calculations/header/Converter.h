@@ -8,380 +8,173 @@
 #include <windows.h>
 
 /// <summary>
-/// 
+///		Converter implementation
 /// </summary>
 class Converter
 {
 public:
 	/// <summary>
-	/// 
+	///		Creates converter
 	/// </summary>
 	/// <param name="width">
-	/// 
+	///		Width of the screen
 	/// </param>
 	/// <param name="height">
-	/// 
+	///		Height of the screen
 	/// </param>
 	/// <param name="maxAngleX">
-	/// 
+	///		Width in angles
 	/// </param>
 	/// <param name="maxAngleY">
-	/// 
+	///		Height in angles
 	/// </param>
 	Converter(INT width, INT height, FLOAT maxAngleX, FLOAT maxAngleY);
 
 	// Window coordinates
 	/// <summary>
-	/// 
+	///		Converts to window coordinate system
 	/// </summary>
-	/// <param name="angle">
-	/// 
-	/// </param>
-	/// <returns>
-	/// 
-	/// </returns>
 	INT ToCoordX(FLOAT angle);
 	/// <summary>
-	/// 
+	///		Converts to window coordinate system
 	/// </summary>
-	/// <param name="angle">
-	/// 
-	/// </param>
-	/// <returns>
-	/// 
-	/// </returns>
 	INT ToCoordY(FLOAT angle);
 	/// <summary>
-	/// 
+	///		Converts to window coordinate system
 	/// </summary>
-	/// <param name="logCoord">
-	/// 
-	/// </param>
-	/// <returns>
-	/// 
-	/// </returns>
 	INT ToCoordX_Log(INT logCoord) const;
 	/// <summary>
-	/// 
+	///		Converts to window coordinate system
 	/// </summary>
-	/// <param name="logCoord">
-	/// 
-	/// </param>
-	/// <returns>
-	/// 
-	/// </returns>
 	INT ToCoordY_Log(INT logCoord) const;
 	/// <summary>
-	/// 
+	///		Converts to window coordinate system
 	/// </summary>
-	/// <param name="str">
-	/// 
-	/// </param>
-	/// <returns>
-	/// 
-	/// </returns>
 	static POINT ToCoord(std::string str);
 	/// <summary>
-	/// 
+	///		Converts to window coordinate system
 	/// </summary>
-	/// <param name="point">
-	/// 
-	/// </param>
-	/// <returns><
-	/// 
-	/// /returns>
 	POINT ToCoord(POINTFLOAT point);
 	/// <summary>
-	/// 
+	///		Converts to window coordinate system
 	/// </summary>
-	/// <param name="logPoint">
-	/// 
-	/// </param>
-	/// <returns>
-	/// 
-	/// </returns>
 	POINT ToCoord(POINT logPoint);
+	/// <summary>
+	///		Converts to window coordinate system
+	/// </summary>
+	POINT ToCoord_FromLogCoordString(std::string str);
+	/// <summary>
+	///		Converts to window coordinate system
+	/// </summary>
+	POINT ToCoord_FromAngleString(std::string str);
 
 	// Angle coordinates
 	/// <summary>
-	/// 
+	///		Converts to angles
 	/// </summary>
-	/// <param name="coord">
-	/// 
-	/// </param>
-	/// <returns>
-	/// 
-	/// </returns>
 	FLOAT ToAngleX(INT coord) const;
 	/// <summary>
-	/// 
+	///		Converts to angles
 	/// </summary>
-	/// <param name="coord">
-	/// 
-	/// </param>
-	/// <returns>
-	/// 
-	/// </returns>
 	FLOAT ToAngleY(INT coord) const;
 	/// <summary>
-	/// 
+	///		Converts to angles
 	/// </summary>
-	/// <param name="logCoord">
-	/// 
-	/// </param>
-	/// <returns>
-	/// 
-	/// </returns>
 	FLOAT ToAngleX_Log(INT logCoord) const;
 	/// <summary>
-	/// 
+	///		Converts to angles
 	/// </summary>
-	/// <param name="logCoord">
-	/// 
-	/// </param>
-	/// <returns>
-	/// 
-	/// </returns>
 	FLOAT ToAngleY_Log(INT logCoord) const;
 	/// <summary>
-	/// 
+	///		Converts to angles
 	/// </summary>
-	/// <param name="str">
-	/// 
-	/// </param>
-	/// <returns>
-	/// 
-	/// </returns>
 	POINTFLOAT ToAngle(std::string str);
 	/// <summary>
-	/// 
+	///		Converts to angles
 	/// </summary>
-	/// <param name="point">
-	/// 
-	/// </param>
-	/// <returns>
-	/// 
-	/// </returns>
 	POINTFLOAT ToAngle(POINT point);
 	/// <summary>
-	/// 
+	///		Converts to angles
 	/// </summary>
-	/// <param name="logPoint">
-	/// 
-	/// </param>
-	/// <returns>
-	/// 
-	/// </returns>
 	POINTFLOAT ToAngle_Log(POINT logPoint);
+	/// <summary>
+	///		Converts to angles
+	/// </summary>
+	POINTFLOAT ToAngle_FromLogCoordString(std::string str);
+	/// <summary>
+	///		Converts to angles
+	/// </summary>
+	POINTFLOAT ToAngle_FromCoordString(std::string str);
+	/// <summary>
+	///		Converts to angles
+	/// </summary>
+	static FLOAT ToAngle_FromRadian(FLOAT radian);
+	/// <summary>
+	///		Converts to angles
+	/// </summary>
+	static POINTFLOAT ToAngle_FromRadian(POINTFLOAT radian);
 
 	// Logical coordinates
 	/// <summary>
-	/// 
+	///		Converts to logical coordinates(center is in the window center)
 	/// </summary>
-	/// <param name="coord">
-	/// 
-	/// </param>
-	/// <returns>
-	/// 
-	/// </returns>
 	INT ToLogCoordX(INT coord) const;
 	/// <summary>
-	/// 
+	///		Converts to logical coordinates(center is in the window center)
 	/// </summary>
-	/// <param name="coord">
-	/// 
-	/// </param>
-	/// <returns>
-	/// 
-	/// </returns>
 	INT ToLogCoordY(INT coord) const;
 	/// <summary>
-	/// 
+	///		Converts to logical coordinates(center is in the window center)
 	/// </summary>
-	/// <param name="angle">
-	/// 
-	/// </param>
-	/// <returns>
-	/// 
-	/// </returns>
 	INT ToLogCoordX_Angle(FLOAT angle);
 	/// <summary>
-	/// 
+	///		Converts to logical coordinates(center is in the window center)
 	/// </summary>
-	/// <param name="angle">
-	/// 
-	/// </param>
-	/// <returns>
-	/// 
-	/// </returns>
 	INT ToLogCoordY_Angle(FLOAT angle);
 	/// <summary>
-	/// 
+	///		Converts to logical coordinates(center is in the window center)
 	/// </summary>
-	/// <param name="point">
-	/// 
-	/// </param>
-	/// <returns>
-	/// 
-	/// </returns>
 	POINT ToLogCoord(POINTFLOAT point);
 	/// <summary>
-	/// 
+	///		Converts to logical coordinates(center is in the window center)
 	/// </summary>
-	/// <param name="point">
-	/// 
-	/// </param>
-	/// <returns>
-	/// 
-	/// </returns>
 	POINT ToLogCoord(POINT point);
 	/// <summary>
-	/// 
+	///		Converts to logical coordinates(center is in the window center)
 	/// </summary>
-	/// <param name="str">
-	/// 
-	/// </param>
-	/// <returns>
-	/// 
-	/// </returns>
 	POINT ToLogCoord(std::string str);
-
 	/// <summary>
-	/// 
+	///		Converts to logical coordinates(center is in the window center)
 	/// </summary>
-	/// <param name="str">
-	/// 
-	/// </param>
-	/// <returns>
-	/// 
-	/// </returns>
 	POINT ToLogCoord_FromCoordString(std::string str);
 	/// <summary>
-	/// 
+	///		Converts to logical coordinates(center is in the window center)
 	/// </summary>
-	/// <param name="str">
-	/// 
-	/// </param>
-	/// <returns>
-	/// 
-	/// </returns>
 	POINT ToLogCoord_FromAngleString(std::string str);
 
+	// Radians
 	/// <summary>
-	/// 
+	///		Converts to radians
 	/// </summary>
-	/// <param name="str">
-	/// 
-	/// </param>
-	/// <returns>
-	/// 
-	/// </returns>
-	POINT ToCoord_FromLogCoordString(std::string str);
-	/// <summary>
-	/// 
-	/// </summary>
-	/// <param name="str">
-	/// 
-	/// </param>
-	/// <returns>
-	/// 
-	/// </returns>
-	POINT ToCoord_FromAngleString(std::string str);
-
-	/// <summary>
-	/// 
-	/// </summary>
-	/// <param name="str">
-	/// 
-	/// </param>
-	/// <returns>
-	/// 
-	/// </returns>
-	POINTFLOAT ToAngle_FromLogCoordString(std::string str);
-	/// <summary>
-	/// 
-	/// </summary>
-	/// <param name="str">
-	/// 
-	/// </param>
-	/// <returns>
-	/// 
-	/// </returns>
-	POINTFLOAT ToAngle_FromCoordString(std::string str);
-
-	/// <summary>
-	/// 
-	/// </summary>
-	/// <param name="radian">
-	/// 
-	/// </param>
-	/// <returns>
-	/// 
-	/// </returns>
-	static FLOAT ToAngle_FromRadian(FLOAT radian);
-	/// <summary>
-	/// 
-	/// </summary>
-	/// <param name="angle">
-	/// 
-	/// </param>
-	/// <returns>
-	/// 
-	/// </returns>
 	static FLOAT ToRadian_FromAngle(FLOAT angle);
-
 	/// <summary>
-	/// 
+	///		Converts to radians
 	/// </summary>
-	/// <param name="radian">
-	/// 
-	/// </param>
-	/// <returns>
-	/// 
-	/// </returns>
-	static POINTFLOAT ToAngle_FromRadian(POINTFLOAT radian);
-	/// <summary>
-	/// 
-	/// </summary>
-	/// <param name="angle">
-	/// 
-	/// </param>
-	/// <returns>
-	/// 
-	/// </returns>
 	static POINTFLOAT ToRadian_FromAngle(POINTFLOAT angle);
 
 	/// <summary>
-	/// 
+	///		Converts to float from control text
 	/// </summary>
-	/// <param name="hWnd">
-	/// 
-	/// </param>
-	/// <returns>
-	/// 
-	/// </returns>
 	static FLOAT GetFloat_FromWindowText(HWND hWnd);
 
 	/// <summary>
-	/// 
+	///		Converts to int from control text
 	/// </summary>
-	/// <param name="str">
-	/// 
-	/// </param>
-	/// <returns>
-	/// 
-	/// </returns>
 	static INT GetValue(std::string str);
 
 	/// <summary>
-	/// 
+	///		Replaces commas in string
 	/// </summary>
-	/// <param name="str">
-	/// 
-	/// </param>
-	/// <returns>
-	/// 
-	/// </returns>
 	std::string ReplaceCommas(std::string str);
 private:
 	INT maxCoordX;
