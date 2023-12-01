@@ -545,11 +545,8 @@ LRESULT CALLBACK WndProcPaint(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPa
 			user_graph.DrawWindRose(renderTarget, constant::DEF_USER_WINDROSE_COLOR, converter, constant::DEF_WINDROSE_SIDES,
 				constant::CIRCLE_MAX_ANGLE);
 
-			PathDrawer enemy_drawer(constant::FILEPATH_ENEMY_COORDINATES, converter);
-			enemy_drawer.Draw(renderTarget, constant::DEF_ENEMY_COLOR);
-
-			PathDrawer user_drawer(constant::FILEPATH_USER_COORDINATES, converter);
-			user_drawer.Draw(renderTarget, constant::DEF_CURSOR_COLOR);
+			PathDrawer::Draw(renderTarget, constant::DEF_ENEMY_COLOR, constant::FILEPATH_ENEMY_REAL_COORDINATES);
+			PathDrawer::Draw(renderTarget, constant::DEF_CURSOR_COLOR, constant::FILEPATH_USER_REAL_COORDINATES);
 		}
 
 		renderTarget->EndDraw();

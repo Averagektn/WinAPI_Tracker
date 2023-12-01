@@ -8,41 +8,11 @@
 #include "../../calculations/header/Converter.h"
 
 /// <summary>
-/// 
+///		Generates and draws path from given file with dataset. File format: "INT INT". Window coordinate system
 /// </summary>
 class PathDrawer
 {
 public:
-	/// <summary>
-	/// 
-	/// </summary>
-	/// <param name="filePath">
-	/// 
-	/// </param>
-	/// <param name="converter">
-	/// 
-	/// </param>
-	PathDrawer(std::string filePath, Converter converter);
-
-	/// <summary>
-	/// 
-	/// </summary>
-	/// <param name="reader">
-	/// 
-	/// </param>
-	/// <param name="converter">
-	/// 
-	/// </param>
-	PathDrawer(FileReader reader, Converter converter);
-
-	/// <summary>
-	/// 
-	/// </summary>
-	/// <param name="path">
-	/// 
-	/// </param>
-	PathDrawer(std::vector<POINT> path);
-
 	/// <summary>
 	/// 
 	/// </summary>
@@ -55,7 +25,5 @@ public:
 	/// <returns>
 	/// 
 	/// </returns>
-	VOID Draw(ID2D1HwndRenderTarget* renderTarget, D2D1::ColorF color);
-protected:
-	std::vector<POINT> path;
+	static VOID Draw(ID2D1HwndRenderTarget* renderTarget, D2D1::ColorF color, std::string reader);
 };
