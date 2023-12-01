@@ -4,13 +4,13 @@
 #include <vector>
 
 /// <summary>
-/// 
+///		Divides points into classes
 /// </summary>
 class Classifier
 {
 public:
 	/// <summary>
-	/// 
+	///		
 	/// </summary>
 	/// <param name="centers">
 	/// 
