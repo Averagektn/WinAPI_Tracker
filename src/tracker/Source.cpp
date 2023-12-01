@@ -77,7 +77,7 @@ D2D1_RENDER_TARGET_PROPERTIES renderProps = D2D1::RenderTargetProperties
 	D2D1::PixelFormat(DXGI_FORMAT_UNKNOWN, D2D1_ALPHA_MODE_PREMULTIPLIED)
 );
 
-// Window handlers
+// Window handles
 HWND hWndMain, hWndPaint;
 LRESULT CALLBACK WndProcPaint(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
 LRESULT CALLBACK WndProcMain(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);

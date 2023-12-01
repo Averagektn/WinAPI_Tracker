@@ -64,12 +64,12 @@ VOID Control::SetClientRect(RECT clientRect)
 	this->clientRect = clientRect;
 }
 
-VOID Control::SetWindowHandler(HWND hWnd)
+VOID Control::SetWindowHandle(HWND hWnd)
 {
 	this->hWnd = hWnd;
 }
 
-HWND Control::GetWindowHandler() const
+HWND Control::GetWindowHandle() const
 {
 	return hWnd;
 }
