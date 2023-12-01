@@ -5,7 +5,6 @@ FileReader::FileReader(std::string filePath)
 	this->filePath = filePath;
 
 	inputFile.open(filePath);
-
 	if (!inputFile.is_open())
 	{
 		std::cerr << "Error: Could not open file " << filePath << std::endl;
@@ -25,12 +24,10 @@ std::string FileReader::Read(INT length)
 {
 	std::string content;
 	CHAR c;
-	INT count = 0;
 
-	while (inputFile.get(c) && count < length)
+	for (INT count = 0; inputFile.get(c) && count < length; count++)
 	{
 		content += c;
-		count++;
 	}
 
 	return content;
