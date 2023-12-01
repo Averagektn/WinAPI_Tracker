@@ -21,8 +21,8 @@
 #include "view\\header\\Graph.h"
 
 Cursor user(0, 0, constant::CURSOR_RADIUS, { 0, 0, 0, 0 }, constant::SPEED);
-Target enemy(0, 0, constant::ENEMY_RADIUS, { 0, 0, 0, 0 });
-Target target(0, 0, constant::TARGET_RADIUS, { 0, 0, 0, 0 });
+Target enemy(0, 0, constant::ENEMY_RADIUS);
+Target target(0, 0, constant::TARGET_RADIUS);
 
 // User data
 Logger user_RealLogger(constant::FILEPATH_USER_REAL_COORDINATES, constant::DEF_SEPARATOR);

@@ -96,7 +96,7 @@ namespace constant
 
 	const INT DEF_TIMER_TIME = 15;
 	const INT DEF_PORT = 9998;
-	const INT TIMER_WAITING = 500;
+	const INT TIMER_WAITING = 100;
 
 	const INT CURSOR_RADIUS = 5;
 	const INT ENEMY_RADIUS = 10;

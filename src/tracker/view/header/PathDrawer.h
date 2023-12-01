@@ -8,22 +8,19 @@
 #include "../../calculations/header/Converter.h"
 
 /// <summary>
-///		Generates and draws path from given file with dataset. File format: "INT INT". Window coordinate system
+///		Generates and draws path from given file with dataset. File format: "INT INT\n". Window coordinate system
 /// </summary>
 class PathDrawer
 {
 public:
 	/// <summary>
-	/// 
+	///		Draws path from file
 	/// </summary>
 	/// <param name="renderTarget">
-	/// 
+	///		Drawer
 	/// </param>
 	/// <param name="color">
-	/// 
+	///		Path color
 	/// </param>
-	/// <returns>
-	/// 
-	/// </returns>
 	static VOID Draw(ID2D1HwndRenderTarget* renderTarget, D2D1::ColorF color, std::string reader);
 };

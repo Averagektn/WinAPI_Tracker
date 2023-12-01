@@ -12,38 +12,7 @@ class Target : public Circle
 {
 public:
 	/// <summary>
-	///		Inititializes target with specified coordinates. Delay of the target is infinite by default
-	/// </summary>
-	/// <param name="x">
-	///		x coordinate
-	/// </param>
-	/// <param name="y">
-	///		y coordinate
-	/// </param>
-	/// <param name="radius">
-	///		radius of target circle
-	/// </param>
-	/// <param name="rect">
-	///		rectangle which specifies bounds of the playing zone 
-	/// </param>
-	Target(INT x, INT y, INT radius, RECT rect);
-
-	/// <summary>
-	///		Inititializes target with specified coordinates. Delay of the target is infinite by default
-	/// </summary>
-	/// <param name="center">
-	///		Cental point of the target
-	/// </param>
-	/// <param name="radius">
-	///		radius of target circle
-	/// </param>
-	/// <param name="rect">
-	///		rectangle which specifies bounds of the playing zone 
-	/// </param>
-	Target(POINT center, INT radius, RECT rect);
-
-	/// <summary>
-	///		Inititializes target with specified coordinates. Delay of the target is infinite by default. Bounds are: 0, 0, 0, 0
+	///		Inititializes target with specified coordinates. Delay of the target is infinite by default.
 	///		Bounds are: 0, 0, 0, 0
 	/// </summary>
 	/// <param name="x">
@@ -58,7 +27,7 @@ public:
 	Target(INT x, INT y, INT radius);
 
 	/// <summary>
-	///		Inititializes target with specified coordinates. Delay of the target is infinite by default. Bounds are: 0, 0, 0, 0
+	///		Inititializes target with specified coordinates. Delay of the target is infinite by default.
 	/// </summary>
 	/// <param name="center">
 	///		Cental point of the target
