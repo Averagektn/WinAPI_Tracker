@@ -18,7 +18,7 @@ Graph::Graph(FileReader reader, Converter converter)
 
 	while (!line.empty())
 	{
-		points.push_back(converter.ToCoord_FromLogCoordString(line));
+		points.push_back(converter.ToLogCoord(line));
 		line = reader.ReadLn();
 	}
 }
@@ -82,7 +82,7 @@ std::vector<std::vector<DOUBLE>> Graph::GetClasses(INT segmentsNum)
 			angle = 0;
 		}
 
-		part = static_cast<INT>(angle / (360.0 / segmentsNum));
+		part = static_cast<INT>(angle / (360.0f / segmentsNum));
 		segments[part].push_back(angle);
 	}
 
@@ -101,10 +101,10 @@ std::vector<POINT> Graph::GetGeometryPoints(std::vector<std::vector<DOUBLE>> ang
 
 	for (INT i = 0; i < segmentsNum; i++)
 	{
-		DOUBLE x = radius * cos(ToRadians(ang));
+		DOUBLE x = radius * cos(Converter::ToRadian_FromAngle(ang));
 		x *= (FLOAT)angles[i].size() / coeff;
 
-		DOUBLE y = radius * sin(ToRadians(ang));
+		DOUBLE y = radius * sin(Converter::ToRadian_FromAngle(ang));
 		y *= (FLOAT)angles[i].size() / coeff;
 
 		x = converter.ToCoordX_Log((INT)x);
@@ -142,9 +142,4 @@ INT Graph::GetMaxLength(std::vector<std::vector<DOUBLE>> angles)
 	}
 
 	return res;
-}
-
-DOUBLE Graph::ToRadians(DOUBLE angle)
-{
-	return angle * 3.14 / 180;
 }
