@@ -121,7 +121,7 @@ DOUBLE Graph::GetAngle(POINT point)
 {
 	DOUBLE angle = atan2(static_cast<DOUBLE>(point.y), static_cast<DOUBLE>(point.x)) * (180.0 / 3.14);
 
-	if (angle < 0) 
+	if (angle < 0)
 	{
 		angle += 360.0;
 	}

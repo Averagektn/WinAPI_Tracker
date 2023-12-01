@@ -2,93 +2,93 @@
 
 Control::Control(HWND hWnd)
 {
-    this->hWnd = hWnd;
-    GetClientRect(hWnd, &clientRect);
+	this->hWnd = hWnd;
+	GetClientRect(hWnd, &clientRect);
 }
 
 VOID Control::Scale(HWND hControl)
 {
-    RECT clientRect;
-    GetClientRect(hWnd, &clientRect);
+	RECT clientRect;
+	GetClientRect(hWnd, &clientRect);
 
-    FLOAT xScale = (FLOAT)clientRect.right / this->clientRect.right;
-    FLOAT yScale = (FLOAT)clientRect.bottom / this->clientRect.bottom;
+	FLOAT xScale = (FLOAT)clientRect.right / this->clientRect.right;
+	FLOAT yScale = (FLOAT)clientRect.bottom / this->clientRect.bottom;
 
-    RECT controlRect;
-    GetClientRect(hControl, &controlRect);
+	RECT controlRect;
+	GetClientRect(hControl, &controlRect);
 
-    POINT controlPoint = { 0, 0 };
-    MapWindowPoints(hControl, hWnd, &controlPoint, 1);
+	POINT controlPoint = { 0, 0 };
+	MapWindowPoints(hControl, hWnd, &controlPoint, 1);
 
-    INT x = controlPoint.x * xScale;
-    INT y = controlPoint.y * yScale;
-    INT width = (controlRect.right - controlRect.left) * xScale;
-    INT height = (controlRect.bottom - controlRect.top) * yScale;
+	INT x = controlPoint.x * xScale;
+	INT y = controlPoint.y * yScale;
+	INT width = (controlRect.right - controlRect.left) * xScale;
+	INT height = (controlRect.bottom - controlRect.top) * yScale;
 
-    ScaleFont(hControl, xScale, yScale);
+	ScaleFont(hControl, xScale, yScale);
 
-    MoveWindow(hControl, x, y, width, height, TRUE);
+	MoveWindow(hControl, x, y, width, height, TRUE);
 }
 
 VOID Control::ScaleComboBox(HWND hControl, INT nItems)
 {
-    RECT clientRect;
-    GetClientRect(hWnd, &clientRect);
+	RECT clientRect;
+	GetClientRect(hWnd, &clientRect);
 
-    FLOAT xScale = (FLOAT)clientRect.right / this->clientRect.right;
-    FLOAT yScale = (FLOAT)clientRect.bottom / this->clientRect.bottom;
+	FLOAT xScale = (FLOAT)clientRect.right / this->clientRect.right;
+	FLOAT yScale = (FLOAT)clientRect.bottom / this->clientRect.bottom;
 
-    RECT controlRect;
-    GetClientRect(hControl, &controlRect);
+	RECT controlRect;
+	GetClientRect(hControl, &controlRect);
 
-    POINT controlPoint = { 0, 0 };
-    MapWindowPoints(hControl, hWnd, &controlPoint, 1);
+	POINT controlPoint = { 0, 0 };
+	MapWindowPoints(hControl, hWnd, &controlPoint, 1);
 
-    INT x = controlPoint.x * xScale;
-    INT y = controlPoint.y * yScale;
-    INT width = (controlRect.right - controlRect.left) * xScale;
-    INT height = clientRect.bottom;
+	INT x = controlPoint.x * xScale;
+	INT y = controlPoint.y * yScale;
+	INT width = (controlRect.right - controlRect.left) * xScale;
+	INT height = clientRect.bottom;
 
-    ScaleFont(hControl, xScale, yScale);
+	ScaleFont(hControl, xScale, yScale);
 
-    MoveWindow(hControl, x, y, width, height, TRUE);
+	MoveWindow(hControl, x, y, width, height, TRUE);
 }
 
 VOID Control::UpdateClientRect()
 {
-    GetClientRect(hWnd, &clientRect);
+	GetClientRect(hWnd, &clientRect);
 }
 
 VOID Control::SetClientRect(RECT clientRect)
 {
-    this->clientRect = clientRect;
+	this->clientRect = clientRect;
 }
 
 VOID Control::SetWindowHandler(HWND hWnd)
 {
-    this->hWnd = hWnd;
+	this->hWnd = hWnd;
 }
 
 HWND Control::GetWindowHandler() const
 {
-    return hWnd;
+	return hWnd;
 }
 
 RECT Control::GetCurrentClientRect() const
 {
-    return clientRect;
+	return clientRect;
 }
 
 VOID Control::ScaleFont(HWND hControl, FLOAT xScale, FLOAT yScale)
 {
-    HFONT hButtonFont = (HFONT)SendMessage(hControl, WM_GETFONT, 0, 0);
-    LOGFONT lf{};
+	HFONT hButtonFont = (HFONT)SendMessage(hControl, WM_GETFONT, 0, 0);
+	LOGFONT lf{};
 
-    GetObject(hButtonFont, sizeof(LOGFONT), &lf);
-    
-    lf.lfWidth *= xScale;
-    lf.lfHeight *= yScale;
-    
-    HFONT hNewFont = CreateFontIndirect(&lf);
-    SendMessage(hControl, WM_SETFONT, (WPARAM)hNewFont, TRUE);
+	GetObject(hButtonFont, sizeof(LOGFONT), &lf);
+
+	lf.lfWidth *= xScale;
+	lf.lfHeight *= yScale;
+
+	HFONT hNewFont = CreateFontIndirect(&lf);
+	SendMessage(hControl, WM_SETFONT, (WPARAM)hNewFont, TRUE);
 }

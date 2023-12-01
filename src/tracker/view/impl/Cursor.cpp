@@ -1,12 +1,12 @@
 #include "../header/Cursor.h"
 
-Cursor::Cursor(INT x, INT y, INT radius, RECT oldRect, INT speed) : Circle(x, y, radius, oldRect) 
-{  
+Cursor::Cursor(INT x, INT y, INT radius, RECT oldRect, INT speed) : Circle(x, y, radius, oldRect)
+{
 	this->speed = speed;
 }
 
-Cursor::Cursor(POINT center, INT radius, RECT oldRect, INT speed) : Circle(center, radius, oldRect) 
-{  
+Cursor::Cursor(POINT center, INT radius, RECT oldRect, INT speed) : Circle(center, radius, oldRect)
+{
 	this->speed = speed;
 }
 
