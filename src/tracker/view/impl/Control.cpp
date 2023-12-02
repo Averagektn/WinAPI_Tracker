@@ -1,4 +1,4 @@
-#include "Control.h"
+#include "..\\header\\Control.h"
 
 Control::Control(HWND hWnd)
 {

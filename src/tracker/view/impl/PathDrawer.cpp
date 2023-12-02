@@ -11,6 +11,7 @@ VOID PathDrawer::Draw(ID2D1HwndRenderTarget* renderTarget, D2D1::ColorF color, s
 		POINT prev{}, curr{};
 		std::string newLine = reader.ReadLn();
 		curr = Converter::ToCoord(newLine);
+		
 		while (!newLine.empty())
 		{
 			prev = curr;

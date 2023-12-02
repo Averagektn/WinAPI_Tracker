@@ -131,7 +131,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="Control.cpp" />
+    <ClCompile Include="view\impl\Control.cpp" />
     <ClCompile Include="view\impl\Axis.cpp" />
     <ClCompile Include="view\impl\Circle.cpp" />
     <ClCompile Include="calculations\impl\Classifier.cpp" />
@@ -147,7 +147,7 @@
     <ClCompile Include="view\impl\Target.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Control.h" />
+    <ClInclude Include="view\header\Control.h" />
     <ClInclude Include="view\header\Axis.h" />
     <ClInclude Include="view\header\Circle.h" />
     <ClInclude Include="calculations\header\Classifier.h" />

@@ -4,8 +4,6 @@
 #include <iostream>
 #include <d2d1.h>
 
-#include "Control.h"
-
 #include "config\\Constants.h"
 
 #include "data\\header\\Network.h"
@@ -14,6 +12,7 @@
 
 #include "calculations\\header\\Converter.h"
 
+#include "view\\header\\Control.h"
 #include "view\\header\\Cursor.h"
 #include "view\\header\\Target.h"
 #include "view\\header\\Axis.h"
@@ -531,11 +530,14 @@ LRESULT CALLBACK WndProcPaint(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPa
 
 		xAxis.Draw(renderTarget, constant::DEF_AXIS_COLOR);
 		yAxis.Draw(renderTarget, constant::DEF_AXIS_COLOR);
-		target.Draw(renderTarget, constant::DEF_TARGET_COLOR);
-		enemy.Draw(renderTarget, constant::DEF_ENEMY_COLOR);
-		user.Draw(renderTarget, constant::DEF_CURSOR_COLOR);
 
-		if (!isGame)
+		if (isGame)
+		{
+			target.Draw(renderTarget, constant::DEF_TARGET_COLOR);
+			enemy.Draw(renderTarget, constant::DEF_ENEMY_COLOR);
+			user.Draw(renderTarget, constant::DEF_CURSOR_COLOR);
+		}
+		else
 		{
 			//Graph enemy_graph(constant::FILEPATH_ENEMY_COORDINATES, converter);
 			//enemy_graph.DrawWindRose(renderTarget, constant::DEF_ENEMY_WINDROSE_COLOR, converter, constant::DEF_WINDROSE_SIDES,

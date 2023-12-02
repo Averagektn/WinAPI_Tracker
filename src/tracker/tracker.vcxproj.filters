@@ -54,7 +54,7 @@
     <ClCompile Include="calculations\impl\Classifier.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Control.cpp">
+    <ClCompile Include="view\impl\Control.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -98,7 +98,7 @@
     <ClInclude Include="calculations\header\Classifier.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Control.h">
+    <ClInclude Include="view\header\Control.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
