@@ -337,8 +337,8 @@ LRESULT CALLBACK WndProcMain(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPar
 		}
 		else if (LOWORD(wParam) == constant::BTN_CENTRALIZE)
 		{
-			centerAngleX = -Converter::GetFloat_FromWindowText(GetDlgItem(hWnd, constant::TXT_ANGLE_X));
-			centerAngleY = -Converter::GetFloat_FromWindowText(GetDlgItem(hWnd, constant::TXT_ANGLE_Y));
+			centerAngleX += -Converter::GetFloat_FromWindowText(GetDlgItem(hWnd, constant::TXT_ANGLE_X));
+			centerAngleY += -Converter::GetFloat_FromWindowText(GetDlgItem(hWnd, constant::TXT_ANGLE_Y));
 		}
 		break;
 	case WM_TIMER:
@@ -402,6 +402,8 @@ LRESULT CALLBACK WndProcPaint(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPa
 		user.Scale(clientRect);
 		enemy.Scale(clientRect);
 		target.Scale(clientRect);
+
+		InvalidateRect(hWnd, NULL, TRUE);
 		break;
 	case WM_LBUTTONDOWN:
 		enemy.SetCenter(POINT{ 0, 0 });
@@ -528,11 +530,11 @@ LRESULT CALLBACK WndProcPaint(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPa
 
 		renderTarget->Clear(constant::DEF_BACKGROUND_COLOR);
 
-		xAxis.Draw(renderTarget, constant::DEF_AXIS_COLOR);
-		yAxis.Draw(renderTarget, constant::DEF_AXIS_COLOR);
-
 		if (isGame)
 		{
+			xAxis.Draw(renderTarget, constant::DEF_AXIS_COLOR);
+			yAxis.Draw(renderTarget, constant::DEF_AXIS_COLOR);
+
 			target.Draw(renderTarget, constant::DEF_TARGET_COLOR);
 			enemy.Draw(renderTarget, constant::DEF_ENEMY_COLOR);
 			user.Draw(renderTarget, constant::DEF_CURSOR_COLOR);
@@ -547,8 +549,11 @@ LRESULT CALLBACK WndProcPaint(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPa
 			user_graph.DrawWindRose(renderTarget, constant::DEF_USER_WINDROSE_COLOR, converter, constant::DEF_WINDROSE_SIDES,
 				constant::CIRCLE_MAX_ANGLE);
 
-			PathDrawer::Draw(renderTarget, constant::DEF_ENEMY_COLOR, constant::FILEPATH_ENEMY_REAL_COORDINATES);
-			PathDrawer::Draw(renderTarget, constant::DEF_CURSOR_COLOR, constant::FILEPATH_USER_REAL_COORDINATES);
+			PathDrawer::Draw(renderTarget, constant::DEF_ENEMY_COLOR, constant::FILEPATH_ENEMY_COORDINATES, converter);
+			PathDrawer::Draw(renderTarget, constant::DEF_CURSOR_COLOR, constant::FILEPATH_USER_COORDINATES, converter);
+
+			xAxis.Draw(renderTarget, constant::DEF_AXIS_COLOR);
+			yAxis.Draw(renderTarget, constant::DEF_AXIS_COLOR);
 		}
 
 		renderTarget->EndDraw();

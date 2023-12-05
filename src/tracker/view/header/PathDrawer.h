@@ -22,5 +22,5 @@ public:
 	/// <param name="color">
 	///		Path color
 	/// </param>
-	static VOID Draw(ID2D1HwndRenderTarget* renderTarget, D2D1::ColorF color, std::string reader);
+	static VOID Draw(ID2D1HwndRenderTarget* renderTarget, D2D1::ColorF color, std::string reader, Converter converter);
 };
