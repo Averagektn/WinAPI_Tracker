@@ -535,19 +535,19 @@ LRESULT CALLBACK WndProcPaint(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPa
 			xAxis.Draw(renderTarget, constant::DEF_AXIS_COLOR);
 			yAxis.Draw(renderTarget, constant::DEF_AXIS_COLOR);
 
-			target.Draw(renderTarget, constant::DEF_TARGET_COLOR);
+			//target.Draw(renderTarget, constant::DEF_TARGET_COLOR);
 			enemy.Draw(renderTarget, constant::DEF_ENEMY_COLOR);
 			user.Draw(renderTarget, constant::DEF_CURSOR_COLOR);
 		}
 		else
 		{
-			//Graph enemy_graph(constant::FILEPATH_ENEMY_COORDINATES, converter);
-			//enemy_graph.DrawWindRose(renderTarget, constant::DEF_ENEMY_WINDROSE_COLOR, converter, constant::DEF_WINDROSE_SIDES,
-			//	constant::CIRCLE_MAX_ANGLE);
+			Graph enemy_graph(constant::FILEPATH_ENEMY_COORDINATES, converter);
+			enemy_graph.DrawWindRose(renderTarget, constant::DEF_ENEMY_WINDROSE_COLOR, converter, constant::DEF_WINDROSE_SIDES + 4,
+				clientRect.bottom / 2);
 
-			Graph user_graph(constant::FILEPATH_USER_COORDINATES, converter);
-			user_graph.DrawWindRose(renderTarget, constant::DEF_USER_WINDROSE_COLOR, converter, constant::DEF_WINDROSE_SIDES,
-				constant::CIRCLE_MAX_ANGLE);
+			//Graph user_graph(constant::FILEPATH_USER_COORDINATES, converter);
+			//user_graph.DrawWindRose(renderTarget, constant::DEF_USER_WINDROSE_COLOR, converter, constant::DEF_WINDROSE_SIDES,
+			//	constant::CIRCLE_MAX_ANGLE);
 
 			PathDrawer::Draw(renderTarget, constant::DEF_ENEMY_COLOR, constant::FILEPATH_ENEMY_COORDINATES, converter);
 			PathDrawer::Draw(renderTarget, constant::DEF_CURSOR_COLOR, constant::FILEPATH_USER_COORDINATES, converter);
